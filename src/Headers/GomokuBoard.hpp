@@ -32,8 +32,22 @@
 #include "ObserverIf.hpp"  // For Observer design pattern interface.
 
 // FORWARD REFERENCES
-class GomokuBoardTest;
-class ScoreTest;
+class TEST_GomokuBoardTest_ConstructorInvalidParameterTest;
+class TEST_GomokuBoardTest_ConstructorConnectionCorrectnessTest;
+class TEST_GomokuBoardTest_CopyConstructorTest;
+class TEST_GomokuBoardTest_PutMoveTest;
+class TEST_GomokuBoardTest_GetLastMoveTest;
+class TEST_GomokuBoardTest_VacantFieldsTest;
+class TEST_GomokuBoardTest_EdgeDistanceTest;
+class TEST_GomokuBoardTest_NeighbourDistanceTest;
+class TEST_GomokuBoardTest_InRowTest;
+class TEST_GomokuBoardTest_IsOnEdgeTest;
+class TEST_GomokuBoardTest_GoDirectionTest;
+class TEST_GomokuBoardTest_RemoveMoveTest;
+class TEST_GomokuBoardTest_RemoveNLastMoveTest;
+class TEST_GomokuBoardTest_OppositePlayerTest;
+class TEST_GomokuBoardTest_GetFirstMoveTest;
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 /// CLASS NAME: GomokuBoard.
@@ -432,8 +446,23 @@ class GomokuBoard
    private:
     /// Friends class declaration.
 #warning "TODO: Such dependency should be removed."
-    friend class GomokuBoardTest;
-    friend class ScoreTest;
+
+	friend TEST_GomokuBoardTest_ConstructorInvalidParameterTest;
+	friend TEST_GomokuBoardTest_ConstructorConnectionCorrectnessTest;
+	friend TEST_GomokuBoardTest_CopyConstructorTest;
+	friend TEST_GomokuBoardTest_PutMoveTest;
+	friend TEST_GomokuBoardTest_GetLastMoveTest;
+	friend TEST_GomokuBoardTest_VacantFieldsTest;
+	friend TEST_GomokuBoardTest_EdgeDistanceTest;
+	friend TEST_GomokuBoardTest_NeighbourDistanceTest;
+	friend TEST_GomokuBoardTest_InRowTest;
+	friend TEST_GomokuBoardTest_IsOnEdgeTest;
+	friend TEST_GomokuBoardTest_GoDirectionTest;
+	friend TEST_GomokuBoardTest_RemoveMoveTest;
+	friend TEST_GomokuBoardTest_RemoveNLastMoveTest;
+	friend TEST_GomokuBoardTest_OppositePlayerTest;
+	friend TEST_GomokuBoardTest_GetFirstMoveTest;
+
 };
 
 #endif /* GOMOKUBOARD_HPP_ */

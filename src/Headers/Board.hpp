@@ -40,6 +40,21 @@ struct Neighbours;
 using std::cout;
 using std::endl;
 using std::vector;
+class TEST_GomokuBoardTest_ConstructorInvalidParameterTest;
+class TEST_GomokuBoardTest_ConstructorConnectionCorrectnessTest;
+class TEST_GomokuBoardTest_CopyConstructorTest;
+class TEST_GomokuBoardTest_PutMoveTest;
+class TEST_GomokuBoardTest_GetLastMoveTest;
+class TEST_GomokuBoardTest_VacantFieldsTest;
+class TEST_GomokuBoardTest_EdgeDistanceTest;
+class TEST_GomokuBoardTest_NeighbourDistanceTest;
+class TEST_GomokuBoardTest_InRowTest;
+class TEST_GomokuBoardTest_IsOnEdgeTest;
+class TEST_GomokuBoardTest_GoDirectionTest;
+class TEST_GomokuBoardTest_RemoveMoveTest;
+class TEST_GomokuBoardTest_RemoveNLastMoveTest;
+class TEST_GomokuBoardTest_OppositePlayerTest;
+class TEST_GomokuBoardTest_GetFirstMoveTest;
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 /// CLASS NAME: Board.
@@ -632,7 +647,7 @@ class Board
             // None.
         };
 
-   protected:
+   //protected:
     // Board size.
     uint32_t m_Size;
 
@@ -800,6 +815,22 @@ class Board
         _stream << "(" << rPositionXY.m_x << ", " << rPositionXY.m_y << ")" << endl;
         return _stream;
     }
+	
+	friend TEST_GomokuBoardTest_ConstructorInvalidParameterTest;
+	friend TEST_GomokuBoardTest_ConstructorConnectionCorrectnessTest;
+	friend TEST_GomokuBoardTest_CopyConstructorTest;
+	friend TEST_GomokuBoardTest_PutMoveTest;
+	friend TEST_GomokuBoardTest_GetLastMoveTest;
+	friend TEST_GomokuBoardTest_VacantFieldsTest;
+	friend TEST_GomokuBoardTest_EdgeDistanceTest;
+	friend TEST_GomokuBoardTest_NeighbourDistanceTest;
+	friend TEST_GomokuBoardTest_InRowTest;
+	friend TEST_GomokuBoardTest_IsOnEdgeTest;
+	friend TEST_GomokuBoardTest_GoDirectionTest;
+	friend TEST_GomokuBoardTest_RemoveMoveTest;
+	friend TEST_GomokuBoardTest_RemoveNLastMoveTest;
+	friend TEST_GomokuBoardTest_OppositePlayerTest;
+	friend TEST_GomokuBoardTest_GetFirstMoveTest;
 };
 
 // Converter PositionField2PositionXY.

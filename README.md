@@ -1,16 +1,16 @@
 # Gomoku
-
-#### GUI
 The project provides gomoku game implementation.
-The goal of the game is to put unbroken row of five stones horizontally, vertically or diagonally. 
-You play by clicking on any empty field of the board - then click 'Go' button.
+The goal of the game is to put unbroken row of five stones horizontally, vertically or diagonally.
 
+Project uses kind of facade pattern so it can be compiled to two GUI versions: Console & Android 
+
+#### GUI - Android
 The first release is avaliable at google store apps:
 https://play.google.com/store/apps/details?id=org.qtproject.GomokuHalsoft
 
 ![](Design/intro.png)  
 
-#### Console
+#### GUI - Console
 However you can compile&run game from your local console.
 To do this from project root:
 
@@ -126,7 +126,7 @@ User move shall be provided: *row_number\r column_number\r*
 #### Development
 To generate Eclipse project do the following:
 1. define env **DEFAULT_TOOLCHAIN_PATH** in your system. Default it would be: DEFAULT_TOOLCHAIN_PATH="/usr/bin"
-2. from build directory run command:
+2. from *build* directory run command:
 	~~~cmake
 	cmake ../src/ -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE="../cmake/toolchain-gcc-default.cmake"
 	~~~
@@ -141,3 +141,4 @@ To generate Eclipse project do the following:
   * build project to be sure configuration is OK
 
 #### CI
+CI is based on cpp_unit framework.
