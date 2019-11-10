@@ -1,0 +1,9 @@
+NXP_src/MKM34Z256xxx7_Project/CMSIS/*
+NXP_src/MKM34Z256xxx7_Project/drivers/*
+ci/downloads/*
+ci/ut/Utils/*
+NXP_src/MKM34Z256xxx7_Project/source/externalLib/*
+crc16.h
+crc16.c
+clock_config.h
+clock_config.c
