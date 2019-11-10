@@ -141,4 +141,4 @@ To generate Eclipse project do the following:
   * build project to be sure configuration is OK
 
 #### CI
-CI is based on cpp_unit framework.
+CI is based on cpp_unit framework. 
