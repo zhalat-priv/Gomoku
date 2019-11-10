@@ -11,7 +11,7 @@ https://play.google.com/store/apps/details?id=org.qtproject.GomokuHalsoft
 ![](Design/intro.png)  
 
 #### GUI - Console
-However you can compile&run game from your local console.
+However, you can compile&run game from your local console.
 To do this from project root:
 
 ###### Compilation
@@ -23,7 +23,7 @@ To do this from project root:
 
 $ mkdir build
 $ cd build
-$ cmake
+$ cmake ../
 $ make
 ~~~
 ###### Running
