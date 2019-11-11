@@ -124,6 +124,7 @@ void Score::UpdateScore(BoardScore& boardScore, const Board::PositionXY xy, cons
 // Destructor.
 Score::~Score()
 {
+	m_pInstance = NULL;
     // Delete threat classes from heap.
     for(uint32_t i = 0; i < MAX_KIND_OF_THREATS; ++i)
     {

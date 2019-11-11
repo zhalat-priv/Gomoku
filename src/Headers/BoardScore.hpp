@@ -361,6 +361,7 @@ class BoardScore
     virtual ~BoardScore()
     {
         // Nothing to do.
+		m_Spotter.~Spotter();
     }
 
    private:

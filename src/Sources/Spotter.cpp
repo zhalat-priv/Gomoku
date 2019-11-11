@@ -38,6 +38,11 @@ Spotter::Spotter(BoardScore& rBoardScore) : m_rBoardScore(rBoardScore), m_Region
     assert(m_RegionToInvestigate.IsEmpty());
 }
 
+Spotter::~Spotter()
+{
+	ThreatsBloodRelation::DeInit();
+}
+
 void Spotter::AddToExecute(const RegionToInvestigate regionToInvestigate)
 {
     m_RegionToInvestigate.AddToTail(regionToInvestigate);

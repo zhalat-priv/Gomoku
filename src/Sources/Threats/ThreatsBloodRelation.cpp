@@ -146,6 +146,19 @@ void ThreatsBloodRelation::Init()
     }
 }
 
+void ThreatsBloodRelation::DeInit()
+{
+	for(uint32_t i = 0; i < ThreatsBloodRelation::DISMISSAL_SIZE; ++i)
+	{
+		ThreatsBloodRelation::DISMISSAL[i].m_Dependency.~SingleList();
+	}
+
+	for(uint32_t i = 0; i < ThreatsBloodRelation::PROMOTION_SIZE; ++i)
+	{
+		ThreatsBloodRelation::PROMOTION[i].m_Dependency.~SingleList();
+	}
+}
+
 bool ThreatsBloodRelation::IsOnFourList(const ThreatFinder::KindOfThreats kindOfThreat)
 {
     bool retVal = false;

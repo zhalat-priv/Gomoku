@@ -97,6 +97,7 @@ SingleList<parList>::~SingleList()
     }
 
     delete m_pIterator;
+    m_pIterator= NULL;
 }
 
 // IsEmpty:

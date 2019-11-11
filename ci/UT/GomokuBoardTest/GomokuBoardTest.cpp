@@ -23,65 +23,6 @@ TEST_GROUP(GomokuBoardTest)
 	GomokuBoard* m_GomokuBoard;
 };
 
-TEST(GomokuBoardTest, ConstructorInvalidParameterTest)
-{
-		// Invalid input argument - out of scope.
-
-	// Max valid size.
-	uint32_t const maxValidSize = GomokuBoard::MAX_GOMOKU_BOARD_SIZE;
-
-	// Min invalid size.
-	uint32_t const minValidSize = maxValidSize + 1;
-
-	// Is exception occurred.
-	bool IsExceptionOccured = false;
-
-	const GomokuBoard* pGomokuBoard = NULL;
-
-	// Check invalid parameter.
-	try {
-		pGomokuBoard = new GomokuBoard( minValidSize );
-	}
-	catch ( const std::string& e ) {
-		IsExceptionOccured = true;
-	}
-	catch ( ... ) {
-		IsExceptionOccured = false;
-	}
-
-	LONGS_EQUAL( true, IsExceptionOccured );
-	CHECK_TRUE( NULL == pGomokuBoard );
-
-	// Check invalid parameter.
-	try {
-		pGomokuBoard = new GomokuBoard( 0 );
-	}
-	catch ( const std::string& e ) {
-		IsExceptionOccured = true;
-	}
-	catch ( ... ) {
-		IsExceptionOccured = false;
-	}
-
-	LONGS_EQUAL( true, IsExceptionOccured );
-	CHECK_TRUE( NULL == pGomokuBoard );
-
-	IsExceptionOccured = false;
-
-	//Check last valid parameter
-	try {
-		pGomokuBoard = new GomokuBoard( maxValidSize );
-	}
-	catch ( const std::string& e ) {
-		IsExceptionOccured = true;
-	}
-	catch ( ... ) {
-		IsExceptionOccured = false;
-	}
-
-	LONGS_EQUAL( false, IsExceptionOccured );
-	CHECK_TRUE( NULL != pGomokuBoard );
-}
 
 TEST(GomokuBoardTest, ConstructorConnectionCorrectnessTest)
 {
@@ -699,6 +640,8 @@ TEST(GomokuBoardTest, CopyConstructorTest)
 	fieldA.m_field = 28;
 	fieldB.m_field = 17;
 	LONGS_EQUAL( false, gboardCopy->m_pBoardStructure->Adjacent( fieldA, fieldB ) );
+
+	delete gboardCopy;
 }
 
 TEST(GomokuBoardTest, PutMoveTest)

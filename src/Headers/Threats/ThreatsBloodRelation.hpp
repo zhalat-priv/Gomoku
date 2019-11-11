@@ -53,6 +53,7 @@ class ThreatsBloodRelation
     /// Initialize the content.
     ///////////////////////////////////////////////////////////////////////
     static void Init();
+	static void DeInit();
 
     static bool IsOnFourList(const ThreatFinder::KindOfThreats);
     static bool IsOnThreeList(const ThreatFinder::KindOfThreats);
@@ -78,7 +79,7 @@ class ThreatsBloodRelation
         {
 #warning "This constructor shall be removed: ThreatChanging( const ThreatChanging& )=delete."
 #warning \
-    "Copy constructor required by compiler to be able init DISMISSAL/PROMOTION. This is gcc bug: see GCC Bugzilla – Bug 63707"
+    "Copy constructor required by compiler to be able init DISMISSAL/PROMOTION. This is gcc bug: see GCC Bugzilla Â– Bug 63707"
 
             // Be sure nobody use it.
             assert(false);
@@ -113,8 +114,8 @@ class ThreatsBloodRelation
     static const uint32_t ACE_LIST_SIZE              = 2;
     static const uint32_t MANY_GAPS_SIZE             = 3;
     static const uint32_t EXTENDED_NEIGHBORHOOD_SIZE = 4;
-    static const uint32_t DISMISSAL_SIZE             = 12;
-    static const uint32_t PROMOTION_SIZE             = 12;
+    static const uint32_t DISMISSAL_SIZE             = 13;
+    static const uint32_t PROMOTION_SIZE             = 13;
 
    private:
 };

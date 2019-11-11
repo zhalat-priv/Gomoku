@@ -7,9 +7,10 @@ set( ${PROJECT_NAME_UPPERCASE}_CXX_FLAGS -mno-align-double )
 add_definitions( 
     -DUNIT_TEST
     -DGOMOKUBOARDTEST #this define is for unblock test in main().
+	-DBOARDSCORE_TEST
 )
 
-add_definitions( -std=gnu++11 )
+add_definitions( -std=gnu++14 )
 
 SET( CMAKE_BUILD_TYPE Debug )
 
@@ -30,10 +31,30 @@ set( ${PROJECT_NAME_UPPERCASE}_SRC
     "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
     # Unit under test
     "${GOMOKUGAME_SRC}/GomokuBoard.cpp"
+	"${GOMOKUGAME_SRC}/BoardScore.cpp"
     # Unit test
     "${UT_GOMOKUGAME_SRC}/GomokuBoardTest/GomokuBoardTest.cpp"
+	"${UT_GOMOKUGAME_SRC}/BoardScoreTest/BoardScoreTest.cpp"
     # Support classes
     "${GOMOKUGAME_SRC}/DataContainers/Graph.cpp"
+	"${GOMOKUGAME_SRC}/GomokuBoard.cpp"
+	"${GOMOKUGAME_SRC}/Spotter.cpp"
+    "${GOMOKUGAME_SRC}/Score.cpp"
+	"${GOMOKUGAME_SRC}/Threats/ThreatFinder.cpp"
+    "${GOMOKUGAME_SRC}/Threats/ThreatWinner.cpp"
+    "${GOMOKUGAME_SRC}/Threats/Threat4CaseA.cpp"
+    "${GOMOKUGAME_SRC}/Threats/Threat4CaseAA.cpp"
+    "${GOMOKUGAME_SRC}/Threats/Threat4CaseB.cpp"
+    "${GOMOKUGAME_SRC}/Threats/Threat4CaseC.cpp"
+    "${GOMOKUGAME_SRC}/Threats/Threat3CaseA.cpp"
+    "${GOMOKUGAME_SRC}/Threats/Threat3CaseAA.cpp"
+    "${GOMOKUGAME_SRC}/Threats/Threat3CaseB.cpp"
+    "${GOMOKUGAME_SRC}/Threats/Threat3CaseC.cpp"
+    "${GOMOKUGAME_SRC}/Threats/Threat2CaseA.cpp"
+	"${GOMOKUGAME_SRC}/Threats/Threat2CaseAA.cpp"
+    "${GOMOKUGAME_SRC}/Threats/Threat2CaseB.cpp"
+    "${GOMOKUGAME_SRC}/Threats/Threat2CaseC.cpp"
+    "${GOMOKUGAME_SRC}/Threats/ThreatsBloodRelation.cpp"
     # Stubs
     "${STUBS_GLOBAL}/StubBoardIterator.cpp"
     "${STUBS_GLOBAL}/StubGraphIterator.cpp"
@@ -44,6 +65,8 @@ set( ${PROJECT_NAME_UPPERCASE}_INCLUDE
     "${CPPUNIT_INC}"
     "${GOMOKUGAME_INC}"
 	"${GOMOKUGAME_INC}/DataContainers"
+	"${GOMOKUGAME_INC}/SearchAlgorithms"
+	"${GOMOKUGAME_INC}/Threats"
     "${UT_GOMOKUGAME_INC}"
 )
 

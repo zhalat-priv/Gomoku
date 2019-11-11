@@ -94,7 +94,8 @@ class Spotter
     Spotter(BoardScore& rBoardScore);
 
     // Destructor.
-    virtual ~Spotter() {}
+    virtual ~Spotter();
+
 
    private:
     // Prevent either copying or assigning (>= C++11).
