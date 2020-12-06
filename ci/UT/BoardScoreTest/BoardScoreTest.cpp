@@ -55,93 +55,93 @@ TEST_GROUP(BoardScoreTest)
 };
 
 
-TEST(BoardScoreTest, AddThreatsTest1)
-{
-	// Define some threat pairs [threatBegin, threatEnd]
-	const Board::PositionXY threat1Begin = Board::PositionXY( 5, 1 ); // assume its Threat2CaseA
-	const Board::PositionXY threat1End = Board::PositionXY( 5, 6 );
-	const uint32_t threat1Value = Score::THREAT_2_CASE_A_SCORE;
-
-	const Board::PositionXY threat2Begin = Board::PositionXY( 2, 4 ); // assume its Threat2CaseA
-	const Board::PositionXY threat2End = Board::PositionXY( 6, 4 );
-	const uint32_t threat2Value = Score::THREAT_2_CASE_A_SCORE;
-
-	const Board::PositionXY threat3Begin = Board::PositionXY( 0, 8 ); // assume its Threat2CaseB
-	const Board::PositionXY threat3End = Board::PositionXY( 5, 8 );
-	const uint32_t threat3Value = Score::THREAT_2_CASE_B_SCORE;
-
-	const Board::PositionXY threat4Begin = Board::PositionXY( 5, 8 ); // assume its Threat3CaseB
-	const Board::PositionXY threat4End = Board::PositionXY( 5, 13 );
-	const uint32_t threat4Value = Score::THREAT_3_CASE_B_SCORE;
-
-	const Board::PositionXY threat5Begin = Board::PositionXY( 8, 4 ); // assume its Threat4CaseC
-	const Board::PositionXY threat5End = Board::PositionXY( 8, 8 );
-	const uint32_t threat5Value = Score::THREAT_4_CASE_C_SCORE;
-
-	// On empty board there are no threats.
-	CHECK_TRUE( 0 == m_pBoardScoreHuman->GetScore() );
-
-	ThreatFinder::ThreatLocation threatContainer;
-
-	// Add threat, then check score.
-	threatContainer.m_ThreatDetails.m_BeginningThreat = threat1Begin;
-	threatContainer.m_ThreatDetails.m_EndThreat = threat1End;
-	threatContainer.m_Trend = ThreatFinder::HORIZONTAL;
-	LONGS_EQUAL( true, m_pBoardScoreHuman->AddThreats( threatContainer, ThreatFinder::THREAT_2_CASE_A ) );
-	CHECK_TRUE( threat1Value == m_pBoardScoreHuman->GetScore() );
-
-	threatContainer.m_ThreatDetails.m_BeginningThreat = threat2Begin;
-	threatContainer.m_ThreatDetails.m_EndThreat = threat2End;
-	threatContainer.m_Trend = ThreatFinder::VERTICAL;
-	LONGS_EQUAL( true, m_pBoardScoreHuman->AddThreats( threatContainer, ThreatFinder::THREAT_2_CASE_A ) );
-	CHECK_TRUE( (threat1Value + threat2Value) == m_pBoardScoreHuman->GetScore() );
-
-	threatContainer.m_ThreatDetails.m_BeginningThreat = threat3Begin;
-	threatContainer.m_ThreatDetails.m_EndThreat = threat3End;
-	threatContainer.m_Trend = ThreatFinder::VERTICAL;
-	LONGS_EQUAL( true, m_pBoardScoreHuman->AddThreats( threatContainer, ThreatFinder::THREAT_2_CASE_B ) );
-	CHECK_TRUE( (threat1Value + threat2Value + threat3Value) == m_pBoardScoreHuman->GetScore() );
-
-	threatContainer.m_ThreatDetails.m_BeginningThreat = threat4Begin;
-	threatContainer.m_ThreatDetails.m_EndThreat = threat4End;
-	threatContainer.m_Trend = ThreatFinder::HORIZONTAL;
-	LONGS_EQUAL( true, m_pBoardScoreHuman->AddThreats( threatContainer, ThreatFinder::THREAT_3_CASE_B ) );
-	CHECK_TRUE( (threat1Value + threat2Value + threat3Value + threat4Value) == m_pBoardScoreHuman->GetScore() );
-
-	threatContainer.m_ThreatDetails.m_BeginningThreat = threat5Begin;
-	threatContainer.m_ThreatDetails.m_EndThreat = threat5End;
-	threatContainer.m_Trend = ThreatFinder::HORIZONTAL;
-	LONGS_EQUAL( true, m_pBoardScoreHuman->AddThreats( threatContainer, ThreatFinder::THREAT_4_CASE_C ) );
-	CHECK_TRUE( (threat1Value + threat2Value + threat3Value + threat4Value + threat5Value) == m_pBoardScoreHuman->GetScore() );
-}
-
-TEST(BoardScoreTest, RemoveThreatsRemoveAllTest1)
-{
-	// Add one threat and remove it. Score shall be clear.
-	// Define threat pairs [threatBegin, threatEnd]
-	const Board::PositionXY threat1Begin = Board::PositionXY( 5, 1 ); // assume its Threat2CaseC
-	const Board::PositionXY threat1End = Board::PositionXY( 5, 6 );
-
-	ThreatFinder::ThreatLocation threatContainer;
-
-	// Add threat, then check score.
-	threatContainer.m_ThreatDetails.m_BeginningThreat = threat1Begin;
-	threatContainer.m_ThreatDetails.m_EndThreat = threat1End;
-	threatContainer.m_ThreatDetails.m_MyPawns[ 0 ] = Board::PositionXY( 5, 3 );
-	threatContainer.m_ThreatDetails.m_MyPawns[ 1 ] = Board::PositionXY( 5, 4 );
-	threatContainer.m_Trend = ThreatFinder::HORIZONTAL;
-
-	// Empty board at the begining, so 0 score.
-    CHECK_TRUE( 0 == m_pBoardScoreHuman->GetScore() );
-
-	m_pBoardScoreHuman->AddThreats( threatContainer, ThreatFinder::THREAT_2_CASE_C );
-
-	// A new move is a part of threat1 (newMove belongs to the threat).
-	const Board::PositionXY newMove = Board::PositionXY( 5, 5 );
-	CHECK_TRUE( 1 == m_pBoardScoreHuman->RemoveThreats( newMove ) );
-    CHECK_TRUE( 0 == m_pBoardScoreHuman->GetScore() );
-}
-
+//TEST(BoardScoreTest, AddThreatsTest1)
+//{
+//	// Define some threat pairs [threatBegin, threatEnd]
+//	const Board::PositionXY threat1Begin = Board::PositionXY( 5, 1 ); // assume its Threat2CaseA
+//	const Board::PositionXY threat1End = Board::PositionXY( 5, 6 );
+//	const uint32_t threat1Value = Score::THREAT_2_CASE_A_SCORE;
+//
+//	const Board::PositionXY threat2Begin = Board::PositionXY( 2, 4 ); // assume its Threat2CaseA
+//	const Board::PositionXY threat2End = Board::PositionXY( 6, 4 );
+//	const uint32_t threat2Value = Score::THREAT_2_CASE_A_SCORE;
+//
+//	const Board::PositionXY threat3Begin = Board::PositionXY( 0, 8 ); // assume its Threat2CaseB
+//	const Board::PositionXY threat3End = Board::PositionXY( 5, 8 );
+//	const uint32_t threat3Value = Score::THREAT_2_CASE_B_SCORE;
+//
+//	const Board::PositionXY threat4Begin = Board::PositionXY( 5, 8 ); // assume its Threat3CaseB
+//	const Board::PositionXY threat4End = Board::PositionXY( 5, 13 );
+//	const uint32_t threat4Value = Score::THREAT_3_CASE_B_SCORE;
+//
+//	const Board::PositionXY threat5Begin = Board::PositionXY( 8, 4 ); // assume its Threat4CaseC
+//	const Board::PositionXY threat5End = Board::PositionXY( 8, 8 );
+//	const uint32_t threat5Value = Score::THREAT_4_CASE_C_SCORE;
+//
+//	// On empty board there are no threats.
+//	CHECK_TRUE( 0 == m_pBoardScoreHuman->GetScore() );
+//
+//	ThreatFinder::ThreatLocation threatContainer;
+//
+//	// Add threat, then check score.
+//	threatContainer.m_ThreatDetails.m_BeginningThreat = threat1Begin;
+//	threatContainer.m_ThreatDetails.m_EndThreat = threat1End;
+//	threatContainer.m_Trend = ThreatFinder::HORIZONTAL;
+//	LONGS_EQUAL( true, m_pBoardScoreHuman->AddThreats( threatContainer, ThreatFinder::THREAT_2_CASE_A ) );
+//	CHECK_TRUE( threat1Value == m_pBoardScoreHuman->GetScore() );
+//
+//	threatContainer.m_ThreatDetails.m_BeginningThreat = threat2Begin;
+//	threatContainer.m_ThreatDetails.m_EndThreat = threat2End;
+//	threatContainer.m_Trend = ThreatFinder::VERTICAL;
+//	LONGS_EQUAL( true, m_pBoardScoreHuman->AddThreats( threatContainer, ThreatFinder::THREAT_2_CASE_A ) );
+//	CHECK_TRUE( (threat1Value + threat2Value) == m_pBoardScoreHuman->GetScore() );
+//
+//	threatContainer.m_ThreatDetails.m_BeginningThreat = threat3Begin;
+//	threatContainer.m_ThreatDetails.m_EndThreat = threat3End;
+//	threatContainer.m_Trend = ThreatFinder::VERTICAL;
+//	LONGS_EQUAL( true, m_pBoardScoreHuman->AddThreats( threatContainer, ThreatFinder::THREAT_2_CASE_B ) );
+//	CHECK_TRUE( (threat1Value + threat2Value + threat3Value) == m_pBoardScoreHuman->GetScore() );
+//
+//	threatContainer.m_ThreatDetails.m_BeginningThreat = threat4Begin;
+//	threatContainer.m_ThreatDetails.m_EndThreat = threat4End;
+//	threatContainer.m_Trend = ThreatFinder::HORIZONTAL;
+//	LONGS_EQUAL( true, m_pBoardScoreHuman->AddThreats( threatContainer, ThreatFinder::THREAT_3_CASE_B ) );
+//	CHECK_TRUE( (threat1Value + threat2Value + threat3Value + threat4Value) == m_pBoardScoreHuman->GetScore() );
+//
+//	threatContainer.m_ThreatDetails.m_BeginningThreat = threat5Begin;
+//	threatContainer.m_ThreatDetails.m_EndThreat = threat5End;
+//	threatContainer.m_Trend = ThreatFinder::HORIZONTAL;
+//	LONGS_EQUAL( true, m_pBoardScoreHuman->AddThreats( threatContainer, ThreatFinder::THREAT_4_CASE_C ) );
+//	CHECK_TRUE( (threat1Value + threat2Value + threat3Value + threat4Value + threat5Value) == m_pBoardScoreHuman->GetScore() );
+//}
+//
+//TEST(BoardScoreTest, RemoveThreatsRemoveAllTest1)
+//{
+//	// Add one threat and remove it. Score shall be clear.
+//	// Define threat pairs [threatBegin, threatEnd]
+//	const Board::PositionXY threat1Begin = Board::PositionXY( 5, 1 ); // assume its Threat2CaseC
+//	const Board::PositionXY threat1End = Board::PositionXY( 5, 6 );
+//
+//	ThreatFinder::ThreatLocation threatContainer;
+//
+//	// Add threat, then check score.
+//	threatContainer.m_ThreatDetails.m_BeginningThreat = threat1Begin;
+//	threatContainer.m_ThreatDetails.m_EndThreat = threat1End;
+//	threatContainer.m_ThreatDetails.m_MyPawns[ 0 ] = Board::PositionXY( 5, 3 );
+//	threatContainer.m_ThreatDetails.m_MyPawns[ 1 ] = Board::PositionXY( 5, 4 );
+//	threatContainer.m_Trend = ThreatFinder::HORIZONTAL;
+//
+//	// Empty board at the begining, so 0 score.
+//    CHECK_TRUE( 0 == m_pBoardScoreHuman->GetScore() );
+//
+//	m_pBoardScoreHuman->AddThreats( threatContainer, ThreatFinder::THREAT_2_CASE_C );
+//
+//	// A new move is a part of threat1 (newMove belongs to the threat).
+//	const Board::PositionXY newMove = Board::PositionXY( 5, 5 );
+//	CHECK_TRUE( 1 == m_pBoardScoreHuman->RemoveThreats( newMove ) );
+//    CHECK_TRUE( 0 == m_pBoardScoreHuman->GetScore() );
+//}
+//
 //TEST(BoardScoreTest, RemoveThreatsRemoveAllTest2)
 //{
 //	// Add some threats of the same kind, then remove all of it separately.
@@ -627,141 +627,142 @@ TEST(BoardScoreTest, RemoveThreatsRemoveAllTest1)
 //}
 //
 //
-//TEST(BoardScoreTest, GetGapsDuplicatedTest1)
-//{
-//	//                       1 1 1 1 1
-//	//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
-//	//   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-//	//0 |. . . . . . . . . . . . . . .|
-//	//1 |. . . x . . . . . . . . . . .|
-//	//2 |. . . x . . . . . . . . . . .|
-//	//3 |. . . . . . . . . . . . . . .|
-//	//4 |. . . . . . . . . . . . . . .|
-//	//5 |. . x + . x . . . . . . . . .|
-//	//6 |. . . . . . . . . . . . . . .|
-//	//7 |. . . . . . . . . . . . x . .|
-//	//8 |. . . . . . . + . . o . . . .|
-//	//9 |. . . . . . . . . . x . . . .|
-//	//10|. . . . . + . x x + . . . . .|
-//	//11|. . . . x . . . . . x . . . .|
-//	//12|. . . x . . . . . . . x . . .|
-//	//13|. . . . . . . . . . . . . . .|
-//	//14|. . . . . . . . . . . . . . .|
-//	//  |_ _ _ _ _ _ _ _ _ _ _ _ _ _ _|
-//
-//	//0. Preconditions.
-//	Score& rScore =  *m_pScore;
-//
-//	//1. Define expectation.
-//	const vector<Board::PositionXY> expected2AResult {
-//		Board::PositionXY( 5, 3 ),
-//		Board::PositionXY( 10, 5 ),
-//		Board::PositionXY( 10, 9 ),
-//		Board::PositionXY( 8, 7 )
-//	};
-//
-//	// 2. Put moves.
-//	vector< Board::PositionXY > xyHuman{
-//		Board::PositionXY( 1, 3 ),
-//		Board::PositionXY( 2, 3 ),
-//		Board::PositionXY( 5, 2 ),
-//		Board::PositionXY( 5, 5),
-//		Board::PositionXY( 7, 12 ),
-//		Board::PositionXY( 9, 10 ),
-//		Board::PositionXY( 10, 7 ),
-//		Board::PositionXY( 10, 8 ),
-//		Board::PositionXY( 11, 4 ),
-//		Board::PositionXY( 11, 10 ),
-//		Board::PositionXY( 12, 3 ),
-//		Board::PositionXY( 12, 11 )
-//	};
-//
-//	const Board::PositionXY cpuMove1 = Board::PositionXY( 8, 10 );
-//
-//	for ( uint32_t i = 0; i < xyHuman.size(); ++i )
-//	{
-//		m_pGomokuBoard->PutMove( xyHuman[i], m_pBoardScoreHuman->GetPlayer() );
-//		rScore.UpdateScore( *m_pBoardScoreHuman, xyHuman[i] );
-//		rScore.UpdateScore( *m_pBoardScoreCpu, xyHuman[i] );
-//	}
-//
-//	m_pGomokuBoard->PutMove( cpuMove1, m_pBoardScoreCpu->GetPlayer() );
-//	rScore.UpdateScore( *m_pBoardScoreHuman, cpuMove1 );
-//	rScore.UpdateScore( *m_pBoardScoreCpu, cpuMove1 );
-//
-//	std::vector<Board::PositionField> duplicatedGaps;
-//	//----------------------------------------------
-//	// 3. Checking.
-//
-//	// 3a. Checking 2B:
-//	const uint32_t expectedSize2B = 0;
-//	m_pBoardScoreHuman->GetGapsDuplicated( duplicatedGaps, ThreatFinder::THREAT_2_CASE_B );
-//	const uint32_t size2B = duplicatedGaps.size();
-//	CHECK_TRUE( expectedSize2B == size2B );
-//	duplicatedGaps.clear();
-//
-//	// 3b. Checking 2A:
-//	const uint32_t expectedSize2A = expected2AResult.size();
-//	m_pBoardScoreHuman->GetGapsDuplicated( duplicatedGaps, ThreatFinder::THREAT_2_CASE_A );
-//	const uint32_t size2A = duplicatedGaps.size();
-//	CHECK_TRUE( expectedSize2A == size2A );
-//	duplicatedGaps.clear();
-//
-//	for ( vector< Board::PositionField >::const_iterator it1 = duplicatedGaps.begin(); it1 != duplicatedGaps.end(); ++it1 )
-//	{
-//		const Board::PositionXY xy = Board::PositionXY( m_pGomokuBoard->GetSize(), *it1 );
-//		CHECK_TRUE( IsOntheList( xy, expected2AResult ) );
-//	}
-//	duplicatedGaps.clear();
-//}
-//
-//
-//TEST(BoardScoreTest, GetCommonFieldNumber1)
-//{
-//	//                       1 1 1 1 1
-//	//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
-//	//   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-//	//0 |. . . . . . . . . . . . . . .|
-//	//1 |. . . . . . . . . . . . . . .|
-//	//2 |. . x . . . . . . . . . . . .|
-//	//3 |. . x . . . . . . . . . . . .|
-//	//4 |. . x . . . . . . . . . . . .|
-//	//5 |. . . x . . . . . . . . . . .|
-//	//6 |. . . . . . . . . . . . . . .|
-//	//7 |. . . . . . . . . . . . . . .|
-//	//8 |. . . . . . . . . . . . . . .|
-//	//9 |. . . . . . . . . . . . . . .|
-//	//10|. . . . . . . . . . . . . . .|
-//	//11|. . . . . . . . . . . . . . .|
-//	//12|. . . . . . . . . . . . . . .|
-//	//13|. . . . . . . . . . . . . . .|
-//	//14|. . . . . . . . . . . . . . .|
-//	//  |_ _ _ _ _ _ _ _ _ _ _ _ _ _ _|
-//
-//	//0. Preconditions.
-//	Score& rScore = *m_pScore;
-//
-//	//1. Define expectation.
-//	const uint32_t expectResult = 1;
-//
-//	// 2. Put moves.
-//	vector< Board::PositionXY > xyMove{
-//		Board::PositionXY( 2, 2 ),
-//		Board::PositionXY( 3, 2 ),
-//		Board::PositionXY( 4, 2 ),
-//		Board::PositionXY( 5, 3)
-//	};
-//
-//	for ( uint32_t i = 0; i < xyMove.size(); ++i )
-//	{
-//		m_pGomokuBoard->PutMove( xyMove[i], m_pBoardScoreHuman->GetPlayer() );
-//		rScore.UpdateScore( *m_pBoardScoreHuman, xyMove[i] );
-//		rScore.UpdateScore( *m_pBoardScoreCpu, xyMove[i] );
-//	}
-//
-//	CHECK_TRUE( expectResult == m_pBoardScoreHuman->GetCommonFieldNumber( ThreatFinder::THREAT_3_CASE_A, ThreatFinder::THREAT_2_CASE_A ) );
-//}
-//
+TEST(BoardScoreTest, GetGapsDuplicatedTest1)
+{
+	//                       1 1 1 1 1
+	//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
+	//   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+	//0 |. . . . . . . . . . . . . . .|
+	//1 |. . . x . . . . . . . . . . .|
+	//2 |. . . x . . . . . . . . . . .|
+	//3 |. . . . . . . . . . . . . . .|
+	//4 |. . . . . . . . . . . . . . .|
+	//5 |. . x + . x . . . . . . . . .|
+	//6 |. . . . . . . . . . . . . . .|
+	//7 |. . . . . . . . . . . . x . .|
+	//8 |. . . . . . . + . . o . . . .|
+	//9 |. . . . . . . . . . x . . . .|
+	//10|. . . . . + . x x + . . . . .|
+	//11|. . . . x . . . . . x . . . .|
+	//12|. . . x . . . . . . . x . . .|
+	//13|. . . . . . . . . . . . . . .|
+	//14|. . . . . . . . . . . . . . .|
+	//  |_ _ _ _ _ _ _ _ _ _ _ _ _ _ _|
+
+	//0. Preconditions.
+	Score& rScore =  *m_pScore;
+
+	//1. Define expectation.
+	const vector<Board::PositionXY> expected2AResult {
+		Board::PositionXY( 5, 3 ),
+		Board::PositionXY( 10, 5 ),
+		Board::PositionXY( 10, 9 ),
+		Board::PositionXY( 8, 7 )
+	};
+
+	// 2. Put moves.
+	vector< Board::PositionXY > xyHuman{
+		Board::PositionXY( 1, 3 ),
+		Board::PositionXY( 2, 3 ),
+		Board::PositionXY( 5, 2 ),
+		Board::PositionXY( 5, 5),
+		Board::PositionXY( 7, 12 ),
+		Board::PositionXY( 9, 10 ),
+		Board::PositionXY( 10, 7 ),
+		Board::PositionXY( 10, 8 ),
+		Board::PositionXY( 11, 4 ),
+		Board::PositionXY( 11, 10 ),
+		Board::PositionXY( 12, 3 ),
+		Board::PositionXY( 12, 11 )
+	};
+
+	const Board::PositionXY cpuMove1 = Board::PositionXY( 8, 10 );
+
+	for ( uint32_t i = 0; i < xyHuman.size(); ++i )
+	{
+		m_pGomokuBoard->PutMove( xyHuman[i], m_pBoardScoreHuman->GetPlayer() );
+		rScore.UpdateScore( *m_pBoardScoreHuman, xyHuman[i] );
+		rScore.UpdateScore( *m_pBoardScoreCpu, xyHuman[i] );
+	}
+
+	m_pGomokuBoard->PutMove( cpuMove1, m_pBoardScoreCpu->GetPlayer() );
+	std::cout<<*m_pGomokuBoard<<std::endl;
+	rScore.UpdateScore( *m_pBoardScoreHuman, cpuMove1 );
+	rScore.UpdateScore( *m_pBoardScoreCpu, cpuMove1 );
+
+	std::vector<Board::PositionField> duplicatedGaps;
+	//----------------------------------------------
+	// 3. Checking.
+
+	// 3a. Checking 2B:
+	const uint32_t expectedSize2B = 0;
+	m_pBoardScoreHuman->GetGapsDuplicated( duplicatedGaps, ThreatFinder::THREAT_2_CASE_B );
+	const uint32_t size2B = duplicatedGaps.size();
+	CHECK_TRUE( expectedSize2B == size2B );
+	duplicatedGaps.clear();
+
+	// 3b. Checking 2A:
+	const uint32_t expectedSize2A = expected2AResult.size();
+	m_pBoardScoreHuman->GetGapsDuplicated( duplicatedGaps, ThreatFinder::THREAT_2_CASE_A );
+	const uint32_t size2A = duplicatedGaps.size();
+	CHECK_TRUE( expectedSize2A == size2A );
+	duplicatedGaps.clear();
+
+	for ( vector< Board::PositionField >::const_iterator it1 = duplicatedGaps.begin(); it1 != duplicatedGaps.end(); ++it1 )
+	{
+		const Board::PositionXY xy = Board::PositionXY( m_pGomokuBoard->GetSize(), *it1 );
+		CHECK_TRUE( IsOntheList( xy, expected2AResult ) );
+	}
+	duplicatedGaps.clear();
+}
+
+
+TEST(BoardScoreTest, GetCommonFieldNumber1)
+{
+	//                       1 1 1 1 1
+	//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
+	//   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+	//0 |. . . . . . . . . . . . . . .|
+	//1 |. . . . . . . . . . . . . . .|
+	//2 |. . x . . . . . . . . . . . .|
+	//3 |. . x . . . . . . . . . . . .|
+	//4 |. . x . . . . . . . . . . . .|
+	//5 |. . . x . . . . . . . . . . .|
+	//6 |. . . . . . . . . . . . . . .|
+	//7 |. . . . . . . . . . . . . . .|
+	//8 |. . . . . . . . . . . . . . .|
+	//9 |. . . . . . . . . . . . . . .|
+	//10|. . . . . . . . . . . . . . .|
+	//11|. . . . . . . . . . . . . . .|
+	//12|. . . . . . . . . . . . . . .|
+	//13|. . . . . . . . . . . . . . .|
+	//14|. . . . . . . . . . . . . . .|
+	//  |_ _ _ _ _ _ _ _ _ _ _ _ _ _ _|
+
+	//0. Preconditions.
+	Score& rScore = *m_pScore;
+
+	//1. Define expectation.
+	const uint32_t expectResult = 1;
+
+	// 2. Put moves.
+	vector< Board::PositionXY > xyMove{
+		Board::PositionXY( 2, 2 ),
+		Board::PositionXY( 3, 2 ),
+		Board::PositionXY( 4, 2 ),
+		Board::PositionXY( 5, 3)
+	};
+
+	for ( uint32_t i = 0; i < xyMove.size(); ++i )
+	{
+		m_pGomokuBoard->PutMove( xyMove[i], m_pBoardScoreHuman->GetPlayer() );
+		rScore.UpdateScore( *m_pBoardScoreHuman, xyMove[i] );
+		rScore.UpdateScore( *m_pBoardScoreCpu, xyMove[i] );
+	}
+
+	CHECK_TRUE( expectResult == m_pBoardScoreHuman->GetCommonFieldNumber( ThreatFinder::THREAT_3_CASE_A, ThreatFinder::THREAT_2_CASE_A ) );
+}
+
 //TEST(BoardScoreTest, GetCommonFieldNumber2)
 //{
 //	//                       1 1 1 1 1

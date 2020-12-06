@@ -16,6 +16,7 @@ To do this from project root:
 
 ###### Compilation
 ~~~cmake
+<*you are here>
 ├── DbgTools
 ├── Design
 ├── README.md
@@ -141,4 +142,42 @@ To generate Eclipse project do the following:
   * build project to be sure configuration is OK
 
 #### CI
-CI is based on cpp_unit framework. 
+CI is based on cpp_unit framework.
+
+	ci
+	└── UT
+		<*you are here>
+		├── AlphaBetaTest
+		├── BoardScoreTest
+		├── CMakeLists.txt
+		├── GomokuBoardTest
+		├── GomokuGameTest
+		├── main.cpp
+		├── MinMaxTest
+		├── OpenBookTest
+		├── ScoreTest
+		├── SingleListTest
+		├── SpotterTest
+		├── StateEvaluationTest
+		├── StubsGlobal
+		├── ThreatsTests
+		├── VectorLightTest
+		└── VectorUniqueTest
+
+If you want:
+  * run tests:
+	~~~cmake
+	$ mkdir build
+	$ cd build
+	$ cmake ..
+	$ make
+	$ ./ci
+	~~~
+	
+  * developing tests:
+    ~~~cmake
+	$ mkdir build
+	$ cd build
+	$ cmake .. -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE="../../../cmake/toolchain-gcc-default.cmake"
+	~~~
+	Run eclipse and import project.
