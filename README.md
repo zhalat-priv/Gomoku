@@ -24,7 +24,7 @@ To do this from project root:
 
 $ mkdir build
 $ cd build
-$ cmake ../
+$ cmake ../ -DCMAKE_BUILD_TYPE=Debug
 $ make
 ~~~
 ###### Running
@@ -36,7 +36,7 @@ It accepts 5 parameters. The meaning and limitation are given below:
 	4-th: {0,1}		: 1- randomize enabled. Algorithm takes random move if many has the same value
 	5-th: <0,...>	: max time for move. 0 - unlimited
 	
-	$ ./Gomoku 15 o 2 1 0
+	$ ./gomoku-al 15 o 2 1 0
 ###### Play
 User move shall be provided: *row_number\r column_number\r*
 
@@ -142,42 +142,3 @@ To generate Eclipse project do the following:
   * build project to be sure configuration is OK
 
 #### CI
-CI is based on cpp_unit framework.
-
-	ci
-	└── UT
-		<*you are here>
-		├── AlphaBetaTest
-		├── BoardScoreTest
-		├── CMakeLists.txt
-		├── GomokuBoardTest
-		├── GomokuGameTest
-		├── main.cpp
-		├── MinMaxTest
-		├── OpenBookTest
-		├── ScoreTest
-		├── SingleListTest
-		├── SpotterTest
-		├── StateEvaluationTest
-		├── StubsGlobal
-		├── ThreatsTests
-		├── VectorLightTest
-		└── VectorUniqueTest
-
-If you want:
-  * run tests:
-	~~~cmake
-	$ mkdir build
-	$ cd build
-	$ cmake ..
-	$ make
-	$ ./ci
-	~~~
-	
-  * developing tests:
-    ~~~cmake
-	$ mkdir build
-	$ cd build
-	$ cmake .. -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE="../../../cmake/toolchain-gcc-default.cmake"
-	~~~
-	Run eclipse and import project.
