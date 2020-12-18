@@ -1,45 +1,9 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-/// @file GraphIterator.hpp
-///
-/// GraphIterator class declaration.
-///
-/// @par Full Description.
-/// Providing iterator for graph class.
-///
-/// @if REVISION_HISTORY_INCLUDED
-/// @par Edit History
-/// - zhalat 12-May-2016 Initial revision.
-/// @endif
-///
-/// @ingroup.
-///
-/// @par non-Copyright (c) 2016 HalSoft
-///////////////////////////////////////////////////////////////////////////////////////////
-
 #if !defined(GRAPH_ITERATOR_)
 #define GRAPH_ITERATOR_
 
-// SYSTEM INCLUDES
-// <none>
-
-// C PROJECT INCLUDES
-// <none>
-
-// C++ PROJECT INCLUDES
 #include "IteratorIf.hpp"  // For IteratorIf definitions.
 #include "Graph.hpp"       // For Graph definitions.
 
-// FORWARD REFERENCES
-// <none>
-
-///////////////////////////////////////////////////////////////////////////////////////////
-/// CLASS NAME: GraphIterator.
-///
-/// GraphIterator class definition.
-///
-/// @par Full Description.
-/// Providing iterator for graph class.
-///////////////////////////////////////////////////////////////////////////////////////////
 class GraphIterator : public IteratorIf<graph::Node>
 {
    public:

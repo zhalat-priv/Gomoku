@@ -1,35 +1,7 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-/// @file IteratorIf.hpp
-///
-/// Iterator interface declaration.
-///
-/// @par Full Description.
-/// Interface for each iterator of collection.
-///
-/// @if REVISION_HISTORY_INCLUDED
-/// @par Edit History
-/// - zhalat 12-May-2016 Initial revision.
-/// @endif
-///
-/// @ingroup.
-///
-/// @par non-Copyright (c) 2016 HalSoft
-///////////////////////////////////////////////////////////////////////////////////////////
-
 #if !defined(ITERATOR_HPP_)
 #define ITERATOR_HPP_
 
-// SYSTEM INCLUDES
 #include <stdint.h>
-
-// C PROJECT INCLUDES
-// <none>
-
-// C++ PROJECT INCLUDES
-// <none>
-
-// FORWARD REFERENCES
-// <none>
 
 /////////////////////////////////////////////////////////////////////////////
 /// ABSTRACT CLASS NAME: Iterator

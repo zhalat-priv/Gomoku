@@ -1,36 +1,9 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-/// @file SingleList.hpp
-///
-/// Single list.
-///
-/// @par Full Description.
-/// Light, crude single list container.
-///
-/// @if REVISION_HISTORY_INCLUDED
-/// @par Edit History
-/// - zhalat 31-Oct-2014 Initial revision.
-/// @endif
-///
-/// @ingroup.
-///
-/// @par non-Copyright (c) 2016 HalSoft
-///////////////////////////////////////////////////////////////////////////////////////////
-
 #ifndef SINGLE_LIST
 #define SINGLE_LIST
 
-// SYSTEM INCLUDES
 #include <assert.h>  // For assert.
 #include <iostream>
-
-// C PROJECT INCLUDES
-// <none>
-
-// C++ PROJECT INCLUDES
 #include "SingleListIterator.hpp"
-
-// FORWARD REFERENCES
-// <none>
 
 template<class parNode>
 class Node
@@ -59,7 +32,6 @@ class SingleList
     uint32_t Size() const;
     IteratorIf<parList>* GetIterator() const;
 
-    // Default constructor.
     SingleList() : m_pHead(NULL), m_pTail(NULL), m_pIterator(NULL)
     {
         // Create iterator for this collection.
@@ -77,11 +49,9 @@ class SingleList
     Node<parList>* m_pHead;
     Node<parList>* m_pTail;
 
-    // Handler to iterator.
     IteratorIf<parList>* m_pIterator;
 };
 
-// ~SingleList:
 template<class parList>
 SingleList<parList>::~SingleList()
 {
@@ -100,7 +70,6 @@ SingleList<parList>::~SingleList()
     m_pIterator= NULL;
 }
 
-// IsEmpty:
 template<class parList>
 bool SingleList<parList>::IsEmpty() const
 {
@@ -110,7 +79,6 @@ bool SingleList<parList>::IsEmpty() const
         return false;
 }
 
-// AddToTail:
 template<class parList>
 void SingleList<parList>::AddToTail(parList data)
 {
@@ -124,7 +92,6 @@ void SingleList<parList>::AddToTail(parList data)
     }
 }
 
-// AddToHead:
 template<class parList>
 void SingleList<parList>::AddToHead(parList data)
 {
@@ -140,7 +107,6 @@ void SingleList<parList>::AddToHead(parList data)
     }
 }
 
-// RemoveFromTail:
 template<class parList>
 parList SingleList<parList>::RemoveFromTail()
 {
@@ -174,7 +140,6 @@ parList SingleList<parList>::RemoveFromTail()
     return tempElement;
 }
 
-// RemoveFromHead:
 template<class parList>
 parList SingleList<parList>::RemoveFromHead()
 {
@@ -202,7 +167,6 @@ parList SingleList<parList>::RemoveFromHead()
     return tempElement;
 }
 
-// IsPresent:
 template<class parList>
 bool SingleList<parList>::IsPresent(parList data) const
 {
@@ -234,7 +198,6 @@ uint32_t SingleList<parList>::Size() const
     return retVal;
 }
 
-// RemoveNode:
 template<class parList>
 parList SingleList<parList>::RemoveNode(parList data)
 {
@@ -277,7 +240,6 @@ parList SingleList<parList>::RemoveNode(parList data)
     return tempElement;
 }
 
-// GetIterator.
 template<class parList>
 IteratorIf<parList>* SingleList<parList>::GetIterator() const
 {
@@ -288,8 +250,15 @@ IteratorIf<parList>* SingleList<parList>::GetIterator() const
     {
         retVal = m_pIterator;
     }
+    else
+    {
+
+    	assert(false);
+    }
+
 
     return retVal;
+
 }
 
 #endif  // SINGLE_LIST

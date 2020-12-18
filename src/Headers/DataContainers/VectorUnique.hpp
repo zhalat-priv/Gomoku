@@ -1,34 +1,10 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-/// @file VectorUnique.hpp
-///
-/// Vector with fast check if element on the list.
-///
-/// @par Full Description.
-/// Based on STL list. Guarantee unique and fast checker element on the list.
-///
-/// @if REVISION_HISTORY_INCLUDED
-/// @par Edit History
-/// - zhalat 28-Jan-2018 Initial revision.
-/// @endif
-///
-/// @ingroup.
-///
-/// @par non-Copyright (c) 2018 HalSoft
-///////////////////////////////////////////////////////////////////////////////////////////
-
 #if !defined(VECTOR_UNIQUE_)
 #define VECTOR_UNIQUE_
 
-// SYSTEM INCLUDES
 #include <assert.h>   // For assert.
 #include <string.h>   // For memset.
 #include <list>       // For list.
 #include <algorithm>  // For find.
-
-// C PROJECT INCLUDES
-// <none>
-
-// C++ PROJECT INCLUDES
 #include "Board.hpp"  // Board::PositionField.
 
 // FORWARD REFERENCES
@@ -201,7 +177,6 @@ class VectorUnique
     friend class VectorUniqueTest;
 };
 
-/// Check if val was added into collection.
 template<typename T, uint32_t Size>
 bool VectorUnique<T, Size>::IsPresent(const T val) const
 {
@@ -212,7 +187,6 @@ bool VectorUnique<T, Size>::IsPresent(const T val) const
     return retVal;
 }
 
-/// Put data into collection.
 template<typename T, uint32_t Size>
 void VectorUnique<T, Size>::Insert(const T val)
 {
@@ -223,7 +197,6 @@ void VectorUnique<T, Size>::Insert(const T val)
     m_List.push_back(val);
 }
 
-/// If data val does exist in the collection, method removes it.
 template<typename T, uint32_t Size>
 bool VectorUnique<T, Size>::Remove(const T val)
 {
@@ -246,7 +219,6 @@ bool VectorUnique<T, Size>::Remove(const T val)
     return retVal;
 }
 
-/// Removes element pointed by iterator. Shifts iterator to next element.
 template<typename T, uint32_t Size>
 bool VectorUnique<T, Size>::Remove(typename std::list<T>::iterator& it)
 {
@@ -269,7 +241,6 @@ bool VectorUnique<T, Size>::Remove(typename std::list<T>::iterator& it)
     return retVal;
 }
 
-/// Checking if collection has space for one more element.
 template<typename T, uint32_t Size>
 bool VectorUnique<T, Size>::IsSpace() const
 {
@@ -277,7 +248,6 @@ bool VectorUnique<T, Size>::IsSpace() const
     return isSpace;
 }
 
-/// Get element existing in collection.
 template<typename T, uint32_t Size>
 uint32_t VectorUnique<T, Size>::GetNumberOfElements() const
 {
@@ -285,7 +255,6 @@ uint32_t VectorUnique<T, Size>::GetNumberOfElements() const
     return retVal;
 }
 
-/// Clear container.
 template<typename T, uint32_t Size>
 void VectorUnique<T, Size>::Clear()
 {
@@ -293,14 +262,12 @@ void VectorUnique<T, Size>::Clear()
     m_List.clear();
 }
 
-/// Constructor.
 template<typename T, uint32_t Size>
 VectorUnique<T, Size>::VectorUnique() : m_Size(Size)
 {
     Clear();
 }
 
-/// Destructor.
 template<typename T, uint32_t Size>
 VectorUnique<T, Size>::~VectorUnique()
 {

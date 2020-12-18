@@ -1,105 +1,21 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-/// @file SingleListIterator.hpp
-///
-/// SingleListIterator class declaration.
-///
-/// @par Full Description.
-/// Providing iterator for SingleList class.
-///
-/// @if REVISION_HISTORY_INCLUDED
-/// @par Edit History
-/// - zhalat 01-Nov-2016 Initial revision.
-/// @endif
-///
-/// @ingroup.
-///
-/// @par non-Copyright (c) 2016 HalSoft
-///////////////////////////////////////////////////////////////////////////////////////////
-
 #if !defined(SINGLE_LIST_ITERATOR_)
 #define SINGLE_LIST_ITERATOR_
 
-// SYSTEM INCLUDES
 #include <stddef.h>
-
-// C PROJECT INCLUDES
-// <none>
-
-// C++ PROJECT INCLUDES
 #include "IteratorIf.hpp"  // For IteratorIf declaration.
 
 // FORWARD REFERENCES
 template<class parNode>
 class Node;
 
-///////////////////////////////////////////////////////////////////////////////////////////
-/// CLASS NAME: SingleListIterator.
-///
-/// SingleListIterator class definition.
-///
-/// @par Full Description.
-/// Providing iterator for SingleList class.
-///////////////////////////////////////////////////////////////////////////////////////////
 template<class parList>
 class SingleListIterator : public IteratorIf<parList>
 {
    public:
-    /////////////////////////////////////////////////////////////////////////////
-    // METHOD NAME: HasNext
-    //
-    /// Check if collection has next element.
-    ///
-    /// @par Full Description
-    /// From current position, check if collection has the next element.
-    ///
-    /// @return False if current element is the last, true otherwise.
-    /////////////////////////////////////////////////////////////////////////////
     virtual bool HasNext() const;
-
-    /////////////////////////////////////////////////////////////////////////////
-    // METHOD NAME: GetNext
-    //
-    /// Get the next element.
-    ///
-    /// @par Full Description
-    /// If exist get the next element from collection.
-    ///
-    /// @return The next element from collection.
-    /////////////////////////////////////////////////////////////////////////////
     virtual parList GetNext();
-
-    /////////////////////////////////////////////////////////////////////////////
-    // METHOD NAME: GetIndex
-    //
-    /// Get index of current element. Index 0 is a head.
-    ///
-    /// @par Full Description
-    /// Provide an index in collection of current element.
-    ///
-    /// @return Index in collection of current element.
-    /////////////////////////////////////////////////////////////////////////////
     virtual uint32_t GetIndex() const;
-
-    /////////////////////////////////////////////////////////////////////////////
-    // METHOD NAME: SetToBase
-    //
-    /// Set iterator to beginning of the collection.
-    ///
-    /// @par Full Description
-    /// Set iterator to beginning of the collection.
-    /////////////////////////////////////////////////////////////////////////////
     virtual void SetToBase();
-
-    /////////////////////////////////////////////////////////////////////////////
-    // METHOD NAME: IsInUse
-    //
-    /// Check if iterator is in use.
-    ///
-    /// @par Full Description
-    /// Check if iterator is in use.
-    ///
-    /// @return True if iterator in use, false otherwise.
-    /////////////////////////////////////////////////////////////////////////////
     virtual bool IsInUse();
 
     // Constructor.

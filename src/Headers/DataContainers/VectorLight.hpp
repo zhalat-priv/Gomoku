@@ -1,33 +1,9 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-/// @file VectorLight.hpp
-///
-/// Light and fast implementation of vector.
-///
-/// @par Full Description.
-/// Light, crude vector-like container.
-///
-/// @if REVISION_HISTORY_INCLUDED
-/// @par Edit History
-/// - zhalat 22-Sep-2016 Initial revision.
-/// @endif
-///
-/// @ingroup.
-///
-/// @par non-Copyright (c) 2016 HalSoft
-///////////////////////////////////////////////////////////////////////////////////////////
-
 #if !defined(VECTOR_LIGHT_)
 #define VECTOR_LIGHT_
 
-// SYSTEM INCLUDES
 #include <assert.h>  // For assert.
 #include <string.h>  // For memset.
 #include <vector>    // For vector.
-
-// C PROJECT INCLUDES
-// <none>
-
-// C++ PROJECT INCLUDES
 #include "GomokuGame.hpp"  // For GomokuGameUI::MAX_BOARD_SIZE.
 #include "IteratorIf.hpp"  // For iterator interface.
 #include "Board.hpp"       // Board::PositionField.
@@ -138,32 +114,18 @@ class VectorLight
     ///////////////////////////////////////////////////////////////////////
     void Clear();
 
-    /// Constructor.
     VectorLight(const uint32_t initVal);
-
-    /// Copy constructor.
     VectorLight(const VectorLight& rVectorLight);
-
-    /// Destructor.
     virtual ~VectorLight();
-
-    /// Assign operator from stl vector.
     VectorLight& operator=(const std::vector<Board::PositionField>& rStlVector);
 
    private:
-    // Value to fill up initial data.
     const uint32_t m_InitVal;
 
     uint32_t m_Array[VECTOR_SIZE];
     uint32_t m_MarkArray[VECTOR_SIZE];
-
-    // For indexing m_Array.
     uint32_t m_Cursor;
-
-    // Number of element in collection.
     uint32_t m_NumberOfElement;
-
-    // Handler to iterator.
     IteratorIf<uint32_t>* m_pIterator;
 
 #warning "Such dependency should be removed."

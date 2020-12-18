@@ -1,38 +1,9 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-/// @file PriorityQueue.hpp
-///
-/// Fixed priority queue.
-///
-/// @par Full Description.
-/// Adapter for stl's priority queue which allows define fixed size priority queue.
-/// Not for using extensively.
-///
-/// @if REVISION_HISTORY_INCLUDED
-/// @par Edit History
-/// - zhalat 04-JAN-2017 Initial revision.
-/// @endif
-///
-/// @ingroup.
-///
-/// @par non-Copyright (c) 2017 HalSoft
-///////////////////////////////////////////////////////////////////////////////////////////
-
 #ifndef PRIORITY_QUEUE_CONTAINER
 #define PRIORITY_QUEUE_CONTAINER
 
-// SYSTEM INCLUDES
 #include <assert.h>   // For assert.
 #include <queue>      // For priority_queue
 #include <algorithm>  // For std::min_element
-
-// C PROJECT INCLUDES
-// <none>
-
-// C++ PROJECT INCLUDES
-// <none>
-
-// FORWARD REFERENCES
-// <none>
 
 template<typename T, typename Sequence = std::vector<T>, typename Compare = std::less<typename Sequence::value_type>>
 class PriorityQueue : public std::priority_queue<T, Sequence, Compare>
