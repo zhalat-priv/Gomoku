@@ -40,6 +40,10 @@ Spotter::Spotter(BoardScore& rBoardScore) : m_rBoardScore(rBoardScore), m_Region
 
 Spotter::~Spotter()
 {
+	// this seems to be issue by desing.
+	// Spotter should not:
+	// - call ThreatsBloodRelation::DeInit() not init. Maybe it should get it via parameters?s
+
 	//ThreatsBloodRelation::DeInit();
 }
 
