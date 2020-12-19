@@ -40,7 +40,7 @@ Spotter::Spotter(BoardScore& rBoardScore) : m_rBoardScore(rBoardScore), m_Region
 
 Spotter::~Spotter()
 {
-	ThreatsBloodRelation::DeInit();
+	//ThreatsBloodRelation::DeInit();
 }
 
 void Spotter::AddToExecute(const RegionToInvestigate regionToInvestigate)

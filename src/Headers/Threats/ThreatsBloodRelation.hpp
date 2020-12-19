@@ -118,6 +118,8 @@ class ThreatsBloodRelation
     static const uint32_t PROMOTION_SIZE             = 13;
 
    private:
+
+    static bool m_isFirstCall;
 };
 #endif /* THREAT_BLOOD_RELATION_A_HPP_ */
 

@@ -16,15 +16,18 @@ To do this from project root:
 
 ###### Compilation
 ~~~cmake
-<*you are here>
-├── DbgTools
-├── Design
-├── README.md
-└── src
+├── build<you are here>
+└── Gomoku
+    ├── ci
+    ├── cmake
+    ├── CMakeLists.txt
+    ├── Design
+    ├── README.md
+    └── src
 
 $ mkdir build
 $ cd build
-$ cmake ../ -DCMAKE_BUILD_TYPE=Debug
+$ cmake ../Gomoku -DCMAKE_BUILD_TYPE=Debug -G Eclipse\ CDT4\ -\ Unix\ Makefiles -DCMAKE_TOOLCHAIN_FILE=../Gomoku/cmake/toolchain-gcc-default.cmake
 $ make
 ~~~
 ###### Running

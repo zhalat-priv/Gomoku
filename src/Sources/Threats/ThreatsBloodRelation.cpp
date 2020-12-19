@@ -28,15 +28,13 @@
 #include "ThreatsBloodRelation.hpp"  // For ThreatsBloodRelation declaration.
 
 // FORWARD REFERENCES
-// <none>
+bool ThreatsBloodRelation::m_isFirstCall{};
 
 void ThreatsBloodRelation::Init()
 {
-    static bool isFirstCall = true;
-
-    if(true == isFirstCall)
+    if(true == m_isFirstCall)
     {
-        isFirstCall = false;
+        m_isFirstCall = false;
 
         //---------------------------DISMISSALL LIST----------------------------------------------
         // THREAT_WINNER
@@ -148,6 +146,8 @@ void ThreatsBloodRelation::Init()
 
 void ThreatsBloodRelation::DeInit()
 {
+	m_isFirstCall = true;
+
 	for(uint32_t i = 0; i < ThreatsBloodRelation::DISMISSAL_SIZE; ++i)
 	{
 		ThreatsBloodRelation::DISMISSAL[i].m_Dependency.~SingleList();

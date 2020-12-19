@@ -4,7 +4,7 @@
 #       Creation date:  29/07/19
 #       Toolchain file for embedded-utils.
 #----------------------------------------------------------------------------------------------------------------------#
-cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
 include(${CMAKE_CURRENT_LIST_DIR}/variables.cmake)
 
