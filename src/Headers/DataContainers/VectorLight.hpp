@@ -1,5 +1,4 @@
-#if !defined(VECTOR_LIGHT_)
-#define VECTOR_LIGHT_
+#pragma once
 
 #include <assert.h>  // For assert.
 #include <string.h>  // For memset.
@@ -132,7 +131,6 @@ class VectorLight
     friend class VectorLightTest;
 };
 
-#endif /* VECTOR_LIGHT_ */
 
 /***************************************************************************
  *   Copyright (C) 2018 by Zbigniew Halat                                  *

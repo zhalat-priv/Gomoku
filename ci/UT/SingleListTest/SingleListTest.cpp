@@ -1,27 +1,44 @@
-/*
- * SingleListTest.cpp
- *
- *  Created on: 31 oct, 2016
- *      Author: halsoft
- */
-#include <assert.h>     		// for assert.
-#include <iostream>
-#include "SingleListTest.hpp"
+#include "CppUTest/TestHarness.h"
+#include "CppUTest/SimpleString.h"
+#include "CppUTest/PlatformSpecificFunctions.h"
+#include "CppUTest/TestMemoryAllocator.h"
+#include "CppUTest/MemoryLeakDetector.h"
+//-------------------------------
+#include "SingleList.hpp"
+#include "SingleListIterator.hpp"
 
 #define NUMELEM( x )    ( sizeof( x )/sizeof( x[ 0 ] ) )
 
-void SingleListTest::IsEmptyTest()
+TEST_GROUP(SingleListTest)
+{
+    void setup()
+    {
+        m_pSingleList = new SingleList<uint32_t>;
+    }
+
+    void teardown()
+    {
+    	delete m_pSingleList;
+    }
+
+public:
+    SingleList<uint32_t>* m_pSingleList;
+};
+
+
+TEST(SingleListTest,IsEmptyTest)
 {
 	const uint32_t data = 10;
 
-	CPPUNIT_ASSERT( m_pSingleList->IsEmpty() );
+	CHECK( m_pSingleList->IsEmpty() );
 	m_pSingleList->AddToTail( data );
-	CPPUNIT_ASSERT( !m_pSingleList->IsEmpty() );
+	CHECK( !m_pSingleList->IsEmpty() );
 	m_pSingleList->RemoveFromTail();
-	CPPUNIT_ASSERT( m_pSingleList->IsEmpty() );
+	CHECK( m_pSingleList->IsEmpty() );
 }
 
-void SingleListTest::AddToTailTest()
+
+TEST(SingleListTest,AddToTailTest)
 {
 	const uint32_t data[] = { 10, 20, 30 };
 	bool isCompared = false;
@@ -34,15 +51,15 @@ void SingleListTest::AddToTailTest()
 
 	for( uint32_t i = 0; pIteratorIf->HasNext(); ++i )
 	{
-		CPPUNIT_ASSERT( data[i] == pIteratorIf->GetNext() );
-		CPPUNIT_ASSERT( i == ( pIteratorIf->GetIndex() - 1 ) );
+		CHECK( data[i] == pIteratorIf->GetNext() );
+		CHECK( i == ( pIteratorIf->GetIndex() - 1 ) );
 		isCompared = true;
 	}
 
-	CPPUNIT_ASSERT( isCompared );
+	CHECK( isCompared );
 }
 
-void SingleListTest::AddToHeadTest()
+TEST(SingleListTest,AddToHeadTest)
 {
 	const uint32_t data[] = { 10, 20, 30, 40 };
 	bool isCompared = false;
@@ -56,14 +73,14 @@ void SingleListTest::AddToHeadTest()
 
 	for( uint32_t i = ( NUMELEM( data ) - 1 ); pIteratorIf->HasNext(); --i )
 	{
-		CPPUNIT_ASSERT( data[i] == pIteratorIf->GetNext() );
+		CHECK( data[i] == pIteratorIf->GetNext() );
 		isCompared = true;
 	}
 
-	CPPUNIT_ASSERT( isCompared );
+	CHECK( isCompared );
 }
 
-void SingleListTest::RemoveFromTailTest()
+TEST(SingleListTest,RemoveFromTailTest)
 {
 	const uint32_t data[] = { 10, 20, 30, 40, 50, 60 };
 	const uint32_t dataSize = NUMELEM( data );
@@ -82,24 +99,24 @@ void SingleListTest::RemoveFromTailTest()
 	for( ;removedElementCntr < dataSize;  )
 	{
 		// Remove element form the tail.
-		CPPUNIT_ASSERT( data[ indexOfLastElement - removedElementCntr ] == m_pSingleList->RemoveFromTail() );
+		CHECK( data[ indexOfLastElement - removedElementCntr ] == m_pSingleList->RemoveFromTail() );
 		++removedElementCntr;
 
 		// Check that the rest are untouched.
 		for( i = 0; pIteratorIf->HasNext(); ++i )
 		{
-			CPPUNIT_ASSERT( data[i] == pIteratorIf->GetNext() );
+			CHECK( data[i] == pIteratorIf->GetNext() );
 		}
 		const uint32_t remainedElementInList = dataSize - removedElementCntr;
-		CPPUNIT_ASSERT( i == remainedElementInList );
+		CHECK( i == remainedElementInList );
 
 		pIteratorIf->SetToBase();
 	}
 
-	CPPUNIT_ASSERT( m_pSingleList->IsEmpty() );
+	CHECK( m_pSingleList->IsEmpty() );
 }
 
-void SingleListTest::RemoveFromHeadTest()
+TEST(SingleListTest,RemoveFromHeadTest)
 {
 	const uint32_t data[] = { 10, 20, 30, 40, 50, 60 };
 	const uint32_t dataReversed[] = { 60, 50, 40, 30, 20, 10 };
@@ -119,65 +136,65 @@ void SingleListTest::RemoveFromHeadTest()
 	for( uint32_t i = 0; i < dataSize;  ++i )
 	{
 		// Remove element form the head.
-		CPPUNIT_ASSERT( dataReversed[ i ] == m_pSingleList->RemoveFromHead() );
+		CHECK( dataReversed[ i ] == m_pSingleList->RemoveFromHead() );
 		removedElementCntr++;
 		const uint32_t remainedElementInList = dataSize - removedElementCntr;
 
 		// Check that the rest are untouched.
 		for( j = 0; pIteratorIf->HasNext(); ++j )
 		{
-			CPPUNIT_ASSERT( dataReversed[j + removedElementCntr] == pIteratorIf->GetNext() );
+			CHECK( dataReversed[j + removedElementCntr] == pIteratorIf->GetNext() );
 		}
 
-		CPPUNIT_ASSERT( j == remainedElementInList );
+		CHECK( j == remainedElementInList );
 
 		pIteratorIf->SetToBase();
 	}
 
-	CPPUNIT_ASSERT( m_pSingleList->IsEmpty() );
+	CHECK( m_pSingleList->IsEmpty() );
 }
 
-void SingleListTest::IsPresentTest()
+TEST(SingleListTest,IsPresentTest)
 {
 	const uint32_t data[] = { 10, 20, 30, 40 };
 	m_pSingleList->AddToTail( data[ 0 ] );
 	m_pSingleList->AddToTail( data[ 1 ] );
 	m_pSingleList->AddToTail( data[ 2 ] );
 
-	CPPUNIT_ASSERT( true == m_pSingleList->IsPresent( data[ 0 ] ) );
-	CPPUNIT_ASSERT( true == m_pSingleList->IsPresent( data[ 1 ] ) );
-	CPPUNIT_ASSERT( true == m_pSingleList->IsPresent( data[ 2 ] ) );
-	CPPUNIT_ASSERT( false == m_pSingleList->IsPresent( data[ 3 ] ) );
+	CHECK( true == m_pSingleList->IsPresent( data[ 0 ] ) );
+	CHECK( true == m_pSingleList->IsPresent( data[ 1 ] ) );
+	CHECK( true == m_pSingleList->IsPresent( data[ 2 ] ) );
+	CHECK( false == m_pSingleList->IsPresent( data[ 3 ] ) );
 }
 
-void SingleListTest::RemoveNodeTest()
+TEST(SingleListTest,RemoveNodeTest)
 {
 	const uint32_t data[] = { 10, 20, 30, 40 };
 	m_pSingleList->AddToTail( data[ 0 ] );
 
-	CPPUNIT_ASSERT( data[ 0 ] == m_pSingleList->RemoveNode( data[ 0 ] ) );
-	CPPUNIT_ASSERT( false == m_pSingleList->IsPresent( data[ 0 ] ) );
+	CHECK( data[ 0 ] == m_pSingleList->RemoveNode( data[ 0 ] ) );
+	CHECK( false == m_pSingleList->IsPresent( data[ 0 ] ) );
 
 	m_pSingleList->AddToTail( data[ 0 ] );
 	m_pSingleList->AddToTail( data[ 1 ] );
 	m_pSingleList->AddToTail( data[ 2 ] );
 
-	CPPUNIT_ASSERT( data[ 2 ] == m_pSingleList->RemoveNode( data[ 2 ] ) );
-	CPPUNIT_ASSERT( false == m_pSingleList->IsPresent( data[ 2 ] ) );
+	CHECK( data[ 2 ] == m_pSingleList->RemoveNode( data[ 2 ] ) );
+	CHECK( false == m_pSingleList->IsPresent( data[ 2 ] ) );
 }
 
-void SingleListTest::SizeTest()
+TEST(SingleListTest,SizeTest)
 {
 	const uint32_t data[] = { 10, 20, 30, 40 };
 
 	// List is empty.
-	CPPUNIT_ASSERT( 0 == m_pSingleList->Size() );
+	CHECK( 0 == m_pSingleList->Size() );
 
 	for( uint32_t i = 0; i < NUMELEM( data ); ++i )
 	{
 		m_pSingleList->AddToTail( data[ i ] );
 
 		const uint32_t expectedElementsInList = i + 1;
-		CPPUNIT_ASSERT( expectedElementsInList == m_pSingleList->Size() );
+		CHECK( expectedElementsInList == m_pSingleList->Size() );
 	}
 }

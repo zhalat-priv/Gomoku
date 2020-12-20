@@ -25,18 +25,23 @@ set( CPPUNIT_INC "${CMAKE_PROJECT_ROOT}/../framework_cppunit-3.7_linux/include" 
 set( CPPUNIT_LIB "${CMAKE_PROJECT_ROOT}/../framework_cppunit-3.7_linux/src/CppUTest" )
 set( STUBS_GLOBAL "${CMAKE_PROJECT_ROOT}/StubsGlobal" )
 
-# Define Sources
-set( ${PROJECT_NAME_UPPERCASE}_SRC
-    # Main file
+include_directories( ${${PROJECT_NAME_UPPERCASE}_INCLUDE} )
+add_executable( ci 
+	# Main file
     "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
     # Unit under test
     "${GOMOKUGAME_SRC}/GomokuBoard.cpp"
 	"${GOMOKUGAME_SRC}/BoardScore.cpp"
     # Unit test
     "${UT_GOMOKUGAME_SRC}/GomokuBoardTest/GomokuBoardTest.cpp"
-	"${UT_GOMOKUGAME_SRC}/BoardScoreTest/BoardScoreTest.cpp"
+    "${UT_GOMOKUGAME_SRC}/VectorUniqueTest/VectorUniqueTest.cpp"
+    "${UT_GOMOKUGAME_SRC}/SingleListTest/SingleListTest.cpp"
+    "${UT_GOMOKUGAME_SRC}/VectorLightTest/VectorLightTest.cpp"
+	#"${UT_GOMOKUGAME_SRC}/BoardScoreTest/BoardScoreTest.cpp"
     # Support classes
     "${GOMOKUGAME_SRC}/DataContainers/Graph.cpp"
+    "${GOMOKUGAME_SRC}/DataContainers/VectorLight.cpp"
+    "${GOMOKUGAME_SRC}/DataContainers/VectorLightIterator.cpp"
 	"${GOMOKUGAME_SRC}/GomokuBoard.cpp"
 	"${GOMOKUGAME_SRC}/Spotter.cpp"
     "${GOMOKUGAME_SRC}/Score.cpp"
@@ -58,20 +63,19 @@ set( ${PROJECT_NAME_UPPERCASE}_SRC
     # Stubs
     "${STUBS_GLOBAL}/StubBoardIterator.cpp"
     "${STUBS_GLOBAL}/StubGraphIterator.cpp"
-)
-
-# Define the path to the includes
-set( ${PROJECT_NAME_UPPERCASE}_INCLUDE
-    "${CPPUNIT_INC}"
+ )
+ 
+ target_include_directories(
+ 	ci PUBLIC
+ 	"${CPPUNIT_INC}"
+ 	"${UT_GOMOKUGAME_SRC}/StubsGlobal"
+ 	"${UT_GOMOKUGAME_INC}"
     "${GOMOKUGAME_INC}"
 	"${GOMOKUGAME_INC}/DataContainers"
 	"${GOMOKUGAME_INC}/SearchAlgorithms"
 	"${GOMOKUGAME_INC}/Threats"
-    "${UT_GOMOKUGAME_INC}"
-)
-
-include_directories( ${${PROJECT_NAME_UPPERCASE}_INCLUDE} )
-add_executable( ci ${${PROJECT_NAME_UPPERCASE}_SRC} )
+ )
+ 
 
 #External library:
 add_library( libMyCppUnitStaticLibrary STATIC IMPORTED )

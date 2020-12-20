@@ -8,7 +8,7 @@
 #include "Board.hpp"  // Board::PositionField.
 
 // FORWARD REFERENCES
-class VectorUniqueTest;
+class TEST_VectorUniqueTest_InitTest_TestShell;
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 /// CLASS NAME: VectorUnique
@@ -174,7 +174,7 @@ class VectorUnique
     uint32_t m_MarkArray[Size];
     std::list<T> m_List;
 
-    friend class VectorUniqueTest;
+    friend TEST_VectorUniqueTest_InitTest_TestShell;
 };
 
 template<typename T, uint32_t Size>

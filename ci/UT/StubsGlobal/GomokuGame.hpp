@@ -15,7 +15,7 @@
 // FORWARD REFERENCES
 // <none>
 
-class GomokuGameUI
+class GomokuGame
 {
 public:
 

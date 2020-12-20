@@ -815,22 +815,6 @@ class Board
         _stream << "(" << rPositionXY.m_x << ", " << rPositionXY.m_y << ")" << endl;
         return _stream;
     }
-	
-	friend TEST_GomokuBoardTest_ConstructorInvalidParameterTest;
-	friend TEST_GomokuBoardTest_ConstructorConnectionCorrectnessTest;
-	friend TEST_GomokuBoardTest_CopyConstructorTest;
-	friend TEST_GomokuBoardTest_PutMoveTest;
-	friend TEST_GomokuBoardTest_GetLastMoveTest;
-	friend TEST_GomokuBoardTest_VacantFieldsTest;
-	friend TEST_GomokuBoardTest_EdgeDistanceTest;
-	friend TEST_GomokuBoardTest_NeighbourDistanceTest;
-	friend TEST_GomokuBoardTest_InRowTest;
-	friend TEST_GomokuBoardTest_IsOnEdgeTest;
-	friend TEST_GomokuBoardTest_GoDirectionTest;
-	friend TEST_GomokuBoardTest_RemoveMoveTest;
-	friend TEST_GomokuBoardTest_RemoveNLastMoveTest;
-	friend TEST_GomokuBoardTest_OppositePlayerTest;
-	friend TEST_GomokuBoardTest_GetFirstMoveTest;
 };
 
 // Converter PositionField2PositionXY.

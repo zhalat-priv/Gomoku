@@ -1,55 +1,66 @@
-/*
- * ScoreTest.cpp
- *
- *  Created on: 29 may, 2016
- *      Author: zby
- */
-#include <assert.h>     		// for assert.
-#include <iostream>
-#include "VectorLightTest.hpp"
+#include "CppUTest/TestHarness.h"
+#include "CppUTest/SimpleString.h"
+#include "CppUTest/PlatformSpecificFunctions.h"
+#include "CppUTest/TestMemoryAllocator.h"
+#include "CppUTest/MemoryLeakDetector.h"
+//-------------------------------
+#include "VectorLight.hpp"
+#include "Board.hpp"
 
-
-void VectorLightTest::InitTest()
+TEST_GROUP(VectorLightTest)
 {
-	// Check if constructor fills all cells with initVal.
-	// Check the first and the last one.
+    void setup()
+    {
+    	m_pVectorLight = new VectorLight( Board::PositionField::INVALID_FIELD );
+    }
 
-	const uint32_t data = 0x5;
+    void teardown()
+    {
+    	delete m_pVectorLight;
+    }
 
-	m_pVectorLight->Insert( data );
+public:
+    VectorLight* m_pVectorLight;
+};
 
-	CPPUNIT_ASSERT( data == m_pVectorLight->m_Array[ 0 ] );
-	CPPUNIT_ASSERT( Board::PositionField::INVALID_FIELD == m_pVectorLight->m_Array[ VectorLight::VECTOR_SIZE - 1 ] );
-
-	CPPUNIT_ASSERT( Board::PositionField::INVALID_FIELD == m_pVectorLight->m_MarkArray[ 0 ] );
-	CPPUNIT_ASSERT( Board::PositionField::INVALID_FIELD == m_pVectorLight->m_MarkArray[ VectorLight::VECTOR_SIZE - 1 ] );
-
-	// Check the copy constructor.
-	VectorLight vectorLightCopy = *m_pVectorLight;
-
-	CPPUNIT_ASSERT( data == vectorLightCopy.m_Array[ 0 ] );
-
-	CPPUNIT_ASSERT( Board::PositionField::INVALID_FIELD == vectorLightCopy.m_MarkArray[ 0 ] );
-	CPPUNIT_ASSERT( Board::PositionField::INVALID_FIELD == vectorLightCopy.m_MarkArray[ VectorLight::VECTOR_SIZE - 1 ] );
-
-	// Check assign operator.
-	const Board::PositionField initialData[] = { 3, 4 ,5 };
-
-	vector<Board::PositionField> vectorStl{ initialData[0], initialData[1], initialData[2] };
-	VectorLight vectorLight( Board::PositionField::INVALID_FIELD );
-	vectorLight = vectorStl;
-
-	CPPUNIT_ASSERT( vectorLight.GetNumberOfElements() == sizeof( initialData )/sizeof(initialData[0]) );
-
-	IteratorIf<uint32_t>* pIterator = vectorLight.GetIterator();
-	uint32_t index = 0;
-	for ( pIterator->SetToBase(); pIterator->HasNext(); ++index )
-	{
-		CPPUNIT_ASSERT( initialData[ index ] == pIterator->GetNext() );
-	}
-}
-
-void VectorLightTest::InsertTest()
+//TEST(VectorLightTest,InitTest)
+//{
+////	const uint32_t data = 0x5;
+////
+////	m_pVectorLight->Insert( data );
+////
+////	CHECK( data == m_pVectorLight->m_Array[ 0 ] );
+////	CHECK( Board::PositionField::INVALID_FIELD == m_pVectorLight->m_Array[ VectorLight::VECTOR_SIZE - 1 ] );
+////
+////	CHECK( Board::PositionField::INVALID_FIELD == m_pVectorLight->m_MarkArray[ 0 ] );
+////	CHECK( Board::PositionField::INVALID_FIELD == m_pVectorLight->m_MarkArray[ VectorLight::VECTOR_SIZE - 1 ] );
+////
+////	// Check the copy constructor.
+////	VectorLight vectorLightCopy = *m_pVectorLight;
+////
+////	CHECK( data == vectorLightCopy.m_Array[ 0 ] );
+////
+////	CHECK( Board::PositionField::INVALID_FIELD == vectorLightCopy.m_MarkArray[ 0 ] );
+////	CHECK( Board::PositionField::INVALID_FIELD == vectorLightCopy.m_MarkArray[ VectorLight::VECTOR_SIZE - 1 ] );
+////
+////	// Check assign operator.
+////	const Board::PositionField initialData[] = { 3, 4 ,5 };
+////
+////	vector<Board::PositionField> vectorStl{ initialData[0], initialData[1], initialData[2] };
+////	VectorLight vectorLight( Board::PositionField::INVALID_FIELD );
+////	vectorLight = vectorStl;
+////
+////	CHECK( vectorLight.GetNumberOfElements() == sizeof( initialData )/sizeof(initialData[0]) );
+////
+////	IteratorIf<uint32_t>* pIterator = vectorLight.GetIterator();
+////	uint32_t index = 0;
+////	for ( pIterator->SetToBase(); pIterator->HasNext(); ++index )
+////	{
+////		CHECK( initialData[ index ] == pIterator->GetNext() );
+////	}
+//}
+//
+TEST(VectorLightTest,InsertTest)
 {
 	uint32_t data[ VectorLight::VECTOR_SIZE ]= { 0 };
 
@@ -64,14 +75,14 @@ void VectorLightTest::InsertTest()
 	uint32_t index = 0;
 	for ( pIterator->SetToBase(); pIterator->HasNext(); ++index )
 	{
-		CPPUNIT_ASSERT( data[ index ] == pIterator->GetNext() );
+		CHECK( data[ index ] == pIterator->GetNext() );
 	}
 }
 
-void VectorLightTest::HasNextVectorLightIteratorTest()
+TEST(VectorLightTest,HasNextVectorLightIteratorTest)
 {
 	IteratorIf<uint32_t>* beginTest = m_pVectorLight->GetIterator();
-	CPPUNIT_ASSERT( false == beginTest->HasNext() );
+	CHECK( false == beginTest->HasNext() );
 
 	uint32_t data[ VectorLight::VECTOR_SIZE ]= { 0 };
 
@@ -88,17 +99,17 @@ void VectorLightTest::HasNextVectorLightIteratorTest()
 	{
 		if ( ( VectorLight::VECTOR_SIZE ) == index )
 		{
-			CPPUNIT_ASSERT( false == pIterator->HasNext() );
+			CHECK( false == pIterator->HasNext() );
 		}
 		else
 		{
-			CPPUNIT_ASSERT( true == pIterator->HasNext() );
+			CHECK( true == pIterator->HasNext() );
 			pIterator->GetNext();
 		}
 	}
 }
 
-void VectorLightTest::IsPresentTest()
+TEST(VectorLightTest,IsPresentTest)
 {
 	const uint32_t dat1 = 0x4;
 	const uint32_t dat2 = 0x6;
@@ -111,19 +122,19 @@ void VectorLightTest::IsPresentTest()
 	m_pVectorLight->Insert( dat3 );
 
 	//Check if all data that have been added exist in collection:
-	CPPUNIT_ASSERT( m_pVectorLight->IsPresent( dat1 ) );
-	CPPUNIT_ASSERT( m_pVectorLight->IsPresent( dat2 ) );
-	CPPUNIT_ASSERT( m_pVectorLight->IsPresent( dat3 ) );
+	CHECK( m_pVectorLight->IsPresent( dat1 ) );
+	CHECK( m_pVectorLight->IsPresent( dat2 ) );
+	CHECK( m_pVectorLight->IsPresent( dat3 ) );
 
 	// Check if data that has not been added, doesn't exist in collection.
-	CPPUNIT_ASSERT( !m_pVectorLight->IsPresent( dat4 ) );
+	CHECK( !m_pVectorLight->IsPresent( dat4 ) );
 
 	// Add it now, and check it,
 	m_pVectorLight->Insert( dat4 );
-	CPPUNIT_ASSERT( m_pVectorLight->IsPresent( dat4 ) );
+	CHECK( m_pVectorLight->IsPresent( dat4 ) );
 }
 
-void VectorLightTest::RemoveTest1()
+TEST(VectorLightTest,RemoveTest1)
 {
 	const uint32_t data[] = { 0x4, 0x6, 0x7, 0x5 };
 
@@ -137,25 +148,25 @@ void VectorLightTest::RemoveTest1()
 	uint32_t index = 0;
 	for ( pIterator->SetToBase(); pIterator->HasNext(); ++index )
 	{
-		CPPUNIT_ASSERT( data[ index ] == pIterator->GetNext() );
+		CHECK( data[ index ] == pIterator->GetNext() );
 	}
 
 	// Try to remove not existing data.
-	CPPUNIT_ASSERT( false == m_pVectorLight->Remove( data[3] ) );
+	CHECK( false == m_pVectorLight->Remove( data[3] ) );
 
 	// Try to remove existing data.
 	const uint32_t removedData = data[ 1 ];
-	CPPUNIT_ASSERT( true == m_pVectorLight->Remove( removedData ) );
+	CHECK( true == m_pVectorLight->Remove( removedData ) );
 
 	// Go thru all elements. Removed element shall be not avaliable.
 	for ( pIterator->SetToBase(); pIterator->HasNext(); )
 	{
 		const uint32_t currentData =  pIterator->GetNext();
-		CPPUNIT_ASSERT( removedData!= currentData );
+		CHECK( removedData!= currentData );
 	}
 }
 
-void VectorLightTest::RemoveTest2()
+TEST(VectorLightTest,RemoveTest2)
 {
 	const uint32_t data[] = { 0x8, 0x1, 0x6, 0x3, 0x4, 0x5, 0x2, 0x7, 0x0  };
 
@@ -169,10 +180,10 @@ void VectorLightTest::RemoveTest2()
 	const uint32_t removeData2 = data[3];
 	const uint32_t removeData3 = data[7];
 	const uint32_t removeData4 = data[8];
-	CPPUNIT_ASSERT( true == m_pVectorLight->Remove( removeData1 ) );
-	CPPUNIT_ASSERT( true == m_pVectorLight->Remove( removeData2 ) );
-	CPPUNIT_ASSERT( true == m_pVectorLight->Remove( removeData3 ) );
-	CPPUNIT_ASSERT( true == m_pVectorLight->Remove( removeData4 ) );
+	CHECK( true == m_pVectorLight->Remove( removeData1 ) );
+	CHECK( true == m_pVectorLight->Remove( removeData2 ) );
+	CHECK( true == m_pVectorLight->Remove( removeData3 ) );
+	CHECK( true == m_pVectorLight->Remove( removeData4 ) );
 
 	const uint32_t dataAfterRemove[] = { 0x1, 0x6, 0x4, 0x5, 0x2 };
 
@@ -182,38 +193,38 @@ void VectorLightTest::RemoveTest2()
 	for ( pIterator->SetToBase(); pIterator->HasNext(); ++index )
 	{
 		const uint32_t currentData = pIterator->GetNext();
-		CPPUNIT_ASSERT( dataAfterRemove[ index ] == currentData );
+		CHECK( dataAfterRemove[ index ] == currentData );
 	}
 }
 
-void VectorLightTest::IsSpaceTest()
+TEST(VectorLightTest,IsSpaceTest)
 {
 	//An empty collection.
-	CPPUNIT_ASSERT( true == m_pVectorLight->IsSpace() );
+	CHECK( true == m_pVectorLight->IsSpace() );
 
 	for( uint32_t i = 0; i < ( VectorLight::VECTOR_SIZE - 1 ); ++i )
 	{
 		m_pVectorLight->Insert( i );
-		CPPUNIT_ASSERT( true == m_pVectorLight->IsSpace() );
+		CHECK( true == m_pVectorLight->IsSpace() );
 	}
 
 	// Now collection has only one space.
-	CPPUNIT_ASSERT( true == m_pVectorLight->IsSpace() );
+	CHECK( true == m_pVectorLight->IsSpace() );
 
 	// Even releasing data from collection vacant space does not change. Still one.
 	const uint32_t dataToRemove = 0x01;
 	m_pVectorLight->Remove( dataToRemove );
-	CPPUNIT_ASSERT( true == m_pVectorLight->IsSpace() );
+	CHECK( true == m_pVectorLight->IsSpace() );
 
 	// Add again data that has been removed.
 	m_pVectorLight->Insert( dataToRemove );
-	CPPUNIT_ASSERT( false == m_pVectorLight->IsSpace() );
+	CHECK( false == m_pVectorLight->IsSpace() );
 }
 
-void VectorLightTest::GetNumberOfElementsTest()
+TEST(VectorLightTest,GetNumberOfElementsTest)
 {
 	//An empty collection.
-	CPPUNIT_ASSERT( 0 == m_pVectorLight->GetNumberOfElements() );
+	CHECK( 0 == m_pVectorLight->GetNumberOfElements() );
 
 	// Consecutively insert data and check number of element in collection.
 	for( uint32_t i = 0; i < VectorLight::VECTOR_SIZE; ++i )
@@ -221,7 +232,7 @@ void VectorLightTest::GetNumberOfElementsTest()
 		m_pVectorLight->Insert( i );
 
 		const uint32_t elementsInCollection = i + 1;
-		CPPUNIT_ASSERT( elementsInCollection == m_pVectorLight->GetNumberOfElements() );
+		CHECK( elementsInCollection == m_pVectorLight->GetNumberOfElements() );
 	}
 
 	// Consecutively remove data and check number of element in collection.
@@ -229,15 +240,15 @@ void VectorLightTest::GetNumberOfElementsTest()
 
 	for( uint32_t i = 0, remainedElements = initialElements; i < VectorLight::VECTOR_SIZE; ++i, --remainedElements )
 	{
-		CPPUNIT_ASSERT( remainedElements == m_pVectorLight->GetNumberOfElements() );
+		CHECK( remainedElements == m_pVectorLight->GetNumberOfElements() );
 		m_pVectorLight->Remove( i );
 	}
 
 	// Here all elements have been removed.
-	CPPUNIT_ASSERT( 0 == m_pVectorLight->GetNumberOfElements() );
+	CHECK( 0 == m_pVectorLight->GetNumberOfElements() );
 }
 
-void VectorLightTest::ClearTest()
+TEST(VectorLightTest,ClearTest)
 {
 	const uint32_t dat1 = 0x4;
 	const uint32_t dat2 = 0x6;
@@ -253,6 +264,6 @@ void VectorLightTest::ClearTest()
 
 	IteratorIf<uint32_t>* pIterator = m_pVectorLight->GetIterator();
 
-	CPPUNIT_ASSERT( 0 == m_pVectorLight->GetNumberOfElements() );
-	CPPUNIT_ASSERT( false == pIterator->HasNext() );
+	CHECK( 0 == m_pVectorLight->GetNumberOfElements() );
+	CHECK( false == pIterator->HasNext() );
 }
