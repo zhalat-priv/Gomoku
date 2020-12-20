@@ -1,14 +1,36 @@
-/*
- * Threat3CaseBTest.cpp
- *
- *  Created on: Mar 12, 2016
- *      Author: Zbigniew Halat
- */
-#include <assert.h>                // for assert.
-#include "Board.hpp"               // for Board definitions.
-#include "Threat3CaseBTest.hpp"    // for header class definition.
+#include "Board.hpp"                // for Board definitions.
+#include "Threat3CaseB.hpp"
+#include "GomokuBoard.hpp"
+#include <assert.h>                 // for assert.
+//----------------------------------------------------------
+#include "CppUTest/TestHarness.h"
+#include "CppUTest/SimpleString.h"
+#include "CppUTest/PlatformSpecificFunctions.h"
+#include "CppUTest/TestMemoryAllocator.h"
+#include "CppUTest/MemoryLeakDetector.h"
 
-void Threat3CaseBTest::FindPatternOnHorizontalTrendTest1()
+TEST_GROUP(Threat3CaseBTest)
+{
+    void setup()
+    {
+        m_pGomokuBoard = new GomokuBoard( 15 );
+
+		m_pThreatFinder = new Threat3CaseB();
+		m_pThreatFinder->SetBoard( m_pGomokuBoard );
+    }
+
+    void teardown()
+    {
+    	delete m_pGomokuBoard;
+    	delete m_pThreatFinder;
+    }
+
+public:
+	GomokuBoard* m_pGomokuBoard;
+	ThreatFinder* m_pThreatFinder;
+};
+
+TEST(Threat3CaseBTest,FindPatternOnHorizontalTrendTest1)
 {
 	// Testing of each position: OXXX..
 
@@ -17,18 +39,18 @@ void Threat3CaseBTest::FindPatternOnHorizontalTrendTest1()
 
 	// b:   OX....
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 2 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 2 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 2 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 
 	// c:   OXX...
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 3 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 3 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 3 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 
 	// d:   OXXX..
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 4 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 4 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 4 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 }
 
-void Threat3CaseBTest::FindPatternOnHorizontalTrendTest2()
+TEST(Threat3CaseBTest,FindPatternOnHorizontalTrendTest2)
 {
 	// Testing of each position: OXX.X.
 
@@ -37,19 +59,19 @@ void Threat3CaseBTest::FindPatternOnHorizontalTrendTest2()
 
 	// b:   OX....
 	m_pGomokuBoard->PutMove( Board::PositionXY( 2, 2 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 2, 2 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 2, 2 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 
 	// c:   OXX...
 	m_pGomokuBoard->PutMove( Board::PositionXY( 2, 3 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 2, 3 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 2, 3 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 
 	// d:   OXX.X.
 	m_pGomokuBoard->PutMove( Board::PositionXY( 2, 5 ), Board::PLAYER_A );
 
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 2, 5 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 2, 5 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 }
 
-void Threat3CaseBTest::FindPatternOnHorizontalTrendTest3()
+TEST(Threat3CaseBTest,FindPatternOnHorizontalTrendTest3)
 {
 	// Testing of each position: OX.XX.
 
@@ -58,18 +80,18 @@ void Threat3CaseBTest::FindPatternOnHorizontalTrendTest3()
 
 	// b:   OX....
 	m_pGomokuBoard->PutMove( Board::PositionXY( 3, 2 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 3, 2 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 3, 2 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 
 	// c:   OX.X..
 	m_pGomokuBoard->PutMove( Board::PositionXY( 3, 4 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 3, 4 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 3, 4 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 
 	// d:   OX.XX.
 	m_pGomokuBoard->PutMove( Board::PositionXY( 3, 5 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 3, 5 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 3, 5 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 }
 
-void Threat3CaseBTest::FindPatternOnHorizontalTrendTest4()
+TEST(Threat3CaseBTest,FindPatternOnHorizontalTrendTest4)
 {
 	// Testing of each position: ..XXXO
 
@@ -78,18 +100,18 @@ void Threat3CaseBTest::FindPatternOnHorizontalTrendTest4()
 
 	// b:   ....XO
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 3 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 3 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 3 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 
 	// c:   ...XXO
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 4 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 4 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 4 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 
 	// d:   ..XXXO
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 5 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 5 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 5 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 }
 
-void Threat3CaseBTest::FindPatternOnHorizontalTrendTest5()
+TEST(Threat3CaseBTest,FindPatternOnHorizontalTrendTest5)
 {
 	// Testing of each position: .X.XXO
 
@@ -98,19 +120,19 @@ void Threat3CaseBTest::FindPatternOnHorizontalTrendTest5()
 
 	// b:   ....XO
 	m_pGomokuBoard->PutMove( Board::PositionXY( 5, 2 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 5, 2 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 5, 2 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 
 	// c:   ...XXO
 	m_pGomokuBoard->PutMove( Board::PositionXY( 5, 4 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 5, 4 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 5, 4 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 
 	// d:   .X.XXO
 	m_pGomokuBoard->PutMove( Board::PositionXY( 5, 5 ), Board::PLAYER_A );
 
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 5, 5 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 5, 5 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 }
 
-void Threat3CaseBTest::FindPatternOnHorizontalTrendTest6()
+TEST(Threat3CaseBTest,FindPatternOnHorizontalTrendTest6)
 {
 	// Testing of each position: .XX.XO
 
@@ -119,18 +141,18 @@ void Threat3CaseBTest::FindPatternOnHorizontalTrendTest6()
 
 	// b:   ....XO
 	m_pGomokuBoard->PutMove( Board::PositionXY( 6, 2 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 6, 2 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 6, 2 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 
 	// c:   ..X.XO
 	m_pGomokuBoard->PutMove( Board::PositionXY( 6, 3 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 6, 3 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 6, 3 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 
 	// d:   .XX.XO
 	m_pGomokuBoard->PutMove( Board::PositionXY( 6, 5 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 6, 5 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 6, 5 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 }
 
-void Threat3CaseBTest::SkipFalsePattern1()
+TEST(Threat3CaseBTest,SkipFalsePattern1)
 {
 //	   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
 //	   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
@@ -145,106 +167,106 @@ void Threat3CaseBTest::SkipFalsePattern1()
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 3 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 4 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 5 ), Board::PLAYER_B );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 4 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 4 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 }
 
-void Threat3CaseBTest::FindPatternAbuttedToBoardTest1()
+TEST(Threat3CaseBTest,FindPatternAbuttedToBoardTest1)
 {
 	// Testing abutted to frame: OXXX..
 
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 0 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 3, 1 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 2, 2 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 0 ), ThreatFinder::RISING, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 0 ), ThreatFinder::RISING, Board::PLAYER_A ) );
 
 	m_pGomokuBoard->PutMove( Board::PositionXY( 3, 2 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 2, 3 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 4 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 0, 5 ), Board::PLAYER_B );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 4 ), ThreatFinder::RISING, Board::PLAYER_A) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 4 ), ThreatFinder::RISING, Board::PLAYER_A) );
 }
 
-void Threat3CaseBTest::FindPatternAbuttedToBoardTest2()
+TEST(Threat3CaseBTest,FindPatternAbuttedToBoardTest2)
 {
 	// Testing abutted to frame: OXX.X.
 
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 0 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 3, 1 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 3 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 0 ), ThreatFinder::RISING, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 0 ), ThreatFinder::RISING, Board::PLAYER_A ) );
 
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 1 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 2, 3 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 4 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 0, 5 ), Board::PLAYER_B );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 1 ), ThreatFinder::RISING, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 1 ), ThreatFinder::RISING, Board::PLAYER_A ) );
 }
 
-void Threat3CaseBTest::FindPatternAbuttedToBoardTest3()
+TEST(Threat3CaseBTest,FindPatternAbuttedToBoardTest3)
 {
 	// Testing abutted to frame: OX.XX.
 
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 0 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 2, 2 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 3 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 0 ), ThreatFinder::RISING, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 0 ), ThreatFinder::RISING, Board::PLAYER_A ) );
 
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 1 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 3, 2 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 4 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 0, 5 ), Board::PLAYER_B );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 1 ), ThreatFinder::RISING, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 1 ), ThreatFinder::RISING, Board::PLAYER_A ) );
 }
 
-void Threat3CaseBTest::FindPatternAbuttedToBoardTest4()
+TEST(Threat3CaseBTest,FindPatternAbuttedToBoardTest4)
 {
 	// Testing abutted to frame: ..XXXO
 
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 0 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 3, 1 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 2, 2 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 0 ), ThreatFinder::RISING, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 0 ), ThreatFinder::RISING, Board::PLAYER_A ) );
 
 	m_pGomokuBoard->PutMove( Board::PositionXY( 3, 2 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 2, 3 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 4 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 0, 5 ), Board::PLAYER_B );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 3, 2 ), ThreatFinder::RISING, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 3, 2 ), ThreatFinder::RISING, Board::PLAYER_A ) );
 }
 
-void Threat3CaseBTest::FindPatternAbuttedToBoardTest5()
+TEST(Threat3CaseBTest,FindPatternAbuttedToBoardTest5)
 {
 	// Testing abutted to frame: .X.XXO
 
 	m_pGomokuBoard->PutMove( Board::PositionXY( 3, 1 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 3 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 0, 4 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 3, 1 ), ThreatFinder::RISING, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 3, 1 ), ThreatFinder::RISING, Board::PLAYER_A ) );
 
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 1 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 2, 3 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 4 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 0, 5 ), Board::PLAYER_B );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 1 ), ThreatFinder::RISING, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 1 ), ThreatFinder::RISING, Board::PLAYER_A ) );
 }
 
-void Threat3CaseBTest::FindPatternAbuttedToBoardTest6()
+TEST(Threat3CaseBTest,FindPatternAbuttedToBoardTest6)
 {
 	// Testing abutted to frame: .XX.XO
 
 	m_pGomokuBoard->PutMove( Board::PositionXY( 3, 1 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 2, 2 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 0, 4 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 3, 1 ), ThreatFinder::RISING, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 3, 1 ), ThreatFinder::RISING, Board::PLAYER_A ) );
 
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 1 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 3, 2 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 4 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 0, 5 ), Board::PLAYER_B );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 1 ), ThreatFinder::RISING, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 1 ), ThreatFinder::RISING, Board::PLAYER_A ) );
 }
 
-void Threat3CaseBTest::FindPatternAbuttedToBoardTest7()
+TEST(Threat3CaseBTest,FindPatternAbuttedToBoardTest7)
 {
 	// Testing abutted to frame: OX..XX
 
@@ -253,18 +275,18 @@ void Threat3CaseBTest::FindPatternAbuttedToBoardTest7()
 
 	// b:   OX....
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 2 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 2 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 2 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 
 	// c:   OXX...
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 5 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 5 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 5 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 
 	// d:   OXXX..
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1,6 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 6 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 6 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 }
 
-void Threat3CaseBTest::FindPatternSixInRowTest1()
+TEST(Threat3CaseBTest,FindPatternSixInRowTest1)
 {
 	//                       1 1 1 1 1
 	//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
@@ -291,57 +313,57 @@ void Threat3CaseBTest::FindPatternSixInRowTest1()
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 2 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 4 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 5 ), Board::PLAYER_B );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 0 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 1 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 2 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 4 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 0 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 1 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 2 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 4 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 
 	m_pGomokuBoard->PutMove( Board::PositionXY( 2, 0 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 2, 1 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 2, 2 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 2, 5 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 2, 0 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 2, 1 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 2, 2 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 2, 5 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 2, 0 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 2, 1 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 2, 2 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 2, 5 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 0 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 1 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 2 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 5 ), Board::PLAYER_B );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 0 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 1 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 2 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 0 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 1 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 2 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 10 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 12 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 13 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 14 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 9 ), Board::PLAYER_B );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 10 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 12 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 13 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 14 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 10 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 12 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 13 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 14 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 
 	m_pGomokuBoard->PutMove( Board::PositionXY( 6, 9 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 6, 12 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 6, 13 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 6, 14 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 6, 9 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 6, 12 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 6, 13 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
-	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 6, 14 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 6, 9 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 6, 12 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 6, 13 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_FALSE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 6, 14 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 
 	m_pGomokuBoard->PutMove( Board::PositionXY( 7, 9 ), Board::PLAYER_B );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 7, 12 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 7, 13 ), Board::PLAYER_A );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 7, 14 ), Board::PLAYER_A );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 7, 12 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 7, 13 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
-	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 7, 14 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 7, 12 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 7, 13 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
+	CHECK_TRUE( m_pThreatFinder->FindThreatPattern( Board::PositionXY( 7, 14 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 }
 
-void Threat3CaseBTest::GetPieces1()
+TEST(Threat3CaseBTest,GetPieces1)
 {
 	// oxxx..*
 	//                       1 1 1 1 1
@@ -388,40 +410,40 @@ void Threat3CaseBTest::GetPieces1()
 
 	// 3. Make verification.
 	// a. Check '*':
-	CPPUNIT_ASSERT( elAsterix1 == threatLocation.m_ThreatDetails.m_Asterixes[0] );
-	CPPUNIT_ASSERT( elAsterix2 == threatLocation.m_ThreatDetails.m_Asterixes[1] );
+	CHECK( elAsterix1 == threatLocation.m_ThreatDetails.m_Asterixes[0] );
+	CHECK( elAsterix2 == threatLocation.m_ThreatDetails.m_Asterixes[1] );
 
 	// b. Check 'x':
-	CPPUNIT_ASSERT( elX1 == threatLocation.m_ThreatDetails.m_MyPawns[0] );
-	CPPUNIT_ASSERT( elX2 == threatLocation.m_ThreatDetails.m_MyPawns[1] );
-	CPPUNIT_ASSERT( elX3 == threatLocation.m_ThreatDetails.m_MyPawns[2] );
+	CHECK( elX1 == threatLocation.m_ThreatDetails.m_MyPawns[0] );
+	CHECK( elX2 == threatLocation.m_ThreatDetails.m_MyPawns[1] );
+	CHECK( elX3 == threatLocation.m_ThreatDetails.m_MyPawns[2] );
 
 	// c. Check '.':
-	CPPUNIT_ASSERT( elGap1 == threatLocation.m_ThreatDetails.m_Gaps[0] );
-	CPPUNIT_ASSERT( elGap2 == threatLocation.m_ThreatDetails.m_Gaps[1] );
-	CPPUNIT_ASSERT( elGap3 == threatLocation.m_ThreatDetails.m_Gaps[2] );
-	CPPUNIT_ASSERT( elGap4 == threatLocation.m_ThreatDetails.m_Gaps[3] );
-	CPPUNIT_ASSERT( elGap5 == threatLocation.m_ThreatDetails.m_Gaps[4] );
-	CPPUNIT_ASSERT( elGap6 == threatLocation.m_ThreatDetails.m_Gaps[5] );
-	CPPUNIT_ASSERT( elGap7 == threatLocation.m_ThreatDetails.m_Gaps[6] );
-	CPPUNIT_ASSERT( elGap8 == threatLocation.m_ThreatDetails.m_Gaps[7] );
-	CPPUNIT_ASSERT( elGap9 == threatLocation.m_ThreatDetails.m_Gaps[8] );
-	CPPUNIT_ASSERT( elGap10 == threatLocation.m_ThreatDetails.m_Gaps[9] );
+	CHECK( elGap1 == threatLocation.m_ThreatDetails.m_Gaps[0] );
+	CHECK( elGap2 == threatLocation.m_ThreatDetails.m_Gaps[1] );
+	CHECK( elGap3 == threatLocation.m_ThreatDetails.m_Gaps[2] );
+	CHECK( elGap4 == threatLocation.m_ThreatDetails.m_Gaps[3] );
+	CHECK( elGap5 == threatLocation.m_ThreatDetails.m_Gaps[4] );
+	CHECK( elGap6 == threatLocation.m_ThreatDetails.m_Gaps[5] );
+	CHECK( elGap7 == threatLocation.m_ThreatDetails.m_Gaps[6] );
+	CHECK( elGap8 == threatLocation.m_ThreatDetails.m_Gaps[7] );
+	CHECK( elGap9 == threatLocation.m_ThreatDetails.m_Gaps[8] );
+	CHECK( elGap10 == threatLocation.m_ThreatDetails.m_Gaps[9] );
 
 	// d. Extend gaps:
-	CPPUNIT_ASSERT( elExtendGap1 == threatLocation.m_ThreatDetails.m_ExtGaps[0] );
-	CPPUNIT_ASSERT( elExtendGap2 == threatLocation.m_ThreatDetails.m_ExtGaps[1] );
+	CHECK( elExtendGap1 == threatLocation.m_ThreatDetails.m_ExtGaps[0] );
+	CHECK( elExtendGap2 == threatLocation.m_ThreatDetails.m_ExtGaps[1] );
 
 	// d. Check 'o':
-	CPPUNIT_ASSERT( elO1 == threatLocation.m_ThreatDetails.m_EnemyPawns[0] );
-	CPPUNIT_ASSERT( elO2 == threatLocation.m_ThreatDetails.m_EnemyPawns[1] );
+	CHECK( elO1 == threatLocation.m_ThreatDetails.m_EnemyPawns[0] );
+	CHECK( elO2 == threatLocation.m_ThreatDetails.m_EnemyPawns[1] );
 
 	// e. Check begin & end:
-	CPPUNIT_ASSERT( beginning == threatLocation.m_ThreatDetails.m_BeginningThreat );
-	CPPUNIT_ASSERT( end == threatLocation.m_ThreatDetails.m_EndThreat );
+	CHECK( beginning == threatLocation.m_ThreatDetails.m_BeginningThreat );
+	CHECK( end == threatLocation.m_ThreatDetails.m_EndThreat );
 }
 
-void Threat3CaseBTest::GetPieces2()
+TEST(Threat3CaseBTest,GetPieces2)
 {
 	// oxx..xo
 	//                       1 1 1 1 1
@@ -470,40 +492,40 @@ void Threat3CaseBTest::GetPieces2()
 
 	// 3. Make verification.
 	// a. Check '*':
-	CPPUNIT_ASSERT( elAsterix1 == threatLocation.m_ThreatDetails.m_Asterixes[0] );
-	CPPUNIT_ASSERT( elAsterix2 == threatLocation.m_ThreatDetails.m_Asterixes[1] );
+	CHECK( elAsterix1 == threatLocation.m_ThreatDetails.m_Asterixes[0] );
+	CHECK( elAsterix2 == threatLocation.m_ThreatDetails.m_Asterixes[1] );
 
 	// b. Check 'x':
-	CPPUNIT_ASSERT( elX1 == threatLocation.m_ThreatDetails.m_MyPawns[0] );
-	CPPUNIT_ASSERT( elX2 == threatLocation.m_ThreatDetails.m_MyPawns[1] );
-	CPPUNIT_ASSERT( elX3 == threatLocation.m_ThreatDetails.m_MyPawns[2] );
+	CHECK( elX1 == threatLocation.m_ThreatDetails.m_MyPawns[0] );
+	CHECK( elX2 == threatLocation.m_ThreatDetails.m_MyPawns[1] );
+	CHECK( elX3 == threatLocation.m_ThreatDetails.m_MyPawns[2] );
 
 	// c. Check '.':
-	CPPUNIT_ASSERT( elGap1 == threatLocation.m_ThreatDetails.m_Gaps[0] );
-	CPPUNIT_ASSERT( elGap2 == threatLocation.m_ThreatDetails.m_Gaps[1] );
-	CPPUNIT_ASSERT( elGap3 == threatLocation.m_ThreatDetails.m_Gaps[2] );
-	CPPUNIT_ASSERT( elGap4 == threatLocation.m_ThreatDetails.m_Gaps[3] );
-	CPPUNIT_ASSERT( elGap5 == threatLocation.m_ThreatDetails.m_Gaps[4] );
-	CPPUNIT_ASSERT( elGap6 == threatLocation.m_ThreatDetails.m_Gaps[5] );
-	CPPUNIT_ASSERT( elGap7 == threatLocation.m_ThreatDetails.m_Gaps[6] );
-	CPPUNIT_ASSERT( elGap8 == threatLocation.m_ThreatDetails.m_Gaps[7] );
-	CPPUNIT_ASSERT( elGap9 == threatLocation.m_ThreatDetails.m_Gaps[8] );
-	CPPUNIT_ASSERT( elGap10 == threatLocation.m_ThreatDetails.m_Gaps[9] );
+	CHECK( elGap1 == threatLocation.m_ThreatDetails.m_Gaps[0] );
+	CHECK( elGap2 == threatLocation.m_ThreatDetails.m_Gaps[1] );
+	CHECK( elGap3 == threatLocation.m_ThreatDetails.m_Gaps[2] );
+	CHECK( elGap4 == threatLocation.m_ThreatDetails.m_Gaps[3] );
+	CHECK( elGap5 == threatLocation.m_ThreatDetails.m_Gaps[4] );
+	CHECK( elGap6 == threatLocation.m_ThreatDetails.m_Gaps[5] );
+	CHECK( elGap7 == threatLocation.m_ThreatDetails.m_Gaps[6] );
+	CHECK( elGap8 == threatLocation.m_ThreatDetails.m_Gaps[7] );
+	CHECK( elGap9 == threatLocation.m_ThreatDetails.m_Gaps[8] );
+	CHECK( elGap10 == threatLocation.m_ThreatDetails.m_Gaps[9] );
 
 	// d. Extend gaps:
-	CPPUNIT_ASSERT( elExtendGap1 == threatLocation.m_ThreatDetails.m_ExtGaps[0] );
-	CPPUNIT_ASSERT( elExtendGap2 == threatLocation.m_ThreatDetails.m_ExtGaps[1] );
+	CHECK( elExtendGap1 == threatLocation.m_ThreatDetails.m_ExtGaps[0] );
+	CHECK( elExtendGap2 == threatLocation.m_ThreatDetails.m_ExtGaps[1] );
 
 	// d. Check 'o':
-	CPPUNIT_ASSERT( elO1 == threatLocation.m_ThreatDetails.m_EnemyPawns[0] );
-	CPPUNIT_ASSERT( ThreatFinder::ThreatLocation::XY_OUT_OF_BOARD == threatLocation.m_ThreatDetails.m_EnemyPawns[1] );
+	CHECK( elO1 == threatLocation.m_ThreatDetails.m_EnemyPawns[0] );
+	CHECK( ThreatFinder::ThreatLocation::XY_OUT_OF_BOARD == threatLocation.m_ThreatDetails.m_EnemyPawns[1] );
 
 	// e. Check begin & end:
-	CPPUNIT_ASSERT( beginning == threatLocation.m_ThreatDetails.m_BeginningThreat );
-	CPPUNIT_ASSERT( end == threatLocation.m_ThreatDetails.m_EndThreat );
+	CHECK( beginning == threatLocation.m_ThreatDetails.m_BeginningThreat );
+	CHECK( end == threatLocation.m_ThreatDetails.m_EndThreat );
 }
 
-void Threat3CaseBTest::GetPieces3()
+TEST(Threat3CaseBTest,GetPieces3)
 {
 	// |x.x.x*
 	//                       1 1 1 1 1
@@ -550,40 +572,40 @@ void Threat3CaseBTest::GetPieces3()
 
 	// 3. Make verification.
 	// a. Check '*':
-	CPPUNIT_ASSERT( elAsterix1 == threatLocation.m_ThreatDetails.m_Asterixes[0] );
-	CPPUNIT_ASSERT( elAsterix2 == threatLocation.m_ThreatDetails.m_Asterixes[1] );
+	CHECK( elAsterix1 == threatLocation.m_ThreatDetails.m_Asterixes[0] );
+	CHECK( elAsterix2 == threatLocation.m_ThreatDetails.m_Asterixes[1] );
 
 	// b. Check 'x':
-	CPPUNIT_ASSERT( elX1 == threatLocation.m_ThreatDetails.m_MyPawns[0] );
-	CPPUNIT_ASSERT( elX2 == threatLocation.m_ThreatDetails.m_MyPawns[1] );
-	CPPUNIT_ASSERT( elX3 == threatLocation.m_ThreatDetails.m_MyPawns[2] );
+	CHECK( elX1 == threatLocation.m_ThreatDetails.m_MyPawns[0] );
+	CHECK( elX2 == threatLocation.m_ThreatDetails.m_MyPawns[1] );
+	CHECK( elX3 == threatLocation.m_ThreatDetails.m_MyPawns[2] );
 
 	// c. Check '.':
-	CPPUNIT_ASSERT( elGap1 == threatLocation.m_ThreatDetails.m_Gaps[0] );
-	CPPUNIT_ASSERT( elGap2 == threatLocation.m_ThreatDetails.m_Gaps[1] );
-	CPPUNIT_ASSERT( elGap3 == threatLocation.m_ThreatDetails.m_Gaps[2] );
-	CPPUNIT_ASSERT( elGap4 == threatLocation.m_ThreatDetails.m_Gaps[3] );
-	CPPUNIT_ASSERT( elGap5 == threatLocation.m_ThreatDetails.m_Gaps[4] );
-	CPPUNIT_ASSERT( elGap6 == threatLocation.m_ThreatDetails.m_Gaps[5] );
-	CPPUNIT_ASSERT( elGap7 == threatLocation.m_ThreatDetails.m_Gaps[6] );
-	CPPUNIT_ASSERT( elGap8 == threatLocation.m_ThreatDetails.m_Gaps[7] );
-	CPPUNIT_ASSERT( elGap9 == threatLocation.m_ThreatDetails.m_Gaps[8] );
-	CPPUNIT_ASSERT( elGap10 == threatLocation.m_ThreatDetails.m_Gaps[9] );
+	CHECK( elGap1 == threatLocation.m_ThreatDetails.m_Gaps[0] );
+	CHECK( elGap2 == threatLocation.m_ThreatDetails.m_Gaps[1] );
+	CHECK( elGap3 == threatLocation.m_ThreatDetails.m_Gaps[2] );
+	CHECK( elGap4 == threatLocation.m_ThreatDetails.m_Gaps[3] );
+	CHECK( elGap5 == threatLocation.m_ThreatDetails.m_Gaps[4] );
+	CHECK( elGap6 == threatLocation.m_ThreatDetails.m_Gaps[5] );
+	CHECK( elGap7 == threatLocation.m_ThreatDetails.m_Gaps[6] );
+	CHECK( elGap8 == threatLocation.m_ThreatDetails.m_Gaps[7] );
+	CHECK( elGap9 == threatLocation.m_ThreatDetails.m_Gaps[8] );
+	CHECK( elGap10 == threatLocation.m_ThreatDetails.m_Gaps[9] );
 
 	// d. Extend gaps:
-	CPPUNIT_ASSERT( elExtendGap1 == threatLocation.m_ThreatDetails.m_ExtGaps[0] );
-	CPPUNIT_ASSERT( elExtendGap2 == threatLocation.m_ThreatDetails.m_ExtGaps[1] );
+	CHECK( elExtendGap1 == threatLocation.m_ThreatDetails.m_ExtGaps[0] );
+	CHECK( elExtendGap2 == threatLocation.m_ThreatDetails.m_ExtGaps[1] );
 
 	// d. Check 'o':
-	CPPUNIT_ASSERT( elO1 == threatLocation.m_ThreatDetails.m_EnemyPawns[0] );
-	CPPUNIT_ASSERT( elO2 == threatLocation.m_ThreatDetails.m_EnemyPawns[1] );
+	CHECK( elO1 == threatLocation.m_ThreatDetails.m_EnemyPawns[0] );
+	CHECK( elO2 == threatLocation.m_ThreatDetails.m_EnemyPawns[1] );
 
 	// e. Check begin & end:
-	CPPUNIT_ASSERT( beginning == threatLocation.m_ThreatDetails.m_BeginningThreat );
-	CPPUNIT_ASSERT( end == threatLocation.m_ThreatDetails.m_EndThreat );
+	CHECK( beginning == threatLocation.m_ThreatDetails.m_BeginningThreat );
+	CHECK( end == threatLocation.m_ThreatDetails.m_EndThreat );
 }
 
-void Threat3CaseBTest::GetPieces4()
+TEST(Threat3CaseBTest,GetPieces4)
 {
 	// |xx..xo
 	//                       1 1 1 1 1
@@ -631,40 +653,40 @@ void Threat3CaseBTest::GetPieces4()
 
 	// 3. Make verification.
 	// a. Check '*':
-	CPPUNIT_ASSERT( elAsterix1 == threatLocation.m_ThreatDetails.m_Asterixes[0] );
-	CPPUNIT_ASSERT( elAsterix2 == threatLocation.m_ThreatDetails.m_Asterixes[1] );
+	CHECK( elAsterix1 == threatLocation.m_ThreatDetails.m_Asterixes[0] );
+	CHECK( elAsterix2 == threatLocation.m_ThreatDetails.m_Asterixes[1] );
 
 	// b. Check 'x':
-	CPPUNIT_ASSERT( elX1 == threatLocation.m_ThreatDetails.m_MyPawns[0] );
-	CPPUNIT_ASSERT( elX2 == threatLocation.m_ThreatDetails.m_MyPawns[1] );
-	CPPUNIT_ASSERT( elX3 == threatLocation.m_ThreatDetails.m_MyPawns[2] );
+	CHECK( elX1 == threatLocation.m_ThreatDetails.m_MyPawns[0] );
+	CHECK( elX2 == threatLocation.m_ThreatDetails.m_MyPawns[1] );
+	CHECK( elX3 == threatLocation.m_ThreatDetails.m_MyPawns[2] );
 
 	// c. Check '.':
-	CPPUNIT_ASSERT( elGap1 == threatLocation.m_ThreatDetails.m_Gaps[0] );
-	CPPUNIT_ASSERT( elGap2 == threatLocation.m_ThreatDetails.m_Gaps[1] );
-	CPPUNIT_ASSERT( elGap3 == threatLocation.m_ThreatDetails.m_Gaps[2] );
-	CPPUNIT_ASSERT( elGap4 == threatLocation.m_ThreatDetails.m_Gaps[3] );
-	CPPUNIT_ASSERT( elGap5 == threatLocation.m_ThreatDetails.m_Gaps[4] );
-	CPPUNIT_ASSERT( elGap6 == threatLocation.m_ThreatDetails.m_Gaps[5] );
-	CPPUNIT_ASSERT( elGap7 == threatLocation.m_ThreatDetails.m_Gaps[6] );
-	CPPUNIT_ASSERT( elGap8 == threatLocation.m_ThreatDetails.m_Gaps[7] );
-	CPPUNIT_ASSERT( elGap9 == threatLocation.m_ThreatDetails.m_Gaps[8] );
-	CPPUNIT_ASSERT( elGap10 == threatLocation.m_ThreatDetails.m_Gaps[9] );
+	CHECK( elGap1 == threatLocation.m_ThreatDetails.m_Gaps[0] );
+	CHECK( elGap2 == threatLocation.m_ThreatDetails.m_Gaps[1] );
+	CHECK( elGap3 == threatLocation.m_ThreatDetails.m_Gaps[2] );
+	CHECK( elGap4 == threatLocation.m_ThreatDetails.m_Gaps[3] );
+	CHECK( elGap5 == threatLocation.m_ThreatDetails.m_Gaps[4] );
+	CHECK( elGap6 == threatLocation.m_ThreatDetails.m_Gaps[5] );
+	CHECK( elGap7 == threatLocation.m_ThreatDetails.m_Gaps[6] );
+	CHECK( elGap8 == threatLocation.m_ThreatDetails.m_Gaps[7] );
+	CHECK( elGap9 == threatLocation.m_ThreatDetails.m_Gaps[8] );
+	CHECK( elGap10 == threatLocation.m_ThreatDetails.m_Gaps[9] );
 
 	// d. Extend gaps:
-	CPPUNIT_ASSERT( elExtendGap1 == threatLocation.m_ThreatDetails.m_ExtGaps[0] );
-	CPPUNIT_ASSERT( elExtendGap2 == threatLocation.m_ThreatDetails.m_ExtGaps[1] );
+	CHECK( elExtendGap1 == threatLocation.m_ThreatDetails.m_ExtGaps[0] );
+	CHECK( elExtendGap2 == threatLocation.m_ThreatDetails.m_ExtGaps[1] );
 
 	// d. Check 'o':
-	CPPUNIT_ASSERT( ThreatFinder::ThreatLocation::XY_OUT_OF_BOARD == threatLocation.m_ThreatDetails.m_EnemyPawns[0] );
-	CPPUNIT_ASSERT( ThreatFinder::ThreatLocation::XY_OUT_OF_BOARD == threatLocation.m_ThreatDetails.m_EnemyPawns[1] );
+	CHECK( ThreatFinder::ThreatLocation::XY_OUT_OF_BOARD == threatLocation.m_ThreatDetails.m_EnemyPawns[0] );
+	CHECK( ThreatFinder::ThreatLocation::XY_OUT_OF_BOARD == threatLocation.m_ThreatDetails.m_EnemyPawns[1] );
 
 	// e. Check begin & end:
-	CPPUNIT_ASSERT( beginning == threatLocation.m_ThreatDetails.m_BeginningThreat );
-	CPPUNIT_ASSERT( end == threatLocation.m_ThreatDetails.m_EndThreat );
+	CHECK( beginning == threatLocation.m_ThreatDetails.m_BeginningThreat );
+	CHECK( end == threatLocation.m_ThreatDetails.m_EndThreat );
 }
 
-void Threat3CaseBTest::GetPieces5()
+TEST(Threat3CaseBTest,GetPieces5)
 {
 	// |x.xx.|
 	//                       1 1 1 1 1
@@ -716,40 +738,40 @@ void Threat3CaseBTest::GetPieces5()
 
 	// 3. Make verification.
 	// a. Check '*':
-	CPPUNIT_ASSERT( elAsterix1 == threatLocation.m_ThreatDetails.m_Asterixes[0] );
-	CPPUNIT_ASSERT( elAsterix2 == threatLocation.m_ThreatDetails.m_Asterixes[1] );
+	CHECK( elAsterix1 == threatLocation.m_ThreatDetails.m_Asterixes[0] );
+	CHECK( elAsterix2 == threatLocation.m_ThreatDetails.m_Asterixes[1] );
 
 	// b. Check 'x':
-	CPPUNIT_ASSERT( elX1 == threatLocation.m_ThreatDetails.m_MyPawns[0] );
-	CPPUNIT_ASSERT( elX2 == threatLocation.m_ThreatDetails.m_MyPawns[1] );
-	CPPUNIT_ASSERT( elX3 == threatLocation.m_ThreatDetails.m_MyPawns[2] );
+	CHECK( elX1 == threatLocation.m_ThreatDetails.m_MyPawns[0] );
+	CHECK( elX2 == threatLocation.m_ThreatDetails.m_MyPawns[1] );
+	CHECK( elX3 == threatLocation.m_ThreatDetails.m_MyPawns[2] );
 
 	// c. Check '.':
-	CPPUNIT_ASSERT( elGap1 == threatLocation.m_ThreatDetails.m_Gaps[0] );
-	CPPUNIT_ASSERT( elGap2 == threatLocation.m_ThreatDetails.m_Gaps[1] );
-	CPPUNIT_ASSERT( elGap3 == threatLocation.m_ThreatDetails.m_Gaps[2] );
-	CPPUNIT_ASSERT( elGap4 == threatLocation.m_ThreatDetails.m_Gaps[3] );
-	CPPUNIT_ASSERT( elGap5 == threatLocation.m_ThreatDetails.m_Gaps[4] );
-	CPPUNIT_ASSERT( elGap6 == threatLocation.m_ThreatDetails.m_Gaps[5] );
-	CPPUNIT_ASSERT( elGap7 == threatLocation.m_ThreatDetails.m_Gaps[6] );
-	CPPUNIT_ASSERT( elGap8 == threatLocation.m_ThreatDetails.m_Gaps[7] );
-	CPPUNIT_ASSERT( elGap9 == threatLocation.m_ThreatDetails.m_Gaps[8] );
-	CPPUNIT_ASSERT( elGap10 == threatLocation.m_ThreatDetails.m_Gaps[9] );
+	CHECK( elGap1 == threatLocation.m_ThreatDetails.m_Gaps[0] );
+	CHECK( elGap2 == threatLocation.m_ThreatDetails.m_Gaps[1] );
+	CHECK( elGap3 == threatLocation.m_ThreatDetails.m_Gaps[2] );
+	CHECK( elGap4 == threatLocation.m_ThreatDetails.m_Gaps[3] );
+	CHECK( elGap5 == threatLocation.m_ThreatDetails.m_Gaps[4] );
+	CHECK( elGap6 == threatLocation.m_ThreatDetails.m_Gaps[5] );
+	CHECK( elGap7 == threatLocation.m_ThreatDetails.m_Gaps[6] );
+	CHECK( elGap8 == threatLocation.m_ThreatDetails.m_Gaps[7] );
+	CHECK( elGap9 == threatLocation.m_ThreatDetails.m_Gaps[8] );
+	CHECK( elGap10 == threatLocation.m_ThreatDetails.m_Gaps[9] );
 
 	// d. Extend gaps:
-	CPPUNIT_ASSERT( elExtendGap1 == threatLocation.m_ThreatDetails.m_ExtGaps[0] );
-	CPPUNIT_ASSERT( elExtendGap2 == threatLocation.m_ThreatDetails.m_ExtGaps[1] );
+	CHECK( elExtendGap1 == threatLocation.m_ThreatDetails.m_ExtGaps[0] );
+	CHECK( elExtendGap2 == threatLocation.m_ThreatDetails.m_ExtGaps[1] );
 
 	// d. Check 'o':
-	CPPUNIT_ASSERT( ThreatFinder::ThreatLocation::XY_OUT_OF_BOARD == threatLocation.m_ThreatDetails.m_EnemyPawns[0] );
-	CPPUNIT_ASSERT( ThreatFinder::ThreatLocation::XY_OUT_OF_BOARD == threatLocation.m_ThreatDetails.m_EnemyPawns[1] );
+	CHECK( ThreatFinder::ThreatLocation::XY_OUT_OF_BOARD == threatLocation.m_ThreatDetails.m_EnemyPawns[0] );
+	CHECK( ThreatFinder::ThreatLocation::XY_OUT_OF_BOARD == threatLocation.m_ThreatDetails.m_EnemyPawns[1] );
 
 	// e. Check begin & end:
-	CPPUNIT_ASSERT( beginning == threatLocation.m_ThreatDetails.m_BeginningThreat );
-	CPPUNIT_ASSERT( end == threatLocation.m_ThreatDetails.m_EndThreat );
+	CHECK( beginning == threatLocation.m_ThreatDetails.m_BeginningThreat );
+	CHECK( end == threatLocation.m_ThreatDetails.m_EndThreat );
 }
 
-void Threat3CaseBTest::GetPieces6()
+TEST(Threat3CaseBTest,GetPieces6)
 {
 	// |.xx.xo
 	//                       1 1 1 1 1
@@ -802,40 +824,40 @@ void Threat3CaseBTest::GetPieces6()
 
 	// 3. Make verification.
 	// a. Check '*':
-	CPPUNIT_ASSERT( elAsterix1 == threatLocation.m_ThreatDetails.m_Asterixes[0] );
-	CPPUNIT_ASSERT( elAsterix2 == threatLocation.m_ThreatDetails.m_Asterixes[1] );
+	CHECK( elAsterix1 == threatLocation.m_ThreatDetails.m_Asterixes[0] );
+	CHECK( elAsterix2 == threatLocation.m_ThreatDetails.m_Asterixes[1] );
 
 	// b. Check 'x':
-	CPPUNIT_ASSERT( elX1 == threatLocation.m_ThreatDetails.m_MyPawns[0] );
-	CPPUNIT_ASSERT( elX2 == threatLocation.m_ThreatDetails.m_MyPawns[1] );
-	CPPUNIT_ASSERT( elX3 == threatLocation.m_ThreatDetails.m_MyPawns[2] );
+	CHECK( elX1 == threatLocation.m_ThreatDetails.m_MyPawns[0] );
+	CHECK( elX2 == threatLocation.m_ThreatDetails.m_MyPawns[1] );
+	CHECK( elX3 == threatLocation.m_ThreatDetails.m_MyPawns[2] );
 
 	// c. Check '.':
-	CPPUNIT_ASSERT( elGap1 == threatLocation.m_ThreatDetails.m_Gaps[0] );
-	CPPUNIT_ASSERT( elGap2 == threatLocation.m_ThreatDetails.m_Gaps[1] );
-	CPPUNIT_ASSERT( elGap3 == threatLocation.m_ThreatDetails.m_Gaps[2] );
-	CPPUNIT_ASSERT( elGap4 == threatLocation.m_ThreatDetails.m_Gaps[3] );
-	CPPUNIT_ASSERT( elGap5 == threatLocation.m_ThreatDetails.m_Gaps[4] );
-	CPPUNIT_ASSERT( elGap6 == threatLocation.m_ThreatDetails.m_Gaps[5] );
-	CPPUNIT_ASSERT( elGap7 == threatLocation.m_ThreatDetails.m_Gaps[6] );
-	CPPUNIT_ASSERT( elGap8 == threatLocation.m_ThreatDetails.m_Gaps[7] );
-	CPPUNIT_ASSERT( elGap9 == threatLocation.m_ThreatDetails.m_Gaps[8] );
-	CPPUNIT_ASSERT( elGap10 == threatLocation.m_ThreatDetails.m_Gaps[9] );
+	CHECK( elGap1 == threatLocation.m_ThreatDetails.m_Gaps[0] );
+	CHECK( elGap2 == threatLocation.m_ThreatDetails.m_Gaps[1] );
+	CHECK( elGap3 == threatLocation.m_ThreatDetails.m_Gaps[2] );
+	CHECK( elGap4 == threatLocation.m_ThreatDetails.m_Gaps[3] );
+	CHECK( elGap5 == threatLocation.m_ThreatDetails.m_Gaps[4] );
+	CHECK( elGap6 == threatLocation.m_ThreatDetails.m_Gaps[5] );
+	CHECK( elGap7 == threatLocation.m_ThreatDetails.m_Gaps[6] );
+	CHECK( elGap8 == threatLocation.m_ThreatDetails.m_Gaps[7] );
+	CHECK( elGap9 == threatLocation.m_ThreatDetails.m_Gaps[8] );
+	CHECK( elGap10 == threatLocation.m_ThreatDetails.m_Gaps[9] );
 
 	// d. Extend gaps:
-	CPPUNIT_ASSERT( elExtendGap1 == threatLocation.m_ThreatDetails.m_ExtGaps[0] );
-	CPPUNIT_ASSERT( elExtendGap2 == threatLocation.m_ThreatDetails.m_ExtGaps[1] );
+	CHECK( elExtendGap1 == threatLocation.m_ThreatDetails.m_ExtGaps[0] );
+	CHECK( elExtendGap2 == threatLocation.m_ThreatDetails.m_ExtGaps[1] );
 
 	// d. Check 'o':
-	CPPUNIT_ASSERT( elO1 == threatLocation.m_ThreatDetails.m_EnemyPawns[0] );
-	CPPUNIT_ASSERT( ThreatFinder::ThreatLocation::XY_OUT_OF_BOARD == threatLocation.m_ThreatDetails.m_EnemyPawns[1] );
+	CHECK( elO1 == threatLocation.m_ThreatDetails.m_EnemyPawns[0] );
+	CHECK( ThreatFinder::ThreatLocation::XY_OUT_OF_BOARD == threatLocation.m_ThreatDetails.m_EnemyPawns[1] );
 
 	// e. Check begin & end:
-	CPPUNIT_ASSERT( beginning == threatLocation.m_ThreatDetails.m_BeginningThreat );
-	CPPUNIT_ASSERT( end == threatLocation.m_ThreatDetails.m_EndThreat );
+	CHECK( beginning == threatLocation.m_ThreatDetails.m_BeginningThreat );
+	CHECK( end == threatLocation.m_ThreatDetails.m_EndThreat );
 }
 
-void Threat3CaseBTest::GetPieces7()
+TEST(Threat3CaseBTest,GetPieces7)
 {
 	//  *xx..xo
 	//                       1 1 1 1 1
@@ -888,40 +910,40 @@ void Threat3CaseBTest::GetPieces7()
 
 	// 3. Make verification.
 	// a. Check '*':
-	CPPUNIT_ASSERT( elAsterix1 == threatLocation.m_ThreatDetails.m_Asterixes[0] );
-	CPPUNIT_ASSERT( elAsterix2 == threatLocation.m_ThreatDetails.m_Asterixes[1] );
+	CHECK( elAsterix1 == threatLocation.m_ThreatDetails.m_Asterixes[0] );
+	CHECK( elAsterix2 == threatLocation.m_ThreatDetails.m_Asterixes[1] );
 
 	// b. Check 'x':
-	CPPUNIT_ASSERT( elX1 == threatLocation.m_ThreatDetails.m_MyPawns[0] );
-	CPPUNIT_ASSERT( elX2 == threatLocation.m_ThreatDetails.m_MyPawns[1] );
-	CPPUNIT_ASSERT( elX3 == threatLocation.m_ThreatDetails.m_MyPawns[2] );
+	CHECK( elX1 == threatLocation.m_ThreatDetails.m_MyPawns[0] );
+	CHECK( elX2 == threatLocation.m_ThreatDetails.m_MyPawns[1] );
+	CHECK( elX3 == threatLocation.m_ThreatDetails.m_MyPawns[2] );
 
 	// c. Check '.':
-	CPPUNIT_ASSERT( elGap1 == threatLocation.m_ThreatDetails.m_Gaps[0] );
-	CPPUNIT_ASSERT( elGap2 == threatLocation.m_ThreatDetails.m_Gaps[1] );
-	CPPUNIT_ASSERT( elGap3 == threatLocation.m_ThreatDetails.m_Gaps[2] );
-	CPPUNIT_ASSERT( elGap4 == threatLocation.m_ThreatDetails.m_Gaps[3] );
-	CPPUNIT_ASSERT( elGap5 == threatLocation.m_ThreatDetails.m_Gaps[4] );
-	CPPUNIT_ASSERT( elGap6 == threatLocation.m_ThreatDetails.m_Gaps[5] );
-	CPPUNIT_ASSERT( elGap7 == threatLocation.m_ThreatDetails.m_Gaps[6] );
-	CPPUNIT_ASSERT( elGap8 == threatLocation.m_ThreatDetails.m_Gaps[7] );
-	CPPUNIT_ASSERT( elGap9 == threatLocation.m_ThreatDetails.m_Gaps[8] );
-	CPPUNIT_ASSERT( elGap10 == threatLocation.m_ThreatDetails.m_Gaps[9] );
+	CHECK( elGap1 == threatLocation.m_ThreatDetails.m_Gaps[0] );
+	CHECK( elGap2 == threatLocation.m_ThreatDetails.m_Gaps[1] );
+	CHECK( elGap3 == threatLocation.m_ThreatDetails.m_Gaps[2] );
+	CHECK( elGap4 == threatLocation.m_ThreatDetails.m_Gaps[3] );
+	CHECK( elGap5 == threatLocation.m_ThreatDetails.m_Gaps[4] );
+	CHECK( elGap6 == threatLocation.m_ThreatDetails.m_Gaps[5] );
+	CHECK( elGap7 == threatLocation.m_ThreatDetails.m_Gaps[6] );
+	CHECK( elGap8 == threatLocation.m_ThreatDetails.m_Gaps[7] );
+	CHECK( elGap9 == threatLocation.m_ThreatDetails.m_Gaps[8] );
+	CHECK( elGap10 == threatLocation.m_ThreatDetails.m_Gaps[9] );
 
 	// d. Extend gaps:
-	CPPUNIT_ASSERT( elExtendGap1 == threatLocation.m_ThreatDetails.m_ExtGaps[0] );
-	CPPUNIT_ASSERT( elExtendGap2 == threatLocation.m_ThreatDetails.m_ExtGaps[1] );
+	CHECK( elExtendGap1 == threatLocation.m_ThreatDetails.m_ExtGaps[0] );
+	CHECK( elExtendGap2 == threatLocation.m_ThreatDetails.m_ExtGaps[1] );
 
 	// d. Check 'o':
-	CPPUNIT_ASSERT( elO1 == threatLocation.m_ThreatDetails.m_EnemyPawns[0] );
-	CPPUNIT_ASSERT( ThreatFinder::ThreatLocation::XY_OUT_OF_BOARD == threatLocation.m_ThreatDetails.m_EnemyPawns[1] );
+	CHECK( elO1 == threatLocation.m_ThreatDetails.m_EnemyPawns[0] );
+	CHECK( ThreatFinder::ThreatLocation::XY_OUT_OF_BOARD == threatLocation.m_ThreatDetails.m_EnemyPawns[1] );
 
 	// e. Check begin & end:
-	CPPUNIT_ASSERT( beginning == threatLocation.m_ThreatDetails.m_BeginningThreat );
-	CPPUNIT_ASSERT( end == threatLocation.m_ThreatDetails.m_EndThreat );
+	CHECK( beginning == threatLocation.m_ThreatDetails.m_BeginningThreat );
+	CHECK( end == threatLocation.m_ThreatDetails.m_EndThreat );
 }
 
-void Threat3CaseBTest::GetPieces8()
+TEST(Threat3CaseBTest,GetPieces8)
 {
 	//  *xx..xo
 	//                       1 1 1 1 1
@@ -974,36 +996,36 @@ void Threat3CaseBTest::GetPieces8()
 
 	// 3. Make verification.
 	// a. Check '*':
-	CPPUNIT_ASSERT( elAsterix1 == threatLocation.m_ThreatDetails.m_Asterixes[0] );
-	CPPUNIT_ASSERT( elAsterix2 == threatLocation.m_ThreatDetails.m_Asterixes[1] );
+	CHECK( elAsterix1 == threatLocation.m_ThreatDetails.m_Asterixes[0] );
+	CHECK( elAsterix2 == threatLocation.m_ThreatDetails.m_Asterixes[1] );
 
 	// b. Check 'x':
-	CPPUNIT_ASSERT( elX1 == threatLocation.m_ThreatDetails.m_MyPawns[0] );
-	CPPUNIT_ASSERT( elX2 == threatLocation.m_ThreatDetails.m_MyPawns[1] );
-	CPPUNIT_ASSERT( elX3 == threatLocation.m_ThreatDetails.m_MyPawns[2] );
+	CHECK( elX1 == threatLocation.m_ThreatDetails.m_MyPawns[0] );
+	CHECK( elX2 == threatLocation.m_ThreatDetails.m_MyPawns[1] );
+	CHECK( elX3 == threatLocation.m_ThreatDetails.m_MyPawns[2] );
 
 	// c. Check '.':
-	CPPUNIT_ASSERT( elGap1 == threatLocation.m_ThreatDetails.m_Gaps[0] );
-	CPPUNIT_ASSERT( elGap2 == threatLocation.m_ThreatDetails.m_Gaps[1] );
-	CPPUNIT_ASSERT( elGap3 == threatLocation.m_ThreatDetails.m_Gaps[2] );
-	CPPUNIT_ASSERT( elGap4 == threatLocation.m_ThreatDetails.m_Gaps[3] );
-	CPPUNIT_ASSERT( elGap5 == threatLocation.m_ThreatDetails.m_Gaps[4] );
-	CPPUNIT_ASSERT( elGap6 == threatLocation.m_ThreatDetails.m_Gaps[5] );
-	CPPUNIT_ASSERT( elGap7 == threatLocation.m_ThreatDetails.m_Gaps[6] );
-	CPPUNIT_ASSERT( elGap8 == threatLocation.m_ThreatDetails.m_Gaps[7] );
-	CPPUNIT_ASSERT( elGap9 == threatLocation.m_ThreatDetails.m_Gaps[8] );
-	CPPUNIT_ASSERT( elGap10 == threatLocation.m_ThreatDetails.m_Gaps[9] );
+	CHECK( elGap1 == threatLocation.m_ThreatDetails.m_Gaps[0] );
+	CHECK( elGap2 == threatLocation.m_ThreatDetails.m_Gaps[1] );
+	CHECK( elGap3 == threatLocation.m_ThreatDetails.m_Gaps[2] );
+	CHECK( elGap4 == threatLocation.m_ThreatDetails.m_Gaps[3] );
+	CHECK( elGap5 == threatLocation.m_ThreatDetails.m_Gaps[4] );
+	CHECK( elGap6 == threatLocation.m_ThreatDetails.m_Gaps[5] );
+	CHECK( elGap7 == threatLocation.m_ThreatDetails.m_Gaps[6] );
+	CHECK( elGap8 == threatLocation.m_ThreatDetails.m_Gaps[7] );
+	CHECK( elGap9 == threatLocation.m_ThreatDetails.m_Gaps[8] );
+	CHECK( elGap10 == threatLocation.m_ThreatDetails.m_Gaps[9] );
 
 	// d. Extend gaps:
-	CPPUNIT_ASSERT( elExtendGap1 == threatLocation.m_ThreatDetails.m_ExtGaps[0] );
-	CPPUNIT_ASSERT( elExtendGap2 == threatLocation.m_ThreatDetails.m_ExtGaps[1] );
+	CHECK( elExtendGap1 == threatLocation.m_ThreatDetails.m_ExtGaps[0] );
+	CHECK( elExtendGap2 == threatLocation.m_ThreatDetails.m_ExtGaps[1] );
 
 	// d. Check 'o':
-	CPPUNIT_ASSERT( elO1 == threatLocation.m_ThreatDetails.m_EnemyPawns[0] );
-	CPPUNIT_ASSERT( ThreatFinder::ThreatLocation::XY_OUT_OF_BOARD == threatLocation.m_ThreatDetails.m_EnemyPawns[1] );
+	CHECK( elO1 == threatLocation.m_ThreatDetails.m_EnemyPawns[0] );
+	CHECK( ThreatFinder::ThreatLocation::XY_OUT_OF_BOARD == threatLocation.m_ThreatDetails.m_EnemyPawns[1] );
 
 	// e. Check begin & end:
-	CPPUNIT_ASSERT( beginning == threatLocation.m_ThreatDetails.m_BeginningThreat );
-	CPPUNIT_ASSERT( end == threatLocation.m_ThreatDetails.m_EndThreat );
+	CHECK( beginning == threatLocation.m_ThreatDetails.m_BeginningThreat );
+	CHECK( end == threatLocation.m_ThreatDetails.m_EndThreat );
 }
 

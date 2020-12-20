@@ -39,13 +39,10 @@
 // FORWARD REFERENCES
 #define NUMELEM(x) (sizeof(x) / sizeof(x[0]))
 #define CLR_BIT(p, n) ((p) &= ~((1) << (n)))
-class ThreatWinnerTest;
-class Threat4CaseBTest;
-class Threat3CaseATest;
-class Threat3CaseBTest;
-class Threat2CaseBTest;
-class Threat2CaseATest;
-class Threat2CaseCTest;
+
+class TEST_Threat2CaseCTest_StandarizePOVTest1_Test;
+class TEST_Threat2CaseATest_StandarizePOVTest1_Test;
+class TEST_Threat2CaseATest_StandarizePOVTest2_Test;
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 /// CLASS NAME: ThreatFinder.
@@ -420,13 +417,9 @@ class ThreatFinder
     /// Points if the threat-pattern was found.
     bool m_IsThreatPatternFound;
 
-    friend ThreatWinnerTest;
-    friend Threat4CaseBTest;
-    friend Threat3CaseATest;
-    friend Threat3CaseBTest;
-    friend Threat2CaseBTest;
-    friend Threat2CaseATest;
-    friend Threat2CaseCTest;
+    friend TEST_Threat2CaseCTest_StandarizePOVTest1_Test;
+    friend TEST_Threat2CaseATest_StandarizePOVTest1_Test;
+    friend TEST_Threat2CaseATest_StandarizePOVTest2_Test;
 };
 #endif /* THREAT_FINDER_HPP_ */
 

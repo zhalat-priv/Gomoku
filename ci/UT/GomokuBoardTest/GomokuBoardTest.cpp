@@ -4,8 +4,8 @@
 #include "CppUTest/TestMemoryAllocator.h"
 #include "CppUTest/MemoryLeakDetector.h"
 
-#include <assert.h>     			// for assert.
-#include "Board.hpp"				// for Board definitions.
+#include <assert.h>
+#include "Board.hpp"
 #include "GomokuBoard.hpp"
 
 TEST_GROUP(GomokuBoardTest)
@@ -19,7 +19,7 @@ TEST_GROUP(GomokuBoardTest)
     {
 		delete m_GomokuBoard;
     }
-	
+
 	GomokuBoard* m_GomokuBoard;
 };
 
