@@ -1,14 +1,36 @@
-/*
- * Threat4CaseCTest.hpp
- *
- *  Created on: Mar 06, 2016
- *      Author: Zbigniew Halat
- */
-#include <assert.h>     			// for assert.
-#include "Board.hpp"				// for Board definitions.
-#include "Threat4CaseCTest.hpp"	// for header class definition.
+#include "Board.hpp"                // for Board definitions.
+#include "Threat4CaseC.hpp"
+#include "GomokuBoard.hpp"
+#include <assert.h>                 // for assert.
+//----------------------------------------------------------
+#include "CppUTest/TestHarness.h"
+#include "CppUTest/SimpleString.h"
+#include "CppUTest/PlatformSpecificFunctions.h"
+#include "CppUTest/TestMemoryAllocator.h"
+#include "CppUTest/MemoryLeakDetector.h"
 
-void Threat4CaseCTest::FindPatternOnHorizontalTrendTest1()
+TEST_GROUP(Threat4CaseCTest)
+{
+    void setup()
+    {
+        m_pGomokuBoard = new GomokuBoard( 15 );
+
+		m_pThreatFinder = new Threat4CaseC();
+		m_pThreatFinder->SetBoard( m_pGomokuBoard );
+    }
+
+    void teardown()
+    {
+    	delete m_pGomokuBoard;
+    	delete m_pThreatFinder;
+    }
+
+public:
+	GomokuBoard* m_pGomokuBoard;
+	ThreatFinder* m_pThreatFinder;
+};
+
+TEST(Threat4CaseCTest,FindPatternOnHorizontalTrendTest1)
 {
 	// step by step build OXX.XXO and verify if pattern is found.
 
@@ -48,7 +70,7 @@ void Threat4CaseCTest::FindPatternOnHorizontalTrendTest1()
 	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 2, 6 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 }
 
-void Threat4CaseCTest::FindPatternOnHorizontalTrendTest2()
+TEST(Threat4CaseCTest,FindPatternOnHorizontalTrendTest2)
 {
 	// Check each pattern variations:
 	// OXXXX.O
@@ -107,7 +129,8 @@ void Threat4CaseCTest::FindPatternOnHorizontalTrendTest2()
 	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 4, 5 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 }
 
-void Threat4CaseCTest::FindPatternAbuttedToBoardFrameTest1()
+
+TEST(Threat4CaseCTest,FindPatternAbuttedToBoardFrameTest1)
 {
 	//(frame)XXXX(frame)
 	m_pGomokuBoard->PutMove( Board::PositionXY( 3, 0 ), Board::PLAYER_A );
@@ -141,7 +164,7 @@ void Threat4CaseCTest::FindPatternAbuttedToBoardFrameTest1()
 	CPPUNIT_ASSERT_EQUAL( true, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 11, 13 ), ThreatFinder::RISING, Board::PLAYER_A ) );
 }
 
-void Threat4CaseCTest::FindPatternAbuttedToBoardFrameTest2()
+TEST(Threat4CaseCTest,FindPatternAbuttedToBoardFrameTest2)
 {
 	//                       1 1 1 1 1
 	//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
@@ -218,7 +241,7 @@ void Threat4CaseCTest::FindPatternAbuttedToBoardFrameTest2()
 	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 12, 5 ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 }
 
-void Threat4CaseCTest::FindPatternAbuttedToBoardFrameTest3()
+TEST(Threat4CaseCTest,FindPatternAbuttedToBoardFrameTest3)
 {
 	//                       1 1 1 1 1
 	//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
@@ -251,7 +274,7 @@ void Threat4CaseCTest::FindPatternAbuttedToBoardFrameTest3()
 	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 14, 14  ), ThreatFinder::FALLING, Board::PLAYER_B ) );
 }
 
-void Threat4CaseCTest::CheckingAgainstSixInRowTest1()
+TEST(Threat4CaseCTest,CheckingAgainstSixInRowTest1)
 {
 	// OXXX.XXO
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 1 ), Board::PLAYER_B );
@@ -269,7 +292,7 @@ void Threat4CaseCTest::CheckingAgainstSixInRowTest1()
 	CPPUNIT_ASSERT_EQUAL( false, m_pThreatFinder->FindThreatPattern( Board::PositionXY( 1, 7  ), ThreatFinder::HORIZONTAL, Board::PLAYER_A ) );
 }
 
-void Threat4CaseCTest::GetPieces1()
+TEST(Threat4CaseCTest,GetPieces1)
 {
 	// oxxxx.o
 	//                       1 1 1 1 1
@@ -355,7 +378,7 @@ void Threat4CaseCTest::GetPieces1()
 	CPPUNIT_ASSERT( end == threatLocation.m_ThreatDetails.m_EndThreat );
 }
 
-void Threat4CaseCTest::GetPieces2()
+TEST(Threat4CaseCTest,GetPieces2)
 {
 	// |.xxx.o
 	//                       1 1 1 1 1
@@ -440,7 +463,7 @@ void Threat4CaseCTest::GetPieces2()
 	CPPUNIT_ASSERT( end == threatLocation.m_ThreatDetails.m_EndThreat );
 }
 
-void Threat4CaseCTest::GetPieces3()
+TEST(Threat4CaseCTest,GetPieces3)
 {
 	// oxx.xx|
 	//                       1 1 1 1 1
@@ -526,7 +549,7 @@ void Threat4CaseCTest::GetPieces3()
 	CPPUNIT_ASSERT( end == threatLocation.m_ThreatDetails.m_EndThreat );
 }
 
-void Threat4CaseCTest::GetPieces4()
+TEST(Threat4CaseCTest,GetPieces4)
 {
 	// ox.xxxo
 	//                       1 1 1 1 1
@@ -612,7 +635,7 @@ void Threat4CaseCTest::GetPieces4()
 	CPPUNIT_ASSERT( end == threatLocation.m_ThreatDetails.m_EndThreat );
 }
 
-void Threat4CaseCTest::GetPieces5()
+TEST(Threat4CaseCTest,GetPieces5)
 {
 	// |xxxx.|
 	//                       1 1 1 1 1
@@ -703,7 +726,7 @@ void Threat4CaseCTest::GetPieces5()
 	CPPUNIT_ASSERT( end == threatLocation.m_ThreatDetails.m_EndThreat );
 }
 
-void Threat4CaseCTest::GetPieces6()
+TEST(Threat4CaseCTest,GetPieces6)
 {
 	// |xx.xx|
 	//                       1 1 1 1 1

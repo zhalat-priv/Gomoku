@@ -29,9 +29,7 @@ include_directories( ${${PROJECT_NAME_UPPERCASE}_INCLUDE} )
 add_executable( ci 
 	# Main file
     "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
-    # Unit under test
-    "${GOMOKUGAME_SRC}/GomokuBoard.cpp"
-	"${GOMOKUGAME_SRC}/BoardScore.cpp"
+
     # Unit test
     "${UT_GOMOKUGAME_SRC}/GomokuBoardTest/GomokuBoardTest.cpp"
     "${UT_GOMOKUGAME_SRC}/VectorUniqueTest/VectorUniqueTest.cpp"
@@ -45,8 +43,17 @@ add_executable( ci
 	"${UT_GOMOKUGAME_SRC}/ThreatsTests/Threat3CaseATest/Threat3CaseATest.cpp"
 	"${UT_GOMOKUGAME_SRC}/ThreatsTests/Threat3CaseBTest/Threat3CaseBTest.cpp"
 	"${UT_GOMOKUGAME_SRC}/ThreatsTests/Threat3CaseCTest/Threat3CaseCTest.cpp"
+	"${UT_GOMOKUGAME_SRC}/ThreatsTests/Threat4CaseAATest/Threat4CaseAATest.cpp"
+	"${UT_GOMOKUGAME_SRC}/ThreatsTests/Threat4CaseATest/Threat4CaseATest.cpp"
+	"${UT_GOMOKUGAME_SRC}/ThreatsTests/Threat4CaseBTest/Threat4CaseBTest.cpp"
+	"${UT_GOMOKUGAME_SRC}/ThreatsTests/ThreatWinnerTest/ThreatWinnerTest.cpp"
+	
+	"${UT_GOMOKUGAME_SRC}/SpotterTest/SpotterTest.cpp"
+	
 	#"${UT_GOMOKUGAME_SRC}/BoardScoreTest/BoardScoreTest.cpp"
-    # Support classes
+    # Unit under test
+    "${GOMOKUGAME_SRC}/GomokuBoard.cpp"
+	"${GOMOKUGAME_SRC}/BoardScore.cpp"
     "${GOMOKUGAME_SRC}/DataContainers/Graph.cpp"
     "${GOMOKUGAME_SRC}/DataContainers/VectorLight.cpp"
     "${GOMOKUGAME_SRC}/DataContainers/VectorLightIterator.cpp"
