@@ -10,7 +10,8 @@ add_definitions(
 	-DBOARDSCORE_TEST
 )
 
-add_definitions( -std=gnu++14 )
+add_definitions( -std=gnu++17 )
+#set(CMAKE_CXX_STANDARD 17)
 
 SET( CMAKE_BUILD_TYPE Debug )
 
@@ -47,11 +48,10 @@ add_executable( ci
 	"${UT_GOMOKUGAME_SRC}/ThreatsTests/Threat4CaseATest/Threat4CaseATest.cpp"
 	"${UT_GOMOKUGAME_SRC}/ThreatsTests/Threat4CaseBTest/Threat4CaseBTest.cpp"
 	"${UT_GOMOKUGAME_SRC}/ThreatsTests/ThreatWinnerTest/ThreatWinnerTest.cpp"
-	
 	"${UT_GOMOKUGAME_SRC}/SpotterTest/SpotterTest.cpp"
 	
 	#"${UT_GOMOKUGAME_SRC}/BoardScoreTest/BoardScoreTest.cpp"
-    # Unit under test
+#    # Unit under test
     "${GOMOKUGAME_SRC}/GomokuBoard.cpp"
 	"${GOMOKUGAME_SRC}/BoardScore.cpp"
     "${GOMOKUGAME_SRC}/DataContainers/Graph.cpp"

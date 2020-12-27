@@ -1,37 +1,8 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-/// @file ThreatsBloodRelation.hpp
-///
-/// ThreatsBloodRelation class declaration.
-///
-/// @par Full Description.
-/// Preserves some relations between threats.
-/// Examplary: Threat4CaseA, Threat4CaseB, Threat4CaseC are deadly threats called joker threat.
-///
-/// @if REVISION_HISTORY_INCLUDED
-/// @par Edit History
-/// - zhalat 31-Jul-2016 Initial revision.
-/// @endif
-///
-/// @ingroup.
-///
-/// @par non-Copyright (c) 2016 HalSoft
-///////////////////////////////////////////////////////////////////////////////////////////
+#pragma once
 
-#if !defined(THREAT_BLOOD_RELATION_A_HPP_)
-#define THREAT_BLOOD_RELATION_A_HPP_
-
-// SYSTEM INCLUDES
-#include <assert.h>  // For assert.
-
-// C PROJECT INCLUDES
-// <none>
-
-// C++ PROJECT INCLUDES
+#include <assert.h>
 #include "SingleList.hpp"  // For SingleList definition.
 #include "ThreatFinder.hpp"
-
-// FORWARD REFERENCES
-// <none>
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 /// CLASS NAME: ThreatsBloodRelation.
@@ -41,19 +12,20 @@
 /// @par Full Description.
 /// Define some relations between each threat.
 ///////////////////////////////////////////////////////////////////////////////////////////
-class ThreatsBloodRelation
+class ThreatsBloodRelation final
 {
-   public:
-    ///////////////////////////////////////////////////////////////////////
-    // METHOD NAME: ThreatsBloodRelation::Init
-    //
-    /// Initialize the content.
-    ///
-    /// @par Full Description
-    /// Initialize the content.
-    ///////////////////////////////////////////////////////////////////////
-    static void Init();
-	static void DeInit();
+public:
+    static constexpr uint32_t FOUR_LIST_SIZE             = 4;
+    static constexpr uint32_t THREE_LIST_SIZE            = 4;
+    static constexpr uint32_t TWO_LIST_SIZE              = 4;
+    static constexpr uint32_t JOKER_LIST_SIZE            = 3;
+    static constexpr uint32_t ACE_LIST_SIZE              = 2;
+    static constexpr uint32_t MANY_GAPS_SIZE             = 3;
+    static constexpr uint32_t EXTENDED_NEIGHBORHOOD_SIZE = 4;
+    static constexpr uint32_t DISMISSAL_SIZE_X           = 13;
+    static constexpr uint32_t DISMISSAL_SIZE_Y           = 8;
+    static constexpr uint32_t PROMOTION_SIZE_X           = 13;
+    static constexpr uint32_t PROMOTION_SIZE_Y           = 8;
 
     static bool IsOnFourList(const ThreatFinder::KindOfThreats);
     static bool IsOnThreeList(const ThreatFinder::KindOfThreats);
@@ -63,65 +35,132 @@ class ThreatsBloodRelation
     static bool IsOnManyGapsList(const ThreatFinder::KindOfThreats);
     static bool IsOnExtendedNeighborhoodList(const ThreatFinder::KindOfThreats kindOfThreat);
 
-    struct ThreatChanging
+    // Groups related to number of pawns in a row.
+    static constexpr ThreatFinder::KindOfThreats FOUR_LIST[]=
     {
-        ThreatFinder::KindOfThreats m_KindOfThreat;
-        SingleList<ThreatFinder::KindOfThreats> m_Dependency;
-
-        // Default constructor.
-        ThreatChanging() : m_KindOfThreat(ThreatFinder::THREAT_NONE), m_Dependency() {}
-
-        // Constructor.
-        ThreatChanging(ThreatFinder::KindOfThreats kindOfThreat) : m_KindOfThreat(kindOfThreat), m_Dependency() {}
-
-        // Copy constructor.
-        ThreatChanging(const ThreatChanging&)
-        {
-#warning "This constructor shall be removed: ThreatChanging( const ThreatChanging& )=delete."
-#warning \
-    "Copy constructor required by compiler to be able init DISMISSAL/PROMOTION. This is gcc bug: see GCC Bugzilla  Bug 63707"
-
-            // Be sure nobody use it.
-            assert(false);
-        }
+		ThreatFinder::THREAT_4_CASE_A,
+		ThreatFinder::THREAT_4_CASE_AA,
+		ThreatFinder::THREAT_4_CASE_B,
+		ThreatFinder::THREAT_4_CASE_C
     };
 
-    // Groups related to number of pawns in a row.
-    static const ThreatFinder::KindOfThreats FOUR_LIST[];
-    static const ThreatFinder::KindOfThreats THREE_LIST[];
-    static const ThreatFinder::KindOfThreats TWO_LIST[];
+    static constexpr ThreatFinder::KindOfThreats THREE_LIST[]=
+    {
+		ThreatFinder::THREAT_3_CASE_A,
+		ThreatFinder::THREAT_3_CASE_AA,
+		ThreatFinder::THREAT_3_CASE_B,
+		ThreatFinder::THREAT_3_CASE_C
+    };
+
+    static constexpr ThreatFinder::KindOfThreats TWO_LIST[]=
+    {
+		ThreatFinder::THREAT_2_CASE_A,
+		ThreatFinder::THREAT_2_CASE_AA,
+		ThreatFinder::THREAT_2_CASE_B,
+		ThreatFinder::THREAT_2_CASE_C
+    };
 
     // Groups related to threat danger.
-    static const ThreatFinder::KindOfThreats JOKER_LIST[];
-    static const ThreatFinder::KindOfThreats ACE_LIST[];
+    static constexpr ThreatFinder::KindOfThreats JOKER_LIST[] =
+    {
+    	ThreatFinder::THREAT_4_CASE_A,
+		ThreatFinder::THREAT_4_CASE_B,
+		ThreatFinder::THREAT_4_CASE_C
+    };
+
+    static constexpr ThreatFinder::KindOfThreats ACE_LIST[] =
+    {
+		ThreatFinder::THREAT_4_CASE_A,
+		ThreatFinder::THREAT_4_CASE_C
+    };
 
     // Groups that have more than one consecutive gaps.
-    static const ThreatFinder::KindOfThreats MANY_GAPS[];
+    static constexpr ThreatFinder::KindOfThreats MANY_GAPS[]=
+    {
+		ThreatFinder::THREAT_3_CASE_A,
+		ThreatFinder::THREAT_3_CASE_B,
+		ThreatFinder::THREAT_2_CASE_A
+    };
 
     // Groups that need to have extended neighborhoods.
-    static const ThreatFinder::KindOfThreats EXTENDED_NEIGHBORHOOD[];
+    static constexpr ThreatFinder::KindOfThreats EXTENDED_NEIGHBORHOOD[]=
+    {
+		ThreatFinder::THREAT_3_CASE_A,
+		ThreatFinder::THREAT_3_CASE_B,
+		ThreatFinder::THREAT_3_CASE_C,
+		ThreatFinder::THREAT_2_CASE_A
+    };
 
     // Dismissal Group.
-    static ThreatChanging DISMISSAL[];
+    static constexpr ThreatFinder::KindOfThreats DISMISSAL[DISMISSAL_SIZE_X][DISMISSAL_SIZE_Y] =
+    {
+		// here, only initialize threat but not its dependencies.
+		// Keep the order as it is for Score::m_ThreatScore.
+		//THREAT_WINNER
+		{ThreatFinder::THREAT_NONE},
+		//THREAT_4_CASE_A
+		{ThreatFinder::THREAT_4_CASE_B, ThreatFinder::THREAT_NONE},
+		//THREAT_4_CASE_AA
+		{ThreatFinder::THREAT_4_CASE_B,ThreatFinder::THREAT_3_CASE_B,ThreatFinder::THREAT_2_CASE_B,ThreatFinder::THREAT_NONE},
+		//THREAT_4_CASE_B
+		{ThreatFinder::THREAT_4_CASE_C,ThreatFinder::THREAT_3_CASE_B,ThreatFinder::THREAT_2_CASE_B,ThreatFinder::THREAT_NONE},
+		//THREAT_4_CASE_C
+		{ThreatFinder::THREAT_NONE},
+		//THREAT_3_CASE_A
+		{ThreatFinder::THREAT_3_CASE_A,ThreatFinder::THREAT_3_CASE_B,ThreatFinder::THREAT_3_CASE_C,ThreatFinder::THREAT_2_CASE_B,ThreatFinder::THREAT_NONE},
+		//THREAT_3_CASE_AA
+		{ThreatFinder::THREAT_3_CASE_B,ThreatFinder::THREAT_2_CASE_A,ThreatFinder::THREAT_2_CASE_B,ThreatFinder::THREAT_NONE},
+		//THREAT_3_CASE_B
+		{ThreatFinder::THREAT_3_CASE_C,ThreatFinder::THREAT_2_CASE_A,ThreatFinder::THREAT_2_CASE_B,ThreatFinder::THREAT_NONE},
+		//THREAT_3_CASE_C
+		{ThreatFinder::THREAT_NONE},
+		//THREAT_2_CASE_A
+		{ThreatFinder::THREAT_2_CASE_A,ThreatFinder::THREAT_2_CASE_B,ThreatFinder::THREAT_2_CASE_C,ThreatFinder::THREAT_NONE},
+		//THREAT_2_CASE_AA
+		{ThreatFinder::THREAT_2_CASE_B,ThreatFinder::THREAT_NONE},
+		//THREAT_2_CASE_B
+		{ThreatFinder::THREAT_2_CASE_C,ThreatFinder::THREAT_NONE},
+		//THREAT_2_CASE_C
+		{ThreatFinder::THREAT_NONE}
+    };
 
     // Promotion Group.
-    static ThreatChanging PROMOTION[];
+    static constexpr ThreatFinder::KindOfThreats PROMOTION[PROMOTION_SIZE_X][PROMOTION_SIZE_Y] =
+    {
+		// here, only initialize threat but not its dependencies.
+		// Keep the order as it is for Score::m_ThreatScore.
+		//THREAT_WINNER
+		{ThreatFinder::THREAT_NONE},
+		//THREAT_4_CASE_A
+		{ThreatFinder::THREAT_WINNER, ThreatFinder::THREAT_NONE},
+		//THREAT_4_CASE_AA
+		{ThreatFinder::THREAT_WINNER, ThreatFinder::THREAT_NONE},
+		//THREAT_4_CASE_B
+		{ThreatFinder::THREAT_WINNER, ThreatFinder::THREAT_NONE},
+		//THREAT_4_CASE_C
+		{ThreatFinder::THREAT_WINNER, ThreatFinder::THREAT_NONE},
+		//THREAT_3_CASE_A
+		{ThreatFinder::THREAT_4_CASE_A,ThreatFinder::THREAT_4_CASE_AA, ThreatFinder::THREAT_4_CASE_B,ThreatFinder::THREAT_3_CASE_A, ThreatFinder::THREAT_NONE},
+		//THREAT_3_CASE_AA
+		{ThreatFinder::THREAT_4_CASE_AA, ThreatFinder::THREAT_3_CASE_A, ThreatFinder::THREAT_2_CASE_A, ThreatFinder::THREAT_NONE},
+		//THREAT_3_CASE_B
+		{ThreatFinder::THREAT_4_CASE_B,ThreatFinder::THREAT_3_CASE_A, ThreatFinder::THREAT_NONE},
+		//THREAT_3_CASE_C
+		{ThreatFinder::THREAT_4_CASE_C, ThreatFinder::THREAT_NONE},
+		//THREAT_2_CASE_A
+		{ThreatFinder::THREAT_3_CASE_A,ThreatFinder::THREAT_3_CASE_AA,ThreatFinder::THREAT_3_CASE_B,ThreatFinder::THREAT_2_CASE_A,ThreatFinder::THREAT_NONE},
+		//THREAT_2_CASE_AA
+		{ThreatFinder::THREAT_3_CASE_AA, ThreatFinder::THREAT_2_CASE_A, ThreatFinder::THREAT_2_CASE_B, ThreatFinder::THREAT_NONE},
+		//THREAT_2_CASE_B
+		{ThreatFinder::THREAT_3_CASE_B,ThreatFinder::THREAT_3_CASE_C, ThreatFinder::THREAT_2_CASE_A,ThreatFinder::THREAT_NONE},
+		//THREAT_2_CASE_C
+		{ThreatFinder::THREAT_3_CASE_C, ThreatFinder::THREAT_NONE},
 
-    static const uint32_t FOUR_LIST_SIZE             = 4;
-    static const uint32_t THREE_LIST_SIZE            = 4;
-    static const uint32_t TWO_LIST_SIZE              = 4;
-    static const uint32_t JOKER_LIST_SIZE            = 3;
-    static const uint32_t ACE_LIST_SIZE              = 2;
-    static const uint32_t MANY_GAPS_SIZE             = 3;
-    static const uint32_t EXTENDED_NEIGHBORHOOD_SIZE = 4;
-    static const uint32_t DISMISSAL_SIZE             = 13;
-    static const uint32_t PROMOTION_SIZE             = 13;
+    };
 
-   private:
-
-    static bool m_isFirstCall;
+    ThreatsBloodRelation()=default;
+    ~ThreatsBloodRelation()=default;
 };
-#endif /* THREAT_BLOOD_RELATION_A_HPP_ */
 
 /***************************************************************************
  *   Copyright (C) 2018 by Zbigniew Halat                                  *

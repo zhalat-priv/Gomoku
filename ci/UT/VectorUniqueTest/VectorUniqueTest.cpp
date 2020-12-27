@@ -1,11 +1,11 @@
+#include "VectorUnique.hpp"
+#include "Board.hpp"
+//-------------------------------
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/SimpleString.h"
 #include "CppUTest/PlatformSpecificFunctions.h"
 #include "CppUTest/TestMemoryAllocator.h"
 #include "CppUTest/MemoryLeakDetector.h"
-//-------------------------------
-#include "VectorUnique.hpp"
-#include "Board.hpp"
 
 
 TEST_GROUP(VectorUniqueTest)

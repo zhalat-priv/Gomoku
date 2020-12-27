@@ -34,17 +34,12 @@
 // Constructor.
 Spotter::Spotter(BoardScore& rBoardScore) : m_rBoardScore(rBoardScore), m_RegionToInvestigate()
 {
-    ThreatsBloodRelation::Init();
     assert(m_RegionToInvestigate.IsEmpty());
 }
 
 Spotter::~Spotter()
 {
-	// this seems to be issue by desing.
-	// Spotter should not:
-	// - call ThreatsBloodRelation::DeInit() not init. Maybe it should get it via parameters?s
 
-	//ThreatsBloodRelation::DeInit();
 }
 
 void Spotter::AddToExecute(const RegionToInvestigate regionToInvestigate)
@@ -69,26 +64,21 @@ void Spotter::Execute(const Board::PositionXY xy, const bool isOpponentMove, con
         const uint32_t threatBloodAssociationIndex    = static_cast<uint32_t>(regionToInvestigate.m_ThreatKind);
 
         // Get handle to dismissal/promotion threat container.
-        ThreatsBloodRelation::ThreatChanging* pThreatChanging;
+        const ThreatFinder::KindOfThreats* pThreatChanging{};
         if(isOpponentMove)
         {
             // Opponent's move can mitigate my threats.
-            pThreatChanging = &ThreatsBloodRelation::DISMISSAL[threatBloodAssociationIndex];
+        	pThreatChanging = &ThreatsBloodRelation::DISMISSAL[threatBloodAssociationIndex][0];
         }
         else
         {
             // My move can boost my threats.
-            pThreatChanging = &ThreatsBloodRelation::PROMOTION[threatBloodAssociationIndex];
+        	pThreatChanging = &ThreatsBloodRelation::PROMOTION[threatBloodAssociationIndex][0];
         }
 
-        // Run blood relation
-        IteratorIf<ThreatFinder::KindOfThreats>* const pIteratorIfBloodRelation =
-            pThreatChanging->m_Dependency.GetIterator();
-        assert(pIteratorIfBloodRelation);
-
-        for(; pIteratorIfBloodRelation->HasNext();)
+        for(; *pThreatChanging!=ThreatFinder::THREAT_NONE; pThreatChanging++)
         {
-            const uint32_t threatIndex = static_cast<uint32_t>(pIteratorIfBloodRelation->GetNext());
+            const uint32_t threatIndex = static_cast<uint32_t>(*pThreatChanging);
             const bool isFound         = Score::m_ThreatScore[threatIndex].m_pThreat->FindThreatPattern(
                 regionToInvestigate.m_Xy, regionToInvestigate.m_Trend, m_rBoardScore.GetPlayer());
 
@@ -104,8 +94,6 @@ void Spotter::Execute(const Board::PositionXY xy, const bool isOpponentMove, con
                 break;
             }
         }
-
-        pIteratorIfBloodRelation->SetToBase();
     }
 
     // Searching region done.
