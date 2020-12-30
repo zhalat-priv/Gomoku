@@ -1,37 +1,8 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-/// @file OpenBook.hpp
-///
-///  Simple opening book.
-///
-/// @par Full Description.
-/// Guideline for up to three first move.
-/// see http://www.vcpr.cz/files/download/renjuforbeginners.pdf
-///
-/// @if REVISION_HISTORY_INCLUDED
-/// @par Edit History
-/// - zhalat 28-Dec-2016 Initial revision.
-/// @endif
-///
-/// @ingroup.
-///
-/// @par non-Copyright (c) 2016 HalSoft
-///////////////////////////////////////////////////////////////////////////////////////////
+#pragma once
 
-#if !defined(OPEN_BOOK_HPP_)
-#define OPEN_BOOK_HPP_
-
-// SYSTEM INCLUDES
-// <none>
-
-// C PROJECT INCLUDES
-// <none>
-
-// C++ PROJECT INCLUDES
+#include <iterator>		   // For std::size()
 #include "Board.hpp"       // For PositionXY declaration.
 #include "SingleList.hpp"  // For SingleList definition.
-
-// FORWARD REFERENCES
-// <none>
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 /// CLASS NAME: OpenBook
@@ -58,14 +29,30 @@ class OpenBook
         uint32_t m_Shift;
 
         Crawling() : m_Direction(Board::DIRECTION_NONE), m_Shift(0) {}
-
         Crawling(const Board::Direction direction, const uint32_t shift) : m_Direction(direction), m_Shift(shift) {}
+
+        bool operator ==(const Crawling& el)
+		{
+        	bool retVal {false};
+
+        	if(this->m_Direction==el.m_Direction and this->m_Shift==el.m_Shift)
+        	{
+        		retVal = true;
+        	}
+
+        	return retVal;
+		}
+
+        bool operator!=(const Crawling& el)
+		{
+        	return !(*this==el);
+		}
     };
 
     struct CrawlingChain
     {
         char m_SpotName;
-        SingleList<Crawling> m_CrawlingList;
+        Crawling m_CrawlingList[3];
     };
 
     struct Openings
@@ -123,25 +110,15 @@ class OpenBook
     static OpenGameType OpenGame(const Board& rBoard);
 
    private:
-    ///////////////////////////////////////////////////////////////////////
-    // METHOD NAME: OpenBook::Init
-    //
-    /// Initialize the content.
-    ///
-    /// @par Full Description
-    /// Initialize the content.
-    ///////////////////////////////////////////////////////////////////////
-    static void Init();
-
     // Prevent either copying or assigning (>= C++11).
     OpenBook(const OpenBook& rOpenBook) = delete;
     OpenBook& operator=(const OpenBook& rOpenBook) = delete;
 
     // Directions to find direct or indirect kind of opening game.
-    static const Board::Direction DIRECT_PATH[];
-    static const Board::Direction INDIRECT_PATH[];
-    static const uint32_t DIRECT_PATH_SIZE;
-    static const uint32_t INDIRECT_PATH_SIZE;
+    static constexpr Board::Direction DIRECT_PATH[] = {Board::UP, Board::RIGHT, Board::DOWN, Board::LEFT};
+    static constexpr Board::Direction INDIRECT_PATH[] = {Board::UP_RIGHT, Board::DOWN_RIGHT, Board::DOWN_LEFT, Board::UP_LEFT};
+    static constexpr auto DIRECT_PATH_SIZE {std::size(DIRECT_PATH)};
+    static constexpr auto INDIRECT_PATH_SIZE {std::size(INDIRECT_PATH)};
 
     // Containers for direct open game.
     static const Openings DIRECT_OPEN[];
@@ -162,8 +139,6 @@ class OpenBook
     static const uint32_t DIRECT_OPEN_SIZE;
     static const uint32_t INDIRECT_OPEN_SIZE;
 };
-
-#endif /* OPEN_BOOK_HPP_ */
 
 /***************************************************************************
  *   Copyright (C) 2018 by Zbigniew Halat                                  *

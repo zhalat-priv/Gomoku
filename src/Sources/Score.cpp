@@ -1,31 +1,4 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-/// @file Score.cpp
-///
-/// Score class implementation.
-///
-/// @par Full Description.
-/// Defines score for each threat.
-/// Score class provides scores of board state.
-///
-/// @if REVISION_HISTORY_INCLUDED
-/// @par Edit History
-/// - zhalat 09-Apr-2016 Initial revision.
-/// - zhalat 25-Oct-2016 Introduce mechanism to run only those threats finder
-///						 depending on board situation.
-/// @endif
-///
-/// @ingroup.
-///
-/// @par non-Copyright (c) 2016 HalSoft
-///////////////////////////////////////////////////////////////////////////////////////////
-
-// SYSTEM INCLUDES
 #include <assert.h>  // For assert.
-
-// C PROJECT INCLUDES
-// <none>
-
-// C++ PROJECT INCLUDES
 #include "Score.hpp"          // For Score definition.
 #include "BoardScore.hpp"     // For BoardScore definition.
 #include "Threat2CaseA.hpp"   // For Threat2CaseA declaration.
@@ -43,45 +16,42 @@
 #include "ThreatWinner.hpp"   // For ThreatWinner declaration.
 #include "ThreatFinder.hpp"   // For ThreatFinder declaration.
 
-// FORWARD REFERENCES
-// <none>
+static ThreatWinner threatWinner;
+static Threat4CaseA threat4CaseA;
+static Threat4CaseAA threat4CaseAA;
+static Threat4CaseB threat4CaseB;
+static Threat4CaseC threat4CaseC;
+static Threat3CaseA threat3CaseA;
+static Threat3CaseAA threat3CaseAA;
+static Threat3CaseB threat3CaseB;
+static Threat3CaseC threat3CaseC;
+static Threat2CaseA threat2CaseA;
+static Threat2CaseAA threat2CaseAA;
+static Threat2CaseB threat2CaseB;
+static Threat2CaseC threat2CaseC;
 
-/// Handler for instance.
-Score* Score::m_pInstance = NULL;
-
-/// Associate threat and score (how danger threat is).
-/// Points value were adjusted basing on (my) experience.
 const Score::ThreatScore Score::m_ThreatScore[] = {
-    /*0 */ {ThreatFinder::THREAT_WINNER, (new ThreatWinner()),
-            THREAT_WINNER_SCORE},  // must be much higher than sum of others.
-    /*1 */ {ThreatFinder::THREAT_4_CASE_A, (new Threat4CaseA()), THREAT_4_CASE_A_SCORE},
-    /*2 */ {ThreatFinder::THREAT_4_CASE_AA, (new Threat4CaseAA()), THREAT_4_CASE_AA_SCORE},
-    /*3 */ {ThreatFinder::THREAT_4_CASE_B, (new Threat4CaseB()), THREAT_4_CASE_B_SCORE},
-    /*4 */ {ThreatFinder::THREAT_4_CASE_C, (new Threat4CaseC()), THREAT_4_CASE_C_SCORE},
-    /*5 */ {ThreatFinder::THREAT_3_CASE_A, (new Threat3CaseA()), THREAT_3_CASE_A_SCORE},
-    /*6 */ {ThreatFinder::THREAT_3_CASE_AA, (new Threat3CaseAA()), THREAT_3_CASE_AA_SCORE},
-    /*7 */ {ThreatFinder::THREAT_3_CASE_B, (new Threat3CaseB()), THREAT_3_CASE_B_SCORE},
-    /*8 */ {ThreatFinder::THREAT_3_CASE_C, (new Threat3CaseC()), THREAT_3_CASE_C_SCORE},
-    /*9 */ {ThreatFinder::THREAT_2_CASE_A, (new Threat2CaseA()), THREAT_2_CASE_A_SCORE},
-    /*10 */ {ThreatFinder::THREAT_2_CASE_AA, (new Threat2CaseAA()), THREAT_2_CASE_AA_SCORE},
-    /*11*/ {ThreatFinder::THREAT_2_CASE_B, (new Threat2CaseB()), THREAT_2_CASE_B_SCORE},
-    /*12*/ {ThreatFinder::THREAT_2_CASE_C, (new Threat2CaseC()), THREAT_2_CASE_C_SCORE},
+    /*0 */ {ThreatFinder::THREAT_WINNER, &threatWinner, THREAT_WINNER_SCORE},
+    /*1 */ {ThreatFinder::THREAT_4_CASE_A, &threat4CaseA,THREAT_4_CASE_A_SCORE},
+    /*2 */ {ThreatFinder::THREAT_4_CASE_AA, &threat4CaseAA, THREAT_4_CASE_AA_SCORE},
+    /*3 */ {ThreatFinder::THREAT_4_CASE_B, &threat4CaseB, THREAT_4_CASE_B_SCORE},
+    /*4 */ {ThreatFinder::THREAT_4_CASE_C, &threat4CaseC, THREAT_4_CASE_C_SCORE},
+    /*5 */ {ThreatFinder::THREAT_3_CASE_A, &threat3CaseA, THREAT_3_CASE_A_SCORE},
+    /*6 */ {ThreatFinder::THREAT_3_CASE_AA, &threat3CaseAA, THREAT_3_CASE_AA_SCORE},
+    /*7 */ {ThreatFinder::THREAT_3_CASE_B, &threat3CaseB, THREAT_3_CASE_B_SCORE},
+    /*8 */ {ThreatFinder::THREAT_3_CASE_C, &threat3CaseC, THREAT_3_CASE_C_SCORE},
+    /*9 */ {ThreatFinder::THREAT_2_CASE_A, &threat2CaseA, THREAT_2_CASE_A_SCORE},
+    /*10 */ {ThreatFinder::THREAT_2_CASE_AA, &threat2CaseAA, THREAT_2_CASE_AA_SCORE},
+    /*11*/ {ThreatFinder::THREAT_2_CASE_B, &threat2CaseB, THREAT_2_CASE_B_SCORE},
+    /*12*/ {ThreatFinder::THREAT_2_CASE_C, &threat2CaseC, THREAT_2_CASE_C_SCORE},
 };
-/// Get instance of Score.
+
 Score* Score::GetInstance()
 {
-    if(NULL == m_pInstance)
-    {
-        m_pInstance = new Score();
-        return m_pInstance;
-    }
-    else
-    {
-        return m_pInstance;
-    }
+	static Score score{};
+	return &score;
 }
 
-/// Updates board' score by taking account the new moves.
 void Score::UpdateScore(BoardScore& boardScore, const vector<Board::PositionXY>& xyList, const uint32_t multiplier)
 {
     // Each threats (see content of m_ThreatScore) need to be provided with board first, such that
@@ -102,7 +72,6 @@ void Score::UpdateScore(BoardScore& boardScore, const vector<Board::PositionXY>&
     }
 }
 
-/// Updates board' score by taking account the new moves.
 void Score::UpdateScore(BoardScore& boardScore, const Board::PositionXY xy, const uint32_t multiplier)
 {
     assert(multiplier > 0);
@@ -121,18 +90,6 @@ void Score::UpdateScore(BoardScore& boardScore, const Board::PositionXY xy, cons
     boardScore.GetSpotter().Execute(xy, isOpponentMove, multiplier);
 }
 
-// Destructor.
-Score::~Score()
-{
-	m_pInstance = NULL;
-    // Delete threat classes from heap.
-    for(uint32_t i = 0; i < MAX_KIND_OF_THREATS; ++i)
-    {
-        delete m_ThreatScore[i].m_pThreat;
-    }
-}
-
-/// Set board for threats searching.
 void Score::SetBoard(const Board& rBoard)
 {
     for(uint32_t i = 0; i < NUMELEM(m_ThreatScore); ++i)

@@ -49,11 +49,14 @@ add_executable( ci
 	"${UT_GOMOKUGAME_SRC}/ThreatsTests/Threat4CaseBTest/Threat4CaseBTest.cpp"
 	"${UT_GOMOKUGAME_SRC}/ThreatsTests/ThreatWinnerTest/ThreatWinnerTest.cpp"
 	"${UT_GOMOKUGAME_SRC}/SpotterTest/SpotterTest.cpp"
+	"${UT_GOMOKUGAME_SRC}/ScoreTest/ScoreTest.cpp"
+	"${UT_GOMOKUGAME_SRC}/OpenBookTest/OpenBookTest.cpp"
 	
 	#"${UT_GOMOKUGAME_SRC}/BoardScoreTest/BoardScoreTest.cpp"
-#    # Unit under test
+    # Unit under test
     "${GOMOKUGAME_SRC}/GomokuBoard.cpp"
 	"${GOMOKUGAME_SRC}/BoardScore.cpp"
+	"${GOMOKUGAME_SRC}/OpenBook.cpp"
     "${GOMOKUGAME_SRC}/DataContainers/Graph.cpp"
     "${GOMOKUGAME_SRC}/DataContainers/VectorLight.cpp"
     "${GOMOKUGAME_SRC}/DataContainers/VectorLightIterator.cpp"

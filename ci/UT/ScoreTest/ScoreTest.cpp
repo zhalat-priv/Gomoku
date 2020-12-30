@@ -1,20 +1,43 @@
-/*
- * ScoreTest.cpp
- *
- *  Created on: 24 Apr, 2016
- *      Author: ginar
- */
-#include <assert.h>     		// for assert.
-#include "ScoreTest.hpp"		// for header class definition.
+#include "Score.hpp"
+#include "BoardScore.hpp"
+#include "GomokuBoard.hpp"
+//----------------------------------------------------------
+#include "CppUTest/TestHarness.h"
+#include "CppUTest/SimpleString.h"
+#include "CppUTest/PlatformSpecificFunctions.h"
+#include "CppUTest/TestMemoryAllocator.h"
+#include "CppUTest/MemoryLeakDetector.h"
 
-#define NUMELEM( x )    ( sizeof( x )/sizeof( x[ 0 ] ) )
+TEST_GROUP(ScoreTest)
+{
+	void setup()
+	{
+        m_pGomokuBoard = new GomokuBoard( 15 );
+        m_pBoardScoreHuman = new BoardScore( Board::PLAYER_A );
+        m_pBoardScoreComputer = new BoardScore( Board::PLAYER_B );
 
+        m_pBoardScoreHuman->SetBoard(*m_pGomokuBoard);
+        m_pBoardScoreComputer->SetBoard(*m_pGomokuBoard);
+	};
 
-void ScoreTest::UpdateScoreTest1()
+	void teardown()
+	{
+        delete m_pGomokuBoard;
+        delete m_pBoardScoreHuman;
+        delete m_pBoardScoreComputer;
+	};
+
+    // Board for game.
+    GomokuBoard* m_pGomokuBoard;
+    BoardScore* m_pBoardScoreHuman;
+    BoardScore* m_pBoardScoreComputer;
+};
+
+TEST(ScoreTest,UpdateScoreTest1)
 {
 	// Empty board has zero score.
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetScore() ); 		// player A
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetScore() ); 	// player B
+	CHECK( 0 == m_pBoardScoreHuman->GetScore() ); 		// player A
+	CHECK( 0 == m_pBoardScoreComputer->GetScore() ); 	// player B
 
 	// Get Score class instance.
 	Score& rScore = *Score::GetInstance();
@@ -37,8 +60,8 @@ void ScoreTest::UpdateScoreTest1()
 	rScore.UpdateScore( *m_pBoardScoreHuman, humanMoves[1] );
 	rScore.UpdateScore( *m_pBoardScoreComputer, humanMoves[1] );
 
-	CPPUNIT_ASSERT( Score::THREAT_2_CASE_A_SCORE == m_pBoardScoreHuman->GetScore() );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetScore() );
+	CHECK( Score::THREAT_2_CASE_A_SCORE == m_pBoardScoreHuman->GetScore() );
+	CHECK( 0 == m_pBoardScoreComputer->GetScore() );
 
 	//b. Computer (Player B) creates threat Threat2CaseA, but don't interact with human' threat.
 	computerMoves= {Board::PositionXY( 3, 4 ), Board::PositionXY( 3, 5 )};
@@ -50,8 +73,8 @@ void ScoreTest::UpdateScoreTest1()
 	rScore.UpdateScore( *m_pBoardScoreHuman, computerMoves[1] );
 	rScore.UpdateScore( *m_pBoardScoreComputer, computerMoves[1] );
 
-	CPPUNIT_ASSERT( Score::THREAT_2_CASE_A_SCORE == m_pBoardScoreHuman->GetScore() );
-	CPPUNIT_ASSERT( Score::THREAT_2_CASE_A_SCORE == m_pBoardScoreComputer->GetScore() );
+	CHECK( Score::THREAT_2_CASE_A_SCORE == m_pBoardScoreHuman->GetScore() );
+	CHECK( Score::THREAT_2_CASE_A_SCORE == m_pBoardScoreComputer->GetScore() );
 
 	//c. Human reinforce previous attack. Threat2CaseA->Threat3CaseA.
 	humanMoves.clear();
@@ -61,8 +84,8 @@ void ScoreTest::UpdateScoreTest1()
 	rScore.UpdateScore( *m_pBoardScoreHuman, humanMoves[0] );
 	rScore.UpdateScore( *m_pBoardScoreComputer, humanMoves[0] );
 
-	CPPUNIT_ASSERT( Score::THREAT_3_CASE_A_SCORE == m_pBoardScoreHuman->GetScore() );
-	CPPUNIT_ASSERT( Score::THREAT_2_CASE_A_SCORE == m_pBoardScoreComputer->GetScore() );
+	CHECK( Score::THREAT_3_CASE_A_SCORE == m_pBoardScoreHuman->GetScore() );
+	CHECK( Score::THREAT_2_CASE_A_SCORE == m_pBoardScoreComputer->GetScore() );
 
 	//d. Computer reinforce previous attack. Threat2CaseA->Threat3CaseA.
 
@@ -73,11 +96,11 @@ void ScoreTest::UpdateScoreTest1()
 	rScore.UpdateScore( *m_pBoardScoreHuman, computerMoves[0] );
 	rScore.UpdateScore( *m_pBoardScoreComputer, computerMoves[0] );
 
-	CPPUNIT_ASSERT( Score::THREAT_3_CASE_A_SCORE == m_pBoardScoreHuman->GetScore() );
-	CPPUNIT_ASSERT( Score::THREAT_3_CASE_A_SCORE == m_pBoardScoreComputer->GetScore() );
+	CHECK( Score::THREAT_3_CASE_A_SCORE == m_pBoardScoreHuman->GetScore() );
+	CHECK( Score::THREAT_3_CASE_A_SCORE == m_pBoardScoreComputer->GetScore() );
 }
 
-void ScoreTest::UpdateScoreTest2()
+TEST(ScoreTest,UpdateScoreTest2)
 {
 	//--------- Following there is a scenario:-------------
 	//a. Human (Player A) creates threat Threat2CaseC.
@@ -101,8 +124,8 @@ void ScoreTest::UpdateScoreTest2()
 	rScore.UpdateScore( *m_pBoardScoreHuman, humanMoves[1] );
 	rScore.UpdateScore( *m_pBoardScoreComputer, humanMoves[1] );
 
-	CPPUNIT_ASSERT( Score::THREAT_2_CASE_A_SCORE == m_pBoardScoreHuman->GetScore() );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetScore() );
+	CHECK( Score::THREAT_2_CASE_A_SCORE == m_pBoardScoreHuman->GetScore() );
+	CHECK( 0 == m_pBoardScoreComputer->GetScore() );
 
 	//b. Computer (Player B) blocks attack. Neutral it to zero.
 	computerMoves = {Board::PositionXY( 7, 8 )};
@@ -110,8 +133,8 @@ void ScoreTest::UpdateScoreTest2()
 	rScore.UpdateScore( *m_pBoardScoreHuman, computerMoves[0] );
 	rScore.UpdateScore( *m_pBoardScoreComputer, computerMoves[0] );
 
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetScore() );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetScore() );
+	CHECK( 0 == m_pBoardScoreHuman->GetScore() );
+	CHECK( 0 == m_pBoardScoreComputer->GetScore() );
 
 	//c. Human creates triple Threat2CaseA attack.
 	humanMoves = {Board::PositionXY( 5, 8 ), Board::PositionXY( 3, 8 ), Board::PositionXY( 2, 7 )};
@@ -125,8 +148,8 @@ void ScoreTest::UpdateScoreTest2()
 	rScore.UpdateScore( *m_pBoardScoreHuman, humanMoves[2] );
 	rScore.UpdateScore( *m_pBoardScoreComputer, humanMoves[2] );
 
-	CPPUNIT_ASSERT( ( 3 * Score::THREAT_2_CASE_A_SCORE + 1 * Score::THREAT_2_CASE_AA_SCORE ) == m_pBoardScoreHuman->GetScore() );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetScore() );
+	CHECK( ( 3 * Score::THREAT_2_CASE_A_SCORE + 1 * Score::THREAT_2_CASE_AA_SCORE ) == m_pBoardScoreHuman->GetScore() );
+	CHECK( 0 == m_pBoardScoreComputer->GetScore() );
 
 	//d. Computer (Player B) blocks one of third human attack.
 	computerMoves = {Board::PositionXY( 4, 8 )};
@@ -134,8 +157,8 @@ void ScoreTest::UpdateScoreTest2()
 	rScore.UpdateScore( *m_pBoardScoreHuman, computerMoves[0] );
 	rScore.UpdateScore( *m_pBoardScoreComputer, computerMoves[0] );
 
-	CPPUNIT_ASSERT( ( 2 * Score::THREAT_2_CASE_A_SCORE + 1 * Score::THREAT_2_CASE_AA_SCORE ) == m_pBoardScoreHuman->GetScore() );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetScore() );
+	CHECK( ( 2 * Score::THREAT_2_CASE_A_SCORE + 1 * Score::THREAT_2_CASE_AA_SCORE ) == m_pBoardScoreHuman->GetScore() );
+	CHECK( 0 == m_pBoardScoreComputer->GetScore() );
 
 	//c. Human add move which case two deadly threats at once.
 	humanMoves = {Board::PositionXY( 4, 9 )};
@@ -143,11 +166,11 @@ void ScoreTest::UpdateScoreTest2()
 	rScore.UpdateScore( *m_pBoardScoreHuman, humanMoves[0] );
 	rScore.UpdateScore( *m_pBoardScoreComputer, humanMoves[0] );
 
-	CPPUNIT_ASSERT( ( 2 * Score::THREAT_3_CASE_A_SCORE + 2 * Score::THREAT_2_CASE_AA_SCORE ) == m_pBoardScoreHuman->GetScore() );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetScore() );
+	CHECK( ( 2 * Score::THREAT_3_CASE_A_SCORE + 2 * Score::THREAT_2_CASE_AA_SCORE ) == m_pBoardScoreHuman->GetScore() );
+	CHECK( 0 == m_pBoardScoreComputer->GetScore() );
 }
 
-void ScoreTest::UpdateScoreTest3()
+TEST(ScoreTest,UpdateScoreTest3)
 {
 	//--------- Following there is a scenario:-------------
 	//a. Human (Player A) creates threat Threat2CaseA.
@@ -183,7 +206,7 @@ void ScoreTest::UpdateScoreTest3()
 	rScore.UpdateScore( *m_pBoardScoreComputer, humanMoves[1] );
 	humanMoves.clear();
 
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
+	CHECK( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
 
 	computerMoves = { Board::PositionXY( 1, 5 ) };
 
@@ -192,10 +215,10 @@ void ScoreTest::UpdateScoreTest3()
 	rScore.UpdateScore( *m_pBoardScoreHuman, computerMoves[0] );
 	computerMoves.clear();
 
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
+	CHECK( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
 }
 
-void ScoreTest::UpdateScoreTest4()
+TEST(ScoreTest,UpdateScoreTest4)
 {
 	//--------- Following there is a scenario:-------------
 	//a. Human (Player A) creates threat Threat2CaseA.
@@ -238,7 +261,7 @@ void ScoreTest::UpdateScoreTest4()
 	rScore.UpdateScore( *m_pBoardScoreComputer, humanMoves[1] );
 	humanMoves.clear();
 
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
+	CHECK( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
 
 	computerMoves = { Board::PositionXY( 6, 7 ) };
 	m_pGomokuBoard->PutMove( computerMoves[0], m_pBoardScoreComputer->GetPlayer() );
@@ -258,11 +281,10 @@ void ScoreTest::UpdateScoreTest4()
 
 	computerMoves.clear();
 
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
+	CHECK( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
 }
 
-
-void ScoreTest::UpdateScoreTest5()
+TEST(ScoreTest,UpdateScoreTest5)
 {
 	// UpdateScore shall recognize ALL threads which are on the same level.
 	// The level means: Threat4 or Threat3 or Threat2 threats.
@@ -350,9 +372,9 @@ void ScoreTest::UpdateScoreTest5()
 	computerMoves.clear();
 
 	// Check there is no Threat3 recognized yet.
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
 
 	// Put '*' move:
 	humanMoves = {
@@ -363,12 +385,12 @@ void ScoreTest::UpdateScoreTest5()
 	rScore.UpdateScore( *m_pBoardScoreComputer, humanMoves[0] );
 	humanMoves.clear();
 
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
+	CHECK( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
+	CHECK( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
+	CHECK( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
 }
 
-void ScoreTest::UpdateScoreTest6()
+TEST(ScoreTest,UpdateScoreTest6)
 {
 	//a. create threat THREAT_4_CASE_A
 	//     _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
@@ -422,7 +444,7 @@ void ScoreTest::UpdateScoreTest6()
 	rScore.UpdateScore( *m_pBoardScoreHuman, humanMoves[3] );
 	humanMoves.clear();
 
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
+	CHECK( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
 
 	computerMoves = { Board::PositionXY( 1, 6 ) };
 
@@ -430,7 +452,7 @@ void ScoreTest::UpdateScoreTest6()
 	rScore.UpdateScore( *m_pBoardScoreHuman, computerMoves[0] );
 	computerMoves.clear();
 
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
+	CHECK( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
 
 	computerMoves = { Board::PositionXY( 1, 5 ) };
 
@@ -438,19 +460,19 @@ void ScoreTest::UpdateScoreTest6()
 	rScore.UpdateScore( *m_pBoardScoreHuman, computerMoves[0] );
 	computerMoves.clear();
 
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
+	CHECK( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
 }
 
-void ScoreTest::UpdateScoreTest7()
+TEST(ScoreTest,UpdateScoreTest7)
 {
 	//a. create threat THREAT_4_CASE_C
 	//     _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
@@ -495,7 +517,7 @@ void ScoreTest::UpdateScoreTest7()
 	rScore.UpdateScore( *m_pBoardScoreHuman, humanMoves[3] );
 	humanMoves.clear();
 
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_AA ) );
+	CHECK( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_AA ) );
 
 	// Computer puts its move which split existing into two weaker threats.
 	computerMoves = { Board::PositionXY( 1, 6 ) };
@@ -505,19 +527,19 @@ void ScoreTest::UpdateScoreTest7()
 	computerMoves.clear();
 
 	// THREAT_4_CASE_A - has been broken into two THREAT_2_CASE_B.
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
-	CPPUNIT_ASSERT( 2 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
+	CHECK( 2 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
 }
 
-void ScoreTest::UpdateScoreTest8()
+TEST(ScoreTest,UpdateScoreTest8)
 {
 	//a. create threats: 2x THREAT_4_CASE_C,
 	//     _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
@@ -592,10 +614,10 @@ void ScoreTest::UpdateScoreTest8()
 	computerMoves.clear();
 
 	// Three of THREAT_2_CASE_B shall be visable.
-	CPPUNIT_ASSERT( 3 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
+	CHECK( 3 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
 }
 
-void ScoreTest::UpdateScoreTest9()
+TEST(ScoreTest,UpdateScoreTest9)
 {
 	//     _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 	//  0 |. . . . . . . . . . . . . . .|
@@ -647,11 +669,11 @@ void ScoreTest::UpdateScoreTest9()
 	//  4 |. . . . . . . . . . . . . . .|
 	//  5 |. . . . . . . . . . . . . . .|
 
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetScore() );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetScore() );
+	CHECK( 0 == m_pBoardScoreHuman->GetScore() );
+	CHECK( 0 == m_pBoardScoreComputer->GetScore() );
 }
 
-void ScoreTest::UpdateScoreTest10()
+TEST(ScoreTest,UpdateScoreTest10)
 {
 	//1. CPU created threat:
 
@@ -687,28 +709,28 @@ void ScoreTest::UpdateScoreTest10()
 	//2. Verify the threat.
 
 	// THREAT_2_CASE_A cpu threats
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
+	CHECK( 1 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
 
 	// No human threats.
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
 
 	//3. User blocks cpu attack.
 
@@ -731,31 +753,31 @@ void ScoreTest::UpdateScoreTest10()
 	//4. Verify the threat.
 
 	// THREAT_2_CASE_B cpu threats
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
+	CHECK( 1 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
 
 	// No human threats.
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
 }
 
-void ScoreTest::UpdateScoreTest11()
+TEST(ScoreTest,UpdateScoreTest11)
 {
 	//1. CPU created threat:
 
@@ -790,28 +812,28 @@ void ScoreTest::UpdateScoreTest11()
 
 	//2. Verify the threat.
 	// THREAT_2_CASE_A cpu threats
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
+	CHECK( 1 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
 
 	// THREAT_2_CASE_A human threats
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
 
 	//3. HUMAN created threat:
 
@@ -840,31 +862,31 @@ void ScoreTest::UpdateScoreTest11()
 
 	//4. Verify the threat.
 	// THREAT_2_CASE_A cpu threats
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
+	CHECK( 1 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
 
 	// THREAT_2_CASE_A human threats
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
+	CHECK( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
 }
 
-void ScoreTest::UpdateScoreTest12()
+TEST(ScoreTest,UpdateScoreTest12)
 {
 	//1. CPU created threat:
 
@@ -903,17 +925,17 @@ void ScoreTest::UpdateScoreTest12()
 	rScore.UpdateScore( *m_pBoardScoreComputer, tmpMove );
 	rScore.UpdateScore( *m_pBoardScoreHuman, tmpMove );
 
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
+	CHECK( 1 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
 
 	tmpMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( tmpMove, Board::PLAYER_B );
 	rScore.UpdateScore( *m_pBoardScoreComputer, tmpMove );
 	rScore.UpdateScore( *m_pBoardScoreHuman, tmpMove );
 
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
+	CHECK( 1 == m_pBoardScoreComputer->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
 }
 
-void ScoreTest::UpdateScoreTest13()
+TEST(ScoreTest,UpdateScoreTest13)
 {
 	//a. create threat THREAT_3_CASE_AA
 	//     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
@@ -976,53 +998,53 @@ void ScoreTest::UpdateScoreTest13()
 	rScore.UpdateScore( *m_pBoardScoreHuman, Board::PositionXY( 1, 4 ) );
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 6 ), m_pBoardScoreHuman->GetPlayer() );
 	rScore.UpdateScore( *m_pBoardScoreHuman, Board::PositionXY( 1, 6 ) );
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_AA ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_AA ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_AA ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
+	CHECK( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_AA ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_AA ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_AA ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
 
 	// 2. Put next section:: //  1 |. . x . x . x . x . . . . . .|
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 8 ), m_pBoardScoreHuman->GetPlayer() );
 	rScore.UpdateScore( *m_pBoardScoreHuman, Board::PositionXY( 1, 8 ) );
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_AA ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_AA ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_AA ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
-	CPPUNIT_ASSERT( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
+	CHECK( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_AA ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_AA ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_AA ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
+	CHECK( 1 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
 
 	// 3. Put next section:: //  1 |. . x . x . x . x . x . . . .|
 	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 10 ), m_pBoardScoreHuman->GetPlayer() );
 	rScore.UpdateScore( *m_pBoardScoreHuman, Board::PositionXY( 1, 10 ) );
-	CPPUNIT_ASSERT( 2 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_AA ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_AA ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_AA ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
-	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
+	CHECK( 2 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_AA ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_AA ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_AA ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
+	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
 
 	// 4. Put next section:: //  1 |. . x . x x x . x . x . . . .|
 
@@ -1031,17 +1053,17 @@ void ScoreTest::UpdateScoreTest13()
 
 //	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 5 ), m_pBoardScoreHuman->GetPlayer() );
 //	rScore.UpdateScore( *m_pBoardScoreHuman, Board::PositionXY( 1, 5 ) );
-//	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_AA ) );
-//	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_AA ) );
-//	CPPUNIT_ASSERT( 2 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_AA ) );
-//	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
-//	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
-//	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
-//	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
-//	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
-//	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
-//	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
-//	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
-//	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
-//	CPPUNIT_ASSERT( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
+//	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_AA ) );
+//	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_AA ) );
+//	CHECK( 2 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_AA ) );
+//	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
+//	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
+//	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
+//	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
+//	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
+//	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
+//	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
+//	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
+//	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
+//	CHECK( 0 == m_pBoardScoreHuman->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
 }

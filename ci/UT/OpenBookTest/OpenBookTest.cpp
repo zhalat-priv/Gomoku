@@ -1,12 +1,30 @@
-/*
- * SingleListTest.cpp
- *
- *  Created on: 31 dec, 2016
- *      Author: halsoft
- */
-#include <assert.h>     		// for assert.
-#include <iostream>
-#include "OpenBookTest.hpp"
+#include "SingleList.hpp"
+#include "Board.hpp"
+#include "GomokuBoard.hpp"
+#include "OpenBook.hpp"
+//----------------------------------------------------------
+#include "CppUTest/TestHarness.h"
+#include "CppUTest/SimpleString.h"
+#include "CppUTest/PlatformSpecificFunctions.h"
+#include "CppUTest/TestMemoryAllocator.h"
+#include "CppUTest/MemoryLeakDetector.h"
+
+
+TEST_GROUP(OpenBookTest)
+{
+	void setup()
+	{
+		m_pBoard = new GomokuBoard( BOARD_SIZE );
+	};
+
+	void teardown()
+	{
+		delete m_pBoard;
+	};
+
+    static const uint32_t BOARD_SIZE = 15;
+    Board* m_pBoard;
+};
 
 static bool Checker( const Board::PositionXY xy, const std::vector<Board::PositionXY>& container )
 {
@@ -23,7 +41,7 @@ static bool Checker( const Board::PositionXY xy, const std::vector<Board::Positi
 	return isOK;
 }
 
-void OpenBookTest::DirectOpeningGame1()
+TEST(OpenBookTest,DirectOpeningGame1)
 {
 	//   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 	//0 |. . . . . . . . . . . . . . .|
@@ -53,12 +71,12 @@ void OpenBookTest::DirectOpeningGame1()
 	for( uint32_t i = 0; i < maxSamples; ++i )
 	{
 		const Board::PositionXY xyOpening = OpenBook::GetBestThirdWhiteMove( *m_pBoard );
-
 		const bool isOnExpectedList = Checker( xyOpening, expectedMovements );
-		CPPUNIT_ASSERT( isOnExpectedList == true );
+		CHECK( isOnExpectedList == true );
 	}
 }
-void OpenBookTest::DirectOpeningGame2()
+
+TEST(OpenBookTest,DirectOpeningGame2)
 {
 	//   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 	//0 |. . . . . . . . . . . . . . .|
@@ -90,11 +108,11 @@ void OpenBookTest::DirectOpeningGame2()
 		const Board::PositionXY xyOpening = OpenBook::GetBestThirdWhiteMove( *m_pBoard );
 
 		const bool isOnExpectedList = Checker( xyOpening, expectedMovements );
-		CPPUNIT_ASSERT( isOnExpectedList == true );
+		CHECK( isOnExpectedList == true );
 	}
 }
 
-void OpenBookTest::DirectOpeningGame3()
+TEST(OpenBookTest,DirectOpeningGame3)
 {
 	//   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 	//0 |. . . . . . . . . . . . . . .|
@@ -126,11 +144,11 @@ void OpenBookTest::DirectOpeningGame3()
 		const Board::PositionXY xyOpening = OpenBook::GetBestThirdWhiteMove( *m_pBoard );
 
 		const bool isOnExpectedList = Checker( xyOpening, expectedMovements );
-		CPPUNIT_ASSERT( isOnExpectedList == true );
+		CHECK( isOnExpectedList == true );
 	}
 }
 
-void OpenBookTest::DirectOpeningGame4()
+TEST(OpenBookTest,DirectOpeningGame4)
 {
 	//   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 	//0 |. . . . . . . . . . . . . . .|
@@ -162,11 +180,11 @@ void OpenBookTest::DirectOpeningGame4()
 		const Board::PositionXY xyOpening = OpenBook::GetBestThirdWhiteMove( *m_pBoard );
 
 		const bool isOnExpectedList = Checker( xyOpening, expectedMovements );
-		CPPUNIT_ASSERT( isOnExpectedList == true );
+		CHECK( isOnExpectedList == true );
 	}
 }
 
-void OpenBookTest::IndirectOpeningGame1()
+TEST(OpenBookTest,IndirectOpeningGame1)
 {
 	//   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 	//0 |. . . . . . . . . . . . . . .|
@@ -200,11 +218,11 @@ void OpenBookTest::IndirectOpeningGame1()
 		const Board::PositionXY xyOpening = OpenBook::GetBestThirdWhiteMove( *m_pBoard );
 
 		const bool isOnExpectedList = Checker( xyOpening, expectedMovements );
-		CPPUNIT_ASSERT( isOnExpectedList == true );
+		CHECK( isOnExpectedList == true );
 	}
 }
 
-void OpenBookTest::IndirectOpeningGame2()
+TEST(OpenBookTest,IndirectOpeningGame2)
 {
 	//   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 	//0 |. . . . . . . . . . . . . . .|
@@ -238,11 +256,11 @@ void OpenBookTest::IndirectOpeningGame2()
 		const Board::PositionXY xyOpening = OpenBook::GetBestThirdWhiteMove( *m_pBoard );
 
 		const bool isOnExpectedList = Checker( xyOpening, expectedMovements );
-		CPPUNIT_ASSERT( isOnExpectedList == true );
+		CHECK( isOnExpectedList == true );
 	}
 }
 
-void OpenBookTest::IndirectOpeningGame3()
+TEST(OpenBookTest,IndirectOpeningGame3)
 {
 	//                       1 1 1 1 1
 	//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
@@ -278,11 +296,11 @@ void OpenBookTest::IndirectOpeningGame3()
 		const Board::PositionXY xyOpening = OpenBook::GetBestThirdWhiteMove( *m_pBoard );
 
 		const bool isOnExpectedList = Checker( xyOpening, expectedMovements );
-		CPPUNIT_ASSERT( isOnExpectedList == true );
+		CHECK( isOnExpectedList == true );
 	}
 }
 
-void OpenBookTest::IndirectOpeningGame4()
+TEST(OpenBookTest,IndirectOpeningGame4)
 {
 	//                       1 1 1 1 1
 	//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
@@ -318,7 +336,7 @@ void OpenBookTest::IndirectOpeningGame4()
 		const Board::PositionXY xyOpening = OpenBook::GetBestThirdWhiteMove( *m_pBoard );
 
 		const bool isOnExpectedList = Checker( xyOpening, expectedMovements );
-		CPPUNIT_ASSERT( isOnExpectedList == true );
+		CHECK( isOnExpectedList == true );
 	}
 }
 

@@ -1,37 +1,9 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-/// @file Score.hpp
-///
-/// Estimate score for board state.
-///
-/// @par Full Description.
-/// Score class analyze board for searching threats and assigns points for each threat found.
-///
-/// @if REVISION_HISTORY_INCLUDED
-/// @par Edit History
-/// - zhalat 08-Apr-2016 Initial revision.
-/// - zhalat 30-Apr-2016 ThreatWinner added to threat score.
-/// - zhalat 15-Nov-2016 BoardScore class were extracted from this file.
-/// @endif
-///
-/// @ingroup.
-///
-/// @par non-Copyright (c) 2016 HalSoft
-///////////////////////////////////////////////////////////////////////////////////////////
+#pragma once
 
-#if !defined(SCORE_HPP_)
-#define SCORE_HPP_
-
-// SYSTEM INCLUDES
-#include <string.h>  // For memset.
-
-// C PROJECT INCLUDES
-// <none>
-
-// C++ PROJECT INCLUDES
-#include "Board.hpp"  // For Board declaration.
+#include <string.h>    // For memset.
+#include "Board.hpp"   // For Board declaration.
 #include "ThreatFinder.hpp"
 
-// FORWARD REFERENCES
 class BoardScore;
 using std::vector;
 
@@ -49,33 +21,28 @@ class Score
     /// Associate threat and score (how danger threat is).
     struct ThreatScore
     {
-        // Kind of threat.
         const ThreatFinder::KindOfThreats threatKind;
-
-        // Pointer to threat class.
         ThreatFinder* const m_pThreat;
-
-        // Score assigned to the threat.
         const uint32_t m_Score;
     };
 
     /// Threats score.
-    static const uint32_t THREAT_WINNER_SCORE = 1000;
+    static constexpr uint32_t THREAT_WINNER_SCORE = 1000;
 
-    static const uint32_t THREAT_4_CASE_A_SCORE  = 100;
-    static const uint32_t THREAT_4_CASE_AA_SCORE = 50;
-    static const uint32_t THREAT_4_CASE_B_SCORE  = 25;
-    static const uint32_t THREAT_4_CASE_C_SCORE  = 15;
+    static constexpr uint32_t THREAT_4_CASE_A_SCORE  = 100;
+    static constexpr uint32_t THREAT_4_CASE_AA_SCORE = 50;
+    static constexpr uint32_t THREAT_4_CASE_B_SCORE  = 25;
+    static constexpr uint32_t THREAT_4_CASE_C_SCORE  = 15;
 
-    static const uint32_t THREAT_3_CASE_A_SCORE  = 30;
-    static const uint32_t THREAT_3_CASE_AA_SCORE = 15;
-    static const uint32_t THREAT_3_CASE_B_SCORE  = 5;
-    static const uint32_t THREAT_3_CASE_C_SCORE  = 3;
+    static constexpr uint32_t THREAT_3_CASE_A_SCORE  = 30;
+    static constexpr uint32_t THREAT_3_CASE_AA_SCORE = 15;
+    static constexpr uint32_t THREAT_3_CASE_B_SCORE  = 5;
+    static constexpr uint32_t THREAT_3_CASE_C_SCORE  = 3;
 
-    static const uint32_t THREAT_2_CASE_A_SCORE  = 4;
-    static const uint32_t THREAT_2_CASE_AA_SCORE = 2;
-    static const uint32_t THREAT_2_CASE_B_SCORE  = 2;
-    static const uint32_t THREAT_2_CASE_C_SCORE  = 1;
+    static constexpr uint32_t THREAT_2_CASE_A_SCORE  = 4;
+    static constexpr uint32_t THREAT_2_CASE_AA_SCORE = 2;
+    static constexpr uint32_t THREAT_2_CASE_B_SCORE  = 2;
+    static constexpr uint32_t THREAT_2_CASE_C_SCORE  = 1;
 
     /// Keeps list of all available threats and
     /// associate score to each threat(how danger threat is).
@@ -95,10 +62,10 @@ class Score
     static const ThreatScore m_ThreatScore[];
 
     /// How many threats there are defined.
-    static const uint32_t MAX_KIND_OF_THREATS = 13;  // sizeof m_ThreatScore
+    static constexpr uint32_t MAX_KIND_OF_THREATS = 13;  // sizeof m_ThreatScore
 
     ///	Max number the same kind of threat.
-    static const uint32_t MAX_TRACKED_THREATS = 15;
+    static constexpr uint32_t MAX_TRACKED_THREATS = 15;
 
     /////////////////////////////////////////////////////////////////////////////
     // METHOD NAME: Score::GetInstance
@@ -142,37 +109,14 @@ class Score
     ///////////////////////////////////////////////////////////////////////
     void UpdateScore(BoardScore& boardScore, const Board::PositionXY xy,
                      const uint32_t multiplier = ThreatFinder::ThreatLocation::DEFAULT_MULTIPLIER);
-
-    /// Destructor.
-    virtual ~Score();
+    virtual ~Score()= default;
 
    private:
-    /////////////////////////////////////////////////////////////////////////////
-    // METHOD NAME: Score::SetBoard
-    //
-    /// Set board for threats searching.
-    ///
-    /// @par Full Description
-    /// Set board for threats searching.
-    ///
-    /// @param board  Board for threats searching.
-    /////////////////////////////////////////////////////////////////////////////
+    Score(const Score&)= delete;
+    Score& operator=(const Score&)=delete;
+    Score()=default;
     void SetBoard(const Board& rBoard);
-
-    /// Private copy constructor - forbid copying.
-    Score(const Score&) {}
-
-    /// Private assign operator - forbid copying.
-    Score& operator=(const Score&) {}
-
-    /// Private default constructor - forbid create instance.
-    Score(){};
-
-    /// Handler for instance.
-    static Score* m_pInstance;
 };
-
-#endif /* SCORE_HPP_ */
 
 /***************************************************************************
  *   Copyright (C) 2018 by Zbigniew Halat                                  *

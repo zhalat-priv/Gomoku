@@ -268,7 +268,8 @@ class ThreatFinder
     ///////////////////////////////////////////////////////////////////////
     void GetThreatFields(ThreatLocation& rThreatLocation) const;
 
-    // Constructor.
+
+
     ThreatFinder(const uint32_t patternLenght, const uint32_t* pPointsView, const uint32_t pointsViewSize,
                  const std::unordered_map<ThreatFinder::ThreatAtom, int, std::hash<int>> atomNumber) :
         m_pGomokuBoard(NULL),

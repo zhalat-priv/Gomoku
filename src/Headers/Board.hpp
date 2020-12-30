@@ -116,7 +116,7 @@ class Board
         uint32_t m_x;
         uint32_t m_y;
 
-        PositionXY(uint32_t x = 0, uint32_t y = 0) : m_x(x), m_y(y) {}
+        constexpr PositionXY(uint32_t x = 0, uint32_t y = 0) : m_x(x), m_y(y) {}
 
         // Converter PositionField2PositionXY.
         PositionXY(const uint32_t boardSize, const PositionField field);

@@ -4030,63 +4030,63 @@ TEST(SpotterTest,EdgeTHREAT_3_CASE_AATest1)
 	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_AA ) );
 }
 
-//TEST(SpotterTest,EdgeTHREAT_3_CASE_AATest2)
-//{
-//	// Precondition.
-//	//	   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
-//	//	   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-//	//	0 |. . . . . . . . . . . . . . .|
-//	//	1 |. . . . . . . . . . . . . . .|
-//	//	2 |. . . . x . x . x . . . . . .|
-//	//	3 |. . . . . . . . . . . . . . .|
-//
-//	// Action: .x.x.x. -> .x.x.x.x (3A+2A)
-//	//	   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
-//	//	   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-//	//	0 |. . . . . . . . . . . . . . .|
-//	//	1 |. . . . . . . . . . . . . . .|
-//	//	2 |. . . . x . x . x . x . . . .|
-//	//	3 |. . . . . . . . . . . . . . .|
-//
-//	// Get Score class instance.
-//	Score& rScore = *Score::GetInstance();
-//	//--------------------------------------------------------------------------------------------
-//	m_pBoard->PutMove( Board::PositionXY( 2, 4 ), Board::PLAYER_A );
-//	m_pBoard->PutMove( Board::PositionXY( 2, 6 ), Board::PLAYER_A );
-//	rScore.UpdateScore( *m_pBoardScore, Board::PositionXY( 2, 6 ) );
-//	m_pBoard->PutMove( Board::PositionXY( 2, 8 ), Board::PLAYER_A );
-//	rScore.UpdateScore( *m_pBoardScore, Board::PositionXY( 2, 8 ) );
-//	CHECK( 1 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_AA ) );
-//
-//	// Do some actions:
-//	// a. define some constants.
-//	const Board::PositionXY moveAction = Board::PositionXY( 2, 10 );
-//    const Spotter::RegionToInvestigate regionToInvestigate { moveAction, ThreatFinder::THREAT_3_CASE_AA, ThreatFinder::HORIZONTAL };
-//
-//    // b. Put a new move which is
-//	m_pBoard->PutMove( moveAction, Board::PLAYER_A );
-//
-////	// c. Remove all existing threats.
-////	m_pBoardScore->ResetInstance();
-//
-//	// c. Tells spotter where should search.
-//    m_pSpotter->AddToExecute( regionToInvestigate );
-//
-//    // d. Run spotter.
-//	m_pSpotter->Execute( moveAction, false );
-//
-//	// e. Check if threat change its strength.
-//	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
-//	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
-//	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
-//	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
-//	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
-//	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
-//	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
-//	CHECK( 1 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
-//	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
-//	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
-//	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_AA ) );
-//	CHECK( 1 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_AA ) );
-//	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_AA ) );
-//}
+TEST(SpotterTest,EdgeTHREAT_3_CASE_AATest2)
+{
+	// Precondition.
+	//	   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
+	//	   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+	//	0 |. . . . . . . . . . . . . . .|
+	//	1 |. . . . . . . . . . . . . . .|
+	//	2 |. . . . x . x . x . . . . . .|
+	//	3 |. . . . . . . . . . . . . . .|
+
+	// Action: .x.x.x. -> .x.x.x.x (3A+2A)
+	//	   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
+	//	   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+	//	0 |. . . . . . . . . . . . . . .|
+	//	1 |. . . . . . . . . . . . . . .|
+	//	2 |. . . . x . x . x . x . . . .|
+	//	3 |. . . . . . . . . . . . . . .|
+
+	// Get Score class instance.
+	Score& rScore = *Score::GetInstance();
+	//--------------------------------------------------------------------------------------------
+	m_pBoard->PutMove( Board::PositionXY( 2, 4 ), Board::PLAYER_A );
+	m_pBoard->PutMove( Board::PositionXY( 2, 6 ), Board::PLAYER_A );
+	rScore.UpdateScore( *m_pBoardScore, Board::PositionXY( 2, 6 ) );
+	m_pBoard->PutMove( Board::PositionXY( 2, 8 ), Board::PLAYER_A );
+	rScore.UpdateScore( *m_pBoardScore, Board::PositionXY( 2, 8 ) );
+	CHECK( 1 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_AA ) );
+
+	// Do some actions:
+	// a. define some constants.
+	const Board::PositionXY moveAction = Board::PositionXY( 2, 10 );
+    const Spotter::RegionToInvestigate regionToInvestigate { moveAction, ThreatFinder::THREAT_3_CASE_AA, ThreatFinder::HORIZONTAL };
+
+    // b. Put a new move which is
+	m_pBoard->PutMove( moveAction, Board::PLAYER_A );
+
+//	// c. Remove all existing threats.
+//	m_pBoardScore->ResetInstance();
+
+	// c. Tells spotter where should search.
+    m_pSpotter->AddToExecute( regionToInvestigate );
+
+    // d. Run spotter.
+	m_pSpotter->Execute( moveAction, false );
+
+	// e. Check if threat change its strength.
+	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_WINNER ) );
+	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) );
+	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) );
+	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) );
+	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
+	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) );
+	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_B ) );
+	CHECK( 1 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_A ) );
+	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_B ) );
+	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_C ) );
+	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_AA ) );
+	CHECK( 1 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_AA ) );
+	CHECK( 0 == m_pBoardScore->GetNumberOfRecognizedThreat( ThreatFinder::THREAT_2_CASE_AA ) );
+}
