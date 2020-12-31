@@ -1,33 +1,6 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-/// @file StateEvaluation.hpp
-///
-/// Board state evaluation.
-///
-/// @par Full Description.
-/// Estimate how good a board state is. Singleton.
-/// See document: EvaluationState.docx
-///
-/// @if REVISION_HISTORY_INCLUDED
-/// @par Edit History
-/// - zhalat 30-Jul-2017 Initial revision.
-/// - zhalat 25-Oct-2017 Add IsHeadShot3AAPossible().
-/// @endif
-///
-/// @ingroup.
-///
-/// @par non-Copyright (c) 2017 HalSoft
-///////////////////////////////////////////////////////////////////////////////////////////
+#pragma once
 
-#if !defined(STATE_EVALUATION_HPP_)
-#define STATE_EVALUATION_HPP_
-
-// SYSTEM INCLUDES
-#include <assert.h>  // For assert.
-
-// C PROJECT INCLUDES
-// <none>
-
-// C++ PROJECT INCLUDES
+#include <assert.h>  			  // For assert.
 #include "BoardScore.hpp"         // For Board Score.
 #include "StateEvaluationIf.hpp"  // For StateEvaluationIf interface.
 #include "ObserverIf.hpp"         // For Observer design pattern interface.
@@ -425,10 +398,84 @@ class StateEvaluation
     const BoardScore* m_pBoardScoreHuman;
 
     // For UT
-    friend StateEvaluationTest;
+    friend class TEST_StateEvaluationTest_IsHeadShot4BCPossibleTest1_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot4BCPossibleTest2_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot4BCPossibleTest3_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot4BCPossibleTest4_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot4BCPossibleTest5_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot4BCPossibleTest6_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot4BCPossibleTest7_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot4BCPossibleTest8_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot4BCPossibleTest9_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3APossibleTest1_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3APossibleTest2_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3APossibleTest3_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3APossibleTest4_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3APossibleTest5_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3APossibleTest6_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3APossibleTest7_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3APossibleTest8_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3APossibleTest9_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3APossibleTest10_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3APossibleTest11_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3APossibleTest12_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3APossibleTest13_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3APossibleTest14_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3APossibleTest15_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3APossibleTest16_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3AAPossibleTest1_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3AAPossibleTest2_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3AAPossibleTest3_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3AAPossibleTest4_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3AAPossibleTest5_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3AAPossibleTest6_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3AAPossibleTest7_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3AAPossibleTest8_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShot3AAPossibleTest9_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShotDragonPossibleTest1_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShotDragonPossibleTest2_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShotDragonPossibleTest3_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShotDragonPossibleTest4_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShotDragonPossibleTest5_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShotDragonPossibleTest6_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShotDragonPossibleTest7_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShotDragonPossibleTest8_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShotLizardPossibleTest1_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShotLizardPossibleTest2_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShotLizardPossibleTest3_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShotLizardPossibleTest4_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShotLizardPossibleTest5_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShotLizardPossibleTest6_Test;
+    friend class TEST_StateEvaluationTest_IsHeadShotLizardPossibleTest7_Test;
+    friend class TEST_StateEvaluationTest_IsDouble3AOneStrokePossibleTest1_Test;
+    friend class TEST_StateEvaluationTest_IsDouble3AOneStrokePossibleTest2_Test;
+    friend class TEST_StateEvaluationTest_IsDouble3AOneStrokePossibleTest3_Test;
+    friend class TEST_StateEvaluationTest_IsDouble3AOneStrokePossibleTest4_Test;
+    friend class TEST_StateEvaluationTest_IsDouble3AOneStrokePossibleTest5_Test;
+    friend class TEST_StateEvaluationTest_IsDouble3AOneStrokePossibleTest6_Test;
+    friend class TEST_StateEvaluationTest_IsDouble3AOneStrokePossibleTest7_Test;
+    friend class TEST_StateEvaluationTest_IsDouble3AOneStrokePossibleTest8_Test;
+    friend class TEST_StateEvaluationTest_IsDouble3AOneStrokePossibleTest9_Test;
+    friend class TEST_StateEvaluationTest_IsDoubleThreatMitigationPossibleTest1_Test;
+    friend class TEST_StateEvaluationTest_IsDoubleThreatMitigationPossibleTest2a_Test;
+    friend class TEST_StateEvaluationTest_IsDoubleThreatMitigationPossibleTest2b_Test;
+    friend class TEST_StateEvaluationTest_IsDoubleThreatMitigationPossibleTest3_Test;
+    friend class TEST_StateEvaluationTest_IsDoubleThreatMitigationPossibleTest4_Test;
+    friend class TEST_StateEvaluationTest_IsDoubleThreatMitigationPossibleTest5_Test;
+    friend class TEST_StateEvaluationTest_IsDoubleThreatMitigationPossibleTest6_Test;
+    friend class TEST_StateEvaluationTest_IsDoubleThreatMitigationPossibleTest7_Test;
+    friend class TEST_StateEvaluationTest_IsDoubleThreatMitigationPossibleTest8_Test;
+    friend class TEST_StateEvaluationTest_IsSingle3AThreatMitigationPossibleTest1_Test;
+    friend class TEST_StateEvaluationTest_IsSingle3AThreatMitigationPossibleTest2_Test;
+    friend class TEST_StateEvaluationTest_IsSingle3AThreatMitigationPossibleTest3_Test;
+    friend class TEST_StateEvaluationTest_IsSingle3AThreatMitigationPossibleTest4_Test;
+    friend class TEST_StateEvaluationTest_IsSingle3AThreatMitigationPossibleTest5_Test;
+    friend class TEST_StateEvaluationTest_IsSingle3AThreatMitigationPossibleTest6_Test;
+    friend class TEST_StateEvaluationTest_IsSingle3AThreatMitigationPossibleTest7_Test;
+    friend class TEST_StateEvaluationTest_IsSingle3AThreatMitigationPossibleTest8_Test;
+    friend class TEST_StateEvaluationTest_IsSingle3AThreatMitigationPossibleTest9_Test;
 };
 
-#endif /* STATE_EVALUATION_HPP_ */
 
 /***************************************************************************
  *   Copyright (C) 2018 by Zbigniew Halat                                  *

@@ -51,8 +51,10 @@ add_executable( ci
 	"${UT_GOMOKUGAME_SRC}/SpotterTest/SpotterTest.cpp"
 	"${UT_GOMOKUGAME_SRC}/ScoreTest/ScoreTest.cpp"
 	"${UT_GOMOKUGAME_SRC}/OpenBookTest/OpenBookTest.cpp"
+	"${UT_GOMOKUGAME_SRC}/BoardScoreTest/BoardScoreTest.cpp"
 	
-	#"${UT_GOMOKUGAME_SRC}/BoardScoreTest/BoardScoreTest.cpp"
+	"${UT_GOMOKUGAME_SRC}/StateEvaluationTest/StateEvaluationTest.cpp"
+	#"${UT_GOMOKUGAME_SRC}/SearchAlgorithms/MinMax.cpp"
     # Unit under test
     "${GOMOKUGAME_SRC}/GomokuBoard.cpp"
 	"${GOMOKUGAME_SRC}/BoardScore.cpp"
@@ -78,6 +80,8 @@ add_executable( ci
     "${GOMOKUGAME_SRC}/Threats/Threat2CaseB.cpp"
     "${GOMOKUGAME_SRC}/Threats/Threat2CaseC.cpp"
     "${GOMOKUGAME_SRC}/Threats/ThreatsBloodRelation.cpp"
+    "${GOMOKUGAME_SRC}/SearchAlgorithms/StateEvaluation.cpp"
+    #${GOMOKUGAME_SRC}/SearchAlgorithms/MinMax.cpp"
     # Stubs
     "${STUBS_GLOBAL}/StubBoardIterator.cpp"
     "${STUBS_GLOBAL}/StubGraphIterator.cpp"

@@ -1,15 +1,36 @@
-/*
- * StateEvaluationTest.cpp
- *
- *  Created on: jul 30, 2017
- *      Author: zby
- */
+#include "GomokuBoard.hpp"
+#include "StateEvaluation.hpp"
+#include "BoardScore.hpp"
+#include "Score.hpp"
+//----------------------------------------------------------
+#include "CppUTest/TestHarness.h"
+#include "CppUTest/SimpleString.h"
+#include "CppUTest/PlatformSpecificFunctions.h"
+#include "CppUTest/TestMemoryAllocator.h"
+#include "CppUTest/MemoryLeakDetector.h"
 
-#include "StateEvaluationTest.hpp"
 
-#define NUMELEM( x )    ( sizeof( x )/sizeof( x[ 0 ] ) )
+TEST_GROUP(StateEvaluationTest)
+{
+public:
+    void setup( )
+    {
+        m_pGomokuBoard = new GomokuBoard( 15 );
+        m_pScore = Score::GetInstance();
+        m_pStateEvaluation = StateEvaluation::GetInstance();
+    };
 
-void StateEvaluationTest::IsHeadShot4BCPossibleTest1()
+    void teardown( )
+    {
+        delete m_pGomokuBoard;
+    };
+
+    GomokuBoard* m_pGomokuBoard;
+    Score* m_pScore{};
+    StateEvaluation* m_pStateEvaluation{};
+};
+
+TEST(StateEvaluationTest, IsHeadShot4BCPossibleTest1)
 {
 	// HEAD SHOT 4BC: (5,9)
 	//                       1 1 1 1 1
@@ -38,54 +59,50 @@ void StateEvaluationTest::IsHeadShot4BCPossibleTest1()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 5, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY headShot4BC = Board::PositionXY( 5, 9 );
@@ -93,17 +110,17 @@ void StateEvaluationTest::IsHeadShot4BCPossibleTest1()
 	Board::PositionXY headShot4BCResult;
 
 	// CheckWinnerMoveCondition  == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult ) );
-	CPPUNIT_ASSERT( headShot4BCResult == headShot4BC );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult ) );
+	CHECK( headShot4BCResult == headShot4BC );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult ) );
 
 	// CheckWinnerMoveCondition  == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult, false ) );
-	CPPUNIT_ASSERT( headShot4BCResult == headShot4BC );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult, false ) );
+	CHECK( headShot4BCResult == headShot4BC );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShot4BCPossibleTest2()
+TEST(StateEvaluationTest, IsHeadShot4BCPossibleTest2)
 {
 	// HEAD SHOT 4BC: (5,9)
 	//                       1 1 1 1 1
@@ -132,54 +149,50 @@ void StateEvaluationTest::IsHeadShot4BCPossibleTest2()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 5, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY headShot4BC = Board::PositionXY( 5, 9 );
@@ -187,17 +200,17 @@ void StateEvaluationTest::IsHeadShot4BCPossibleTest2()
 	Board::PositionXY headShot4BCResult;
 
 	// CheckWinnerMoveCondition  == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult ) );
-	CPPUNIT_ASSERT( headShot4BCResult == headShot4BC );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult ) );
+	CHECK( headShot4BCResult == headShot4BC );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult) );
 
 	// CheckWinnerMoveCondition  == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult, false ) );
-	CPPUNIT_ASSERT( headShot4BCResult == headShot4BC );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult, false ) );
+	CHECK( headShot4BCResult == headShot4BC );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShot4BCPossibleTest3()
+TEST(StateEvaluationTest, IsHeadShot4BCPossibleTest3)
 {
 	// HEAD SHOT 4BC: none
 	//                       1 1 1 1 1
@@ -226,69 +239,65 @@ void StateEvaluationTest::IsHeadShot4BCPossibleTest3()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 5, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	// none
 
 	// CheckWinnerMoveCondition  == true
 	Board::PositionXY headShot4BCResult;
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult ) );
 
 	// CheckWinnerMoveCondition  == false
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShot4BCPossibleTest4()
+TEST(StateEvaluationTest, IsHeadShot4BCPossibleTest4)
 {
 	// HEAD SHOT 4BC: (2,2)
 	//                       1 1 1 1 1
@@ -316,49 +325,45 @@ void StateEvaluationTest::IsHeadShot4BCPossibleTest4()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 0, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 1, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 0 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY headShot4BC = Board::PositionXY( 2, 2 );
@@ -366,17 +371,17 @@ void StateEvaluationTest::IsHeadShot4BCPossibleTest4()
 	Board::PositionXY headShot4BCResult;
 
 	// CheckWinnerMoveCondition  == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult ) );
-	CPPUNIT_ASSERT( headShot4BCResult == headShot4BC );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult ) );
+	CHECK( headShot4BCResult == headShot4BC );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult ) );
 
 	// CheckWinnerMoveCondition  == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult, false ) );
-	CPPUNIT_ASSERT( headShot4BCResult == headShot4BC );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult, false ) );
+	CHECK( headShot4BCResult == headShot4BC );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShot4BCPossibleTest5()
+TEST(StateEvaluationTest, IsHeadShot4BCPossibleTest5)
 {
 	// HEAD SHOT 4BC: none
 	//                       1 1 1 1 1
@@ -405,59 +410,55 @@ void StateEvaluationTest::IsHeadShot4BCPossibleTest5()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 5, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	// none
 	Board::PositionXY headShot4BCResult;
 
 	// CheckWinnerMoveCondition  == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult ) );
 
 	// CheckWinnerMoveCondition  == false
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShot4BCPossibleTest6()
+TEST(StateEvaluationTest, IsHeadShot4BCPossibleTest6)
 {
 	// HEAD SHOT 4BC: for checkWinnerMoveCondition == false:  (5,9)
 	//                       1 1 1 1 1
@@ -485,94 +486,90 @@ void StateEvaluationTest::IsHeadShot4BCPossibleTest6()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 5, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 11, 1 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 11, 2 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 11, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 11, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 0, 1 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 1, 1 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 1 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 1 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 11 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY double3A = Board::PositionXY( 5, 9 );
@@ -580,15 +577,15 @@ void StateEvaluationTest::IsHeadShot4BCPossibleTest6()
 	Board::PositionXY headShot4BCResult;
 
 	// CheckWinnerMoveCondition  == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult ) );
 
 	// CheckWinnerMoveCondition  == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShot4BCPossibleTest7()
+TEST(StateEvaluationTest, IsHeadShot4BCPossibleTest7)
 {
 	//                       1 1 1 1 1
 	//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
@@ -615,54 +612,50 @@ void StateEvaluationTest::IsHeadShot4BCPossibleTest7()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 3, 2 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 1 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	// none.
@@ -670,15 +663,15 @@ void StateEvaluationTest::IsHeadShot4BCPossibleTest7()
 	Board::PositionXY headShot4BCResult;
 
 	// CheckWinnerMoveCondition  == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult ) );
 
 	// CheckWinnerMoveCondition  == false
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShot4BCPossibleTest8()
+TEST(StateEvaluationTest, IsHeadShot4BCPossibleTest8)
 {
 	//                       1 1 1 1 1
 	//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
@@ -707,52 +700,52 @@ void StateEvaluationTest::IsHeadShot4BCPossibleTest8()
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
 
 	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    Score* m_pScore = Score::GetInstance();
+    StateEvaluation* m_pStateEvaluation = StateEvaluation::GetInstance();
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 3, 2 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 11);
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 1 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 12 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	// none.
@@ -760,15 +753,15 @@ void StateEvaluationTest::IsHeadShot4BCPossibleTest8()
 	Board::PositionXY headShot4BCResult;
 
 	// CheckWinnerMoveCondition  == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult ) );
 
 	// CheckWinnerMoveCondition  == false
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShot4BCPossibleTest9()
+TEST(StateEvaluationTest, IsHeadShot4BCPossibleTest9)
 {
 	//                       1 1 1 1 1
 	//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
@@ -795,54 +788,50 @@ void StateEvaluationTest::IsHeadShot4BCPossibleTest9()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 3, 2 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 10);
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 1 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 11 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY headShot4BC = Board::PositionXY( 3, 6 );
@@ -850,17 +839,17 @@ void StateEvaluationTest::IsHeadShot4BCPossibleTest9()
 	Board::PositionXY headShot4BCResult;
 
 	// CheckWinnerMoveCondition  == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult ) );
-	CPPUNIT_ASSERT( headShot4BCResult == headShot4BC );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult ) );
+	CHECK( headShot4BCResult == headShot4BC );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult ) );
 
 	// CheckWinnerMoveCondition  == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult, false ) );
-	CPPUNIT_ASSERT( headShot4BCResult == headShot4BC );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot4BCPossible( true, headShot4BCResult, false ) );
+	CHECK( headShot4BCResult == headShot4BC );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot4BCPossible( false, headShot4BCResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShot3APossibleTest1()
+TEST(StateEvaluationTest, IsHeadShot3APossibleTest1)
 {
 	// HEAD SHOT 3A: (4,9)
 
@@ -891,77 +880,77 @@ void StateEvaluationTest::IsHeadShot3APossibleTest1()
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
 
 	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    Score* m_pScore = Score::GetInstance();
+    StateEvaluation* m_pStateEvaluation = StateEvaluation::GetInstance();
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 4, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 0, 0 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 1, 0 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 0 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 0 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 12, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 12, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY(12, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY headShot3A = Board::PositionXY( 4, 9 );
@@ -969,16 +958,16 @@ void StateEvaluationTest::IsHeadShot3APossibleTest1()
 	Board::PositionXY headShot3AResult;
 
 	// CheckWinnerMoveCondition  == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
 
 	// CheckWinnerMoveCondition  == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( headShot3AResult == headShot3A );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult, false ) );
+	CHECK( headShot3AResult == headShot3A );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShot3APossibleTest2()
+TEST(StateEvaluationTest, IsHeadShot3APossibleTest2)
 {
 	// HEAD SHOT 3A: (2,2)
 
@@ -1007,39 +996,35 @@ void StateEvaluationTest::IsHeadShot3APossibleTest2()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 0, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 1, 1 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 1, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 0 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY headShot3A = Board::PositionXY( 2, 2 );
@@ -1047,17 +1032,17 @@ void StateEvaluationTest::IsHeadShot3APossibleTest2()
 	Board::PositionXY headShot3AResult;
 
 	// CheckWinnerMoveCondition  == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( headShot3AResult == headShot3A );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
+	CHECK( headShot3AResult == headShot3A );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
 
 	// CheckWinnerMoveCondition  == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( headShot3AResult == headShot3A );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult, false ) );
+	CHECK( headShot3AResult == headShot3A );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShot3APossibleTest3()
+TEST(StateEvaluationTest, IsHeadShot3APossibleTest3)
 {
 	// HEAD SHOT 3A: none
 
@@ -1086,74 +1071,70 @@ void StateEvaluationTest::IsHeadShot3APossibleTest3()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 11 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 12 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	// none
 
 	Board::PositionXY headShot3AResult;
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShot3APossibleTest4()
+TEST(StateEvaluationTest, IsHeadShot3APossibleTest4)
 {
 	// HEAD SHOT 3A: (2,7)
 
@@ -1183,39 +1164,35 @@ void StateEvaluationTest::IsHeadShot3APossibleTest4()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 0, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 1, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY headShot3A = Board::PositionXY( 2, 7 );
@@ -1223,17 +1200,17 @@ void StateEvaluationTest::IsHeadShot3APossibleTest4()
 	Board::PositionXY headShot3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( headShot3AResult == headShot3A );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
+	CHECK( headShot3AResult == headShot3A );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( headShot3AResult == headShot3A );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult, false ) );
+	CHECK( headShot3AResult == headShot3A );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShot3APossibleTest5()
+TEST(StateEvaluationTest, IsHeadShot3APossibleTest5)
 {
 	// HEAD SHOT 3A: (4,9)
 
@@ -1263,59 +1240,55 @@ void StateEvaluationTest::IsHeadShot3APossibleTest5()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 11 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 1, 12 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY headShot3A = Board::PositionXY( 4, 9 );
@@ -1323,16 +1296,16 @@ void StateEvaluationTest::IsHeadShot3APossibleTest5()
 	Board::PositionXY headShot3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult, false  ) );
-	CPPUNIT_ASSERT( headShot3AResult == headShot3A );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult, false  ) );
+	CHECK( headShot3AResult == headShot3A );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShot3APossibleTest6()
+TEST(StateEvaluationTest, IsHeadShot3APossibleTest6)
 {
 	// HEAD SHOT 3A: none
 
@@ -1361,59 +1334,55 @@ void StateEvaluationTest::IsHeadShot3APossibleTest6()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 5, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	// none
 	Board::PositionXY headShot3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShot3APossibleTest7()
+TEST(StateEvaluationTest, IsHeadShot3APossibleTest7)
 {
 	// HEAD SHOT 3A: none
 
@@ -1443,44 +1412,40 @@ void StateEvaluationTest::IsHeadShot3APossibleTest7()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 5, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	// none
@@ -1488,15 +1453,15 @@ void StateEvaluationTest::IsHeadShot3APossibleTest7()
 	Board::PositionXY headShot3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false,headShot3AResult  ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false,headShot3AResult  ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false,headShot3AResult, false  ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false,headShot3AResult, false  ) );
 }
 
-void StateEvaluationTest::IsHeadShot3APossibleTest8()
+TEST(StateEvaluationTest, IsHeadShot3APossibleTest8)
 {
 	// HEAD SHOT 3A: (4,9)
 
@@ -1527,64 +1492,60 @@ void StateEvaluationTest::IsHeadShot3APossibleTest8()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 4, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 11 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY headShot3A = Board::PositionXY( 4, 9 );
@@ -1592,17 +1553,17 @@ void StateEvaluationTest::IsHeadShot3APossibleTest8()
 	Board::PositionXY headShot3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( headShot3AResult == headShot3A );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
+	CHECK( headShot3AResult == headShot3A );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( headShot3AResult == headShot3A );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult, false ) );
+	CHECK( headShot3AResult == headShot3A );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShot3APossibleTest9()
+TEST(StateEvaluationTest, IsHeadShot3APossibleTest9)
 {
 	// HEAD SHOT 3A: (5,9)
 
@@ -1632,65 +1593,61 @@ void StateEvaluationTest::IsHeadShot3APossibleTest9()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 4, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 11 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY headShot3A = Board::PositionXY( 5, 9 );
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( headShot3AResult == headShot3A );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
+	CHECK( headShot3AResult == headShot3A );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
 }
 
-void StateEvaluationTest::IsHeadShot3APossibleTest10()
+TEST(StateEvaluationTest, IsHeadShot3APossibleTest10)
 {
 	// HEAD SHOT 3A: none
 	//                       1 1 1 1 1
@@ -1719,79 +1676,75 @@ void StateEvaluationTest::IsHeadShot3APossibleTest10()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 4, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 11 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	// None
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
 }
 
-void StateEvaluationTest::IsHeadShot3APossibleTest11()
+TEST(StateEvaluationTest, IsHeadShot3APossibleTest11)
 {
 	// HEAD SHOT 3A: none
 	//                       1 1 1 1 1
@@ -1820,79 +1773,75 @@ void StateEvaluationTest::IsHeadShot3APossibleTest11()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 4, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 11 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 11 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 1, 12 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	// None
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
 }
 
-void StateEvaluationTest::IsHeadShot3APossibleTest12()
+TEST(StateEvaluationTest, IsHeadShot3APossibleTest12)
 {
 	// HEAD SHOT 3A: (5,9)
 	//                       1 1 1 1 1
@@ -1921,80 +1870,76 @@ void StateEvaluationTest::IsHeadShot3APossibleTest12()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 4, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 11 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 11 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 12 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY headShot3A = Board::PositionXY( 5, 9 );
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( headShot3AResult == headShot3A );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
+	CHECK( headShot3AResult == headShot3A );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
 }
 
-void StateEvaluationTest::IsHeadShot3APossibleTest13()
+TEST(StateEvaluationTest, IsHeadShot3APossibleTest13)
 {
 	//                       1 1 1 1 1
 	//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
@@ -2021,70 +1966,66 @@ void StateEvaluationTest::IsHeadShot3APossibleTest13()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 4, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY headShot3A = Board::PositionXY( 4, 9 );
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( headShot3AResult == headShot3A );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
+	CHECK( headShot3AResult == headShot3A );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
 }
 
-void StateEvaluationTest::IsHeadShot3APossibleTest14()
+TEST(StateEvaluationTest, IsHeadShot3APossibleTest14)
 {
 	//                       1 1 1 1 1
 	//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
@@ -2112,49 +2053,45 @@ void StateEvaluationTest::IsHeadShot3APossibleTest14()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 2 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	// none
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
 }
 
-void StateEvaluationTest::IsHeadShot3APossibleTest15()
+TEST(StateEvaluationTest, IsHeadShot3APossibleTest15)
 {
 	//                       1 1 1 1 1
 	//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
@@ -2181,54 +2118,50 @@ void StateEvaluationTest::IsHeadShot3APossibleTest15()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 2 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	// none
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
 }
 
-void StateEvaluationTest::IsHeadShot3APossibleTest16()
+TEST(StateEvaluationTest, IsHeadShot3APossibleTest16)
 {
 	//                       1 1 1 1 1
 	//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
@@ -2255,50 +2188,46 @@ void StateEvaluationTest::IsHeadShot3APossibleTest16()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	// none
 
 	Board::PositionXY headShot3AResult;
-	pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
+	m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3APossible( false, headShot3AResult ) );
 }
 
-void StateEvaluationTest::IsHeadShot3AAPossibleTest1()
+TEST(StateEvaluationTest, IsHeadShot3AAPossibleTest1)
 {
 	// HEAD SHOT 3AA: none
 	//                       1 1 1 1 1
@@ -2326,64 +2255,60 @@ void StateEvaluationTest::IsHeadShot3AAPossibleTest1()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 8, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	//none
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult ) );
 }
 
-void StateEvaluationTest::IsHeadShot3AAPossibleTest2()
+TEST(StateEvaluationTest, IsHeadShot3AAPossibleTest2)
 {
 	// HEAD SHOT 3AA: none
 	//                       1 1 1 1 1
@@ -2411,64 +2336,60 @@ void StateEvaluationTest::IsHeadShot3AAPossibleTest2()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 8, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	//none
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult ) );
 };
 
-void StateEvaluationTest::IsHeadShot3AAPossibleTest3()
+TEST(StateEvaluationTest, IsHeadShot3AAPossibleTest3)
 {
 	// HEAD SHOT 3AA: none
 	//                       1 1 1 1 1
@@ -2496,80 +2417,76 @@ void StateEvaluationTest::IsHeadShot3AAPossibleTest3()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 8, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 
 	// Head shot:
 	//none
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult ) );
 };
 
-void StateEvaluationTest::IsHeadShot3AAPossibleTest4()
+TEST(StateEvaluationTest, IsHeadShot3AAPossibleTest4)
 {
 	// HEAD SHOT 3AA: none
 	//                       1 1 1 1 1
@@ -2597,59 +2514,55 @@ void StateEvaluationTest::IsHeadShot3AAPossibleTest4()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	//none
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult ) );
 };
 
-void StateEvaluationTest::IsHeadShot3AAPossibleTest5()
+TEST(StateEvaluationTest, IsHeadShot3AAPossibleTest5)
 {
 	// HEAD SHOT 3AA: (4,4)
 	//                       1 1 1 1 1
@@ -2677,84 +2590,80 @@ void StateEvaluationTest::IsHeadShot3AAPossibleTest5()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 13, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 13, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 13, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY headShot3AA = Board::PositionXY( 4, 4 );
 
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult, true ) );
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( headShot3AResult == headShot3AA );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult, true ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult, false ) );
+	CHECK( headShot3AResult == headShot3AA );
 
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult, true ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult, true ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult, false ) );
 };
 
-void StateEvaluationTest::IsHeadShot3AAPossibleTest6()
+TEST(StateEvaluationTest, IsHeadShot3AAPossibleTest6)
 {
 	// HEAD SHOT 3AA: (4,4)
 	//                       1 1 1 1 1
@@ -2782,69 +2691,65 @@ void StateEvaluationTest::IsHeadShot3AAPossibleTest6()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 5, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY headShot3AA = Board::PositionXY( 4, 4 );
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( headShot3AResult == headShot3AA );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult ) );
+	CHECK( headShot3AResult == headShot3AA );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult ) );
 
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( headShot3AResult == headShot3AA );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult, false ) );
+	CHECK( headShot3AResult == headShot3AA );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult, false ) );
 };
 
-void StateEvaluationTest::IsHeadShot3AAPossibleTest7()
+TEST(StateEvaluationTest, IsHeadShot3AAPossibleTest7)
 {
 	// HEAD SHOT 3AA: (4,4)
 	//                       1 1 1 1 1
@@ -2873,64 +2778,60 @@ void StateEvaluationTest::IsHeadShot3AAPossibleTest7()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 3, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY headShot3AA = Board::PositionXY( 4, 4 );
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( headShot3AResult == headShot3AA );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult ) );
+	CHECK( headShot3AResult == headShot3AA );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult ) );
 
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( headShot3AResult == headShot3AA );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult, false ) );
+	CHECK( headShot3AResult == headShot3AA );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult, false ) );
 };
 
-void StateEvaluationTest::IsHeadShot3AAPossibleTest8()
+TEST(StateEvaluationTest, IsHeadShot3AAPossibleTest8)
 {
 	// HEAD SHOT 3AA: none
 	//                       1 1 1 1 1
@@ -2958,63 +2859,59 @@ void StateEvaluationTest::IsHeadShot3AAPossibleTest8()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 1, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	// none
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult ) );
 };
 
-void StateEvaluationTest::IsHeadShot3AAPossibleTest9()
+TEST(StateEvaluationTest, IsHeadShot3AAPossibleTest9)
 {
 	// HEAD SHOT 3AA: none
 	//                       1 1 1 1 1
@@ -3042,81 +2939,77 @@ void StateEvaluationTest::IsHeadShot3AAPossibleTest9()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 3, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 1 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 2 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	// none
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( true, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShot3AAPossible( false, headShot3AResult, false ) );
 };
 
-void StateEvaluationTest::IsHeadShotDragonPossibleTest1()
+TEST(StateEvaluationTest, IsHeadShotDragonPossibleTest1)
 {
 	// HEAD SHOT dragon: (5,6)/(8,3)
 	//                       1 1 1 1 1
@@ -3144,89 +3037,85 @@ void StateEvaluationTest::IsHeadShotDragonPossibleTest1()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Dragon shot:
 	const Board::PositionXY dragonSoot1 = Board::PositionXY( 5, 6 );
 	const Board::PositionXY dragonSoot2 = Board::PositionXY( 8, 3 );
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( ( headShot3AResult == dragonSoot1 ) || ( headShot3AResult == dragonSoot2 ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult ) );
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( ( headShot3AResult == dragonSoot1 ) || ( headShot3AResult == dragonSoot2 ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult ) );
+	CHECK( ( headShot3AResult == dragonSoot1 ) || ( headShot3AResult == dragonSoot2 ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult, false ) );
+	CHECK( ( headShot3AResult == dragonSoot1 ) || ( headShot3AResult == dragonSoot2 ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult, false ) );
 };
 
-void StateEvaluationTest::IsHeadShotDragonPossibleTest2()
+TEST(StateEvaluationTest, IsHeadShotDragonPossibleTest2)
 {
 	// HEAD SHOT dragon: (5,6)/(8,3)
 	//                       1 1 1 1 1
@@ -3255,89 +3144,85 @@ void StateEvaluationTest::IsHeadShotDragonPossibleTest2()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Dragon shot:
 	const Board::PositionXY dragonSoot1 = Board::PositionXY( 5, 6 );
 	const Board::PositionXY dragonSoot2 = Board::PositionXY( 8, 3 );
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( ( headShot3AResult == dragonSoot1 ) || ( headShot3AResult == dragonSoot2 ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult ) );
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( ( headShot3AResult == dragonSoot1 ) || ( headShot3AResult == dragonSoot2 ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult ) );
+	CHECK( ( headShot3AResult == dragonSoot1 ) || ( headShot3AResult == dragonSoot2 ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult, false ) );
+	CHECK( ( headShot3AResult == dragonSoot1 ) || ( headShot3AResult == dragonSoot2 ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShotDragonPossibleTest3()
+TEST(StateEvaluationTest, IsHeadShotDragonPossibleTest3)
 {
 	// HEAD SHOT dragon: (6,7)/(7,6)
 	//                       1 1 1 1 1
@@ -3365,79 +3250,75 @@ void StateEvaluationTest::IsHeadShotDragonPossibleTest3()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 5, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Dragon shot:
 	const Board::PositionXY dragonSoot1 = Board::PositionXY( 6, 7 );
 	const Board::PositionXY dragonSoot2 = Board::PositionXY( 7, 6 );
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( ( headShot3AResult == dragonSoot1 ) || ( headShot3AResult == dragonSoot2 ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult ) );
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( ( headShot3AResult == dragonSoot1 ) || ( headShot3AResult == dragonSoot2 ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult ) );
+	CHECK( ( headShot3AResult == dragonSoot1 ) || ( headShot3AResult == dragonSoot2 ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult, false ) );
+	CHECK( ( headShot3AResult == dragonSoot1 ) || ( headShot3AResult == dragonSoot2 ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShotDragonPossibleTest4()
+TEST(StateEvaluationTest, IsHeadShotDragonPossibleTest4)
 {
 	// HEAD SHOT dragon: none
 	//                       1 1 1 1 1
@@ -3466,86 +3347,82 @@ void StateEvaluationTest::IsHeadShotDragonPossibleTest4()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Dragon shot:
 	// none
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShotDragonPossibleTest5()
+TEST(StateEvaluationTest, IsHeadShotDragonPossibleTest5)
 {
 	// 2. Put movies to the board.
 		//                       1 1 1 1 1
@@ -3572,11 +3449,7 @@ void StateEvaluationTest::IsHeadShotDragonPossibleTest5()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 		vector< Board::PositionXY > xyListCpu{
 			Board::PositionXY( 7, 7 ),
@@ -3627,25 +3500,25 @@ void StateEvaluationTest::IsHeadShotDragonPossibleTest5()
 		for ( uint32_t i = 0; i < xyListCpu.size(); ++i )
 		{
 			m_pGomokuBoard->PutMove( xyListCpu[i], boardScoreComputer.GetPlayer() );
-			pScore->UpdateScore( boardScoreComputer, xyListCpu[i] );
-			pScore->UpdateScore( boardScoreHuman, xyListCpu[i] );
+			m_pScore->UpdateScore( boardScoreComputer, xyListCpu[i] );
+			m_pScore->UpdateScore( boardScoreHuman, xyListCpu[i] );
 
 			m_pGomokuBoard->PutMove( xyHuman[i], boardScoreHuman.GetPlayer() );
-			pScore->UpdateScore( boardScoreComputer, xyHuman[i] );
-			pScore->UpdateScore( boardScoreHuman, xyHuman[i] );
+			m_pScore->UpdateScore( boardScoreComputer, xyHuman[i] );
+			m_pScore->UpdateScore( boardScoreHuman, xyHuman[i] );
 		}
 
 	// Dragon shot:
 	// none
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShotDragonPossibleTest6()
+TEST(StateEvaluationTest, IsHeadShotDragonPossibleTest6)
 {
 	// HEAD SHOT dragon: none
 	//	                   1 1 1 1 1
@@ -3673,70 +3546,66 @@ void StateEvaluationTest::IsHeadShotDragonPossibleTest6()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 3, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 2 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Dragon shot:
 	// none
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShotDragonPossibleTest7()
+TEST(StateEvaluationTest, IsHeadShotDragonPossibleTest7)
 {
 	// HEAD SHOT dragon: none
 	//                       1 1 1 1 1
@@ -3764,151 +3633,147 @@ void StateEvaluationTest::IsHeadShotDragonPossibleTest7()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 2, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 
 	newMove = Board::PositionXY( 2, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 2 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Dragon shot:
 	// none
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult, false ) );
 }
 
-void StateEvaluationTest::IsHeadShotDragonPossibleTest8()
+TEST(StateEvaluationTest, IsHeadShotDragonPossibleTest8)
 {
 	// HEAD SHOT dragon: (5,6)/(8,3)
 	//                       1 1 1 1 1
@@ -3936,11 +3801,7 @@ void StateEvaluationTest::IsHeadShotDragonPossibleTest8()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
@@ -3948,102 +3809,102 @@ void StateEvaluationTest::IsHeadShotDragonPossibleTest8()
 
 	newMove = Board::PositionXY( 4, 13 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 13 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 13 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 13 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 13 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Dragon shot:
 	const Board::PositionXY dragonSoot1 = Board::PositionXY( 5, 6 );
 	const Board::PositionXY dragonSoot2 = Board::PositionXY( 8, 3 );
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult ) );
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( ( headShot3AResult == dragonSoot1 ) || ( headShot3AResult == dragonSoot2 ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShotDragonPossible( true, headShot3AResult, false ) );
+	CHECK( ( headShot3AResult == dragonSoot1 ) || ( headShot3AResult == dragonSoot2 ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotDragonPossible( false, headShot3AResult, false ) );
 };
 
-void StateEvaluationTest::IsHeadShotLizardPossibleTest1()
+TEST(StateEvaluationTest, IsHeadShotLizardPossibleTest1)
 {
 	// Lizard shot: (4,4)/(7,7)
 	//                       1 1 1 1 1
@@ -4071,83 +3932,79 @@ void StateEvaluationTest::IsHeadShotLizardPossibleTest1()
 	BoardScore boardScoreHuman( Board::PLAYER_A );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Lizard shot:
 	const Board::PositionXY lizardSoot1 = Board::PositionXY( 4, 4 );
 	const Board::PositionXY lizardSoot2 = Board::PositionXY( 7, 7 );
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( ( headShot3AResult == lizardSoot1 ) || ( headShot3AResult == lizardSoot2 ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult, false ) );
+	CHECK( ( headShot3AResult == lizardSoot1 ) || ( headShot3AResult == lizardSoot2 ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult ) );
 }
 
-void StateEvaluationTest::IsHeadShotLizardPossibleTest2()
+TEST(StateEvaluationTest, IsHeadShotLizardPossibleTest2)
 {
 	// Lizard shot: (6,7)/(6,9)
 	//                       1 1 1 1 1
@@ -4175,98 +4032,94 @@ void StateEvaluationTest::IsHeadShotLizardPossibleTest2()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 4, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 11 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 12 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 10, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 10, 13 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Lizard shot.
 	const Board::PositionXY lizardSoot1 = Board::PositionXY( 6, 7 );
 	const Board::PositionXY lizardSoot2 = Board::PositionXY( 6, 9 );
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( ( headShot3AResult == lizardSoot1 ) || ( headShot3AResult == lizardSoot2 ) );
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult, false ) );
+	CHECK( ( headShot3AResult == lizardSoot1 ) || ( headShot3AResult == lizardSoot2 ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult ) );
 }
 
-void StateEvaluationTest::IsHeadShotLizardPossibleTest3()
+TEST(StateEvaluationTest, IsHeadShotLizardPossibleTest3)
 {
 	// Lizard shot: none
 	//                       1 1 1 1 1
@@ -4294,142 +4147,138 @@ void StateEvaluationTest::IsHeadShotLizardPossibleTest3()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 3, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 0, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 1, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 1, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Lizard shot.
 	// none
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult ) );
 
 }
 
-void StateEvaluationTest::IsHeadShotLizardPossibleTest4()
+TEST(StateEvaluationTest, IsHeadShotLizardPossibleTest4)
 {
 	// Lizard shot: none
 	//                       1 1 1 1 1
@@ -4457,146 +4306,142 @@ void StateEvaluationTest::IsHeadShotLizardPossibleTest4()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 3, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 0, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 1, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Lizard shot.
 	// none
 
 	Board::PositionXY headShot3AResult;
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult ) );
 }
 
-void StateEvaluationTest::IsHeadShotLizardPossibleTest5()
+TEST(StateEvaluationTest, IsHeadShotLizardPossibleTest5)
 {
 	// Lizard shot: none
 	//                       1 1 1 1 1
@@ -4624,86 +4469,82 @@ void StateEvaluationTest::IsHeadShotLizardPossibleTest5()
 		BoardScore boardScoreHuman( Board::PLAYER_B );
 		boardScoreComputer.SetBoard( *m_pGomokuBoard );
 		boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-		// Get singletons.
-	    Score* pScore = Score::GetInstance();
-	    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-	    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+	    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 		Board::PositionXY newMove;
 
 		// Put movies into the board.
 		newMove = Board::PositionXY( 6, 5 );
 		m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-		pScore->UpdateScore( boardScoreComputer, newMove );
-		pScore->UpdateScore( boardScoreHuman, newMove );
+		m_pScore->UpdateScore( boardScoreComputer, newMove );
+		m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 		newMove = Board::PositionXY( 6, 6 );
 		m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-		pScore->UpdateScore( boardScoreComputer, newMove );
-		pScore->UpdateScore( boardScoreHuman, newMove );
+		m_pScore->UpdateScore( boardScoreComputer, newMove );
+		m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 		newMove = Board::PositionXY( 7, 6 );
 		m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-		pScore->UpdateScore( boardScoreComputer, newMove );
-		pScore->UpdateScore( boardScoreHuman, newMove );
+		m_pScore->UpdateScore( boardScoreComputer, newMove );
+		m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 		newMove = Board::PositionXY( 8, 5 );
 		m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-		pScore->UpdateScore( boardScoreComputer, newMove );
-		pScore->UpdateScore( boardScoreHuman, newMove );
+		m_pScore->UpdateScore( boardScoreComputer, newMove );
+		m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 		newMove = Board::PositionXY( 8, 6 );
 		m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-		pScore->UpdateScore( boardScoreComputer, newMove );
-		pScore->UpdateScore( boardScoreHuman, newMove );
+		m_pScore->UpdateScore( boardScoreComputer, newMove );
+		m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 		newMove = Board::PositionXY( 8, 7 );
 		m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-		pScore->UpdateScore( boardScoreComputer, newMove );
-		pScore->UpdateScore( boardScoreHuman, newMove );
+		m_pScore->UpdateScore( boardScoreComputer, newMove );
+		m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 		newMove = Board::PositionXY( 5, 4 );
 		m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-		pScore->UpdateScore( boardScoreComputer, newMove );
-		pScore->UpdateScore( boardScoreHuman, newMove );
+		m_pScore->UpdateScore( boardScoreComputer, newMove );
+		m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 		newMove = Board::PositionXY( 4, 7 );
 		m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-		pScore->UpdateScore( boardScoreComputer, newMove );
-		pScore->UpdateScore( boardScoreHuman, newMove );
+		m_pScore->UpdateScore( boardScoreComputer, newMove );
+		m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 		newMove = Board::PositionXY( 7, 5 );
 		m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-		pScore->UpdateScore( boardScoreComputer, newMove );
-		pScore->UpdateScore( boardScoreHuman, newMove );
+		m_pScore->UpdateScore( boardScoreComputer, newMove );
+		m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 		newMove = Board::PositionXY( 7, 7 );
 		m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-		pScore->UpdateScore( boardScoreComputer, newMove );
-		pScore->UpdateScore( boardScoreHuman, newMove );
+		m_pScore->UpdateScore( boardScoreComputer, newMove );
+		m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 		newMove = Board::PositionXY( 8, 8 );
 		m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-		pScore->UpdateScore( boardScoreComputer, newMove );
-		pScore->UpdateScore( boardScoreHuman, newMove );
+		m_pScore->UpdateScore( boardScoreComputer, newMove );
+		m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 		newMove = Board::PositionXY( 9, 6 );
 		m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-		pScore->UpdateScore( boardScoreComputer, newMove );
-		pScore->UpdateScore( boardScoreHuman, newMove );
+		m_pScore->UpdateScore( boardScoreComputer, newMove );
+		m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 		// Lizard shot.
 		// none
 
 		Board::PositionXY headShot3AResult;
-		CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult, false ) );
-		CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult ) );
-		CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult, false ) );
-		CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult ) );
+		CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult, false ) );
+		CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult ) );
+		CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult, false ) );
+		CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult ) );
 }
 
-void StateEvaluationTest::IsHeadShotLizardPossibleTest6()
+TEST(StateEvaluationTest, IsHeadShotLizardPossibleTest6)
 {
 	// Lizard shot: (4,4)/(7,7)
 	//                       1 1 1 1 1
@@ -4731,109 +4572,105 @@ void StateEvaluationTest::IsHeadShotLizardPossibleTest6()
 	BoardScore boardScoreHuman( Board::PLAYER_A );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 13 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 13 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 13 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 13 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Lizard shot:
 	const Board::PositionXY lizardSoot1 = Board::PositionXY( 4, 4 );
@@ -4841,14 +4678,14 @@ void StateEvaluationTest::IsHeadShotLizardPossibleTest6()
 
 	Board::PositionXY headShot3AResult;
 
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( ( headShot3AResult == lizardSoot1 ) || ( headShot3AResult == lizardSoot2 ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult, false ) );
+	CHECK( ( headShot3AResult == lizardSoot1 ) || ( headShot3AResult == lizardSoot2 ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult ) );
 }
 
-void StateEvaluationTest::IsHeadShotLizardPossibleTest7()
+TEST(StateEvaluationTest, IsHeadShotLizardPossibleTest7)
 {
 	// Lizard shot: none
 	//                         1 1 1 1 1
@@ -4876,77 +4713,73 @@ void StateEvaluationTest::IsHeadShotLizardPossibleTest7()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Lizard shot:
 	// none
 
 	Board::PositionXY headShot3AResult;
 
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult, true ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult, true ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult, true ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( true, headShot3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult, true ) );
+	CHECK_FALSE( m_pStateEvaluation->IsHeadShotLizardPossible( false, headShot3AResult, false ) );
 }
 
-void StateEvaluationTest::IsDouble3AOneStrokePossibleTest1()
+TEST(StateEvaluationTest, IsDouble3AOneStrokePossibleTest1)
 {
 	// Double threat 3A: (5,5)
 	//                       1 1 1 1 1
@@ -4974,34 +4807,30 @@ void StateEvaluationTest::IsDouble3AOneStrokePossibleTest1()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY double3A = Board::PositionXY( 5, 5 );
@@ -5009,17 +4838,17 @@ void StateEvaluationTest::IsDouble3AOneStrokePossibleTest1()
 	Board::PositionXY double3AResult;
 
 	// CheckWinnerMoveCondition  == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult ) );
-	CPPUNIT_ASSERT( double3AResult == double3A );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult ) );
+	CHECK( double3AResult == double3A );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult ) );
 
 	// CheckWinnerMoveCondition  == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult, false ) );
-	CPPUNIT_ASSERT( double3AResult == double3A );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult, false ) );
+	CHECK( double3AResult == double3A );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult, false ) );
 }
 
-void StateEvaluationTest::IsDouble3AOneStrokePossibleTest2()
+TEST(StateEvaluationTest, IsDouble3AOneStrokePossibleTest2)
 {
 	// Double threat 3A: (4,6)
 	//                       1 1 1 1 1
@@ -5047,49 +4876,45 @@ void StateEvaluationTest::IsDouble3AOneStrokePossibleTest2()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 1 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 2 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY double3A = Board::PositionXY( 4, 6 );
@@ -5097,16 +4922,16 @@ void StateEvaluationTest::IsDouble3AOneStrokePossibleTest2()
 	Board::PositionXY double3AResult;
 
 	// CheckWinnerMoveCondition  == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult ) );
 
 	// CheckWinnerMoveCondition  == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult, false ) );
-	CPPUNIT_ASSERT( double3AResult == double3A );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult, false ) );
+	CHECK( double3AResult == double3A );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult, false ) );
 }
 
-void StateEvaluationTest::IsDouble3AOneStrokePossibleTest3()
+TEST(StateEvaluationTest, IsDouble3AOneStrokePossibleTest3)
 {
 	// Double threat 3A: (3,6)
 	//                       1 1 1 1 1
@@ -5134,69 +4959,65 @@ void StateEvaluationTest::IsDouble3AOneStrokePossibleTest3()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 0, 0 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 1, 0 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 0 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 0 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 0, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 0, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 0, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY double3A = Board::PositionXY( 3, 6 );
@@ -5204,16 +5025,16 @@ void StateEvaluationTest::IsDouble3AOneStrokePossibleTest3()
 	Board::PositionXY double3AResult;
 
 	// CheckWinnerMoveCondition  == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult ) );
-	CPPUNIT_ASSERT( false== pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult ) );
+	CHECK( false== m_pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult ) );
 
 	// CheckWinnerMoveCondition  == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult, false ) );
-	CPPUNIT_ASSERT( double3AResult == double3A );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult, false ) );
+	CHECK( double3AResult == double3A );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult, false ) );
 }
 
-void StateEvaluationTest::IsDouble3AOneStrokePossibleTest4()
+TEST(StateEvaluationTest, IsDouble3AOneStrokePossibleTest4)
 {
 	// Double threat 3A: none
 	//                       1 1 1 1 1
@@ -5241,34 +5062,30 @@ void StateEvaluationTest::IsDouble3AOneStrokePossibleTest4()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 5, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	// none
@@ -5276,15 +5093,15 @@ void StateEvaluationTest::IsDouble3AOneStrokePossibleTest4()
 	Board::PositionXY double3AResult;
 
 	// CheckWinnerMoveCondition  == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult ) );
 
 	// CheckWinnerMoveCondition  == false
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult, false ) );
 }
 
-void StateEvaluationTest::IsDouble3AOneStrokePossibleTest5()
+TEST(StateEvaluationTest, IsDouble3AOneStrokePossibleTest5)
 {
 	// Double threat 3A: none
 	//                       1 1 1 1 1
@@ -5312,49 +5129,45 @@ void StateEvaluationTest::IsDouble3AOneStrokePossibleTest5()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 8, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 11 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 11 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 11 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	// none
@@ -5362,15 +5175,15 @@ void StateEvaluationTest::IsDouble3AOneStrokePossibleTest5()
 	Board::PositionXY double3AResult;
 
 	// CheckWinnerMoveCondition  == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult ) );
 
 	// CheckWinnerMoveCondition  == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult, false ) );
 }
 
-void StateEvaluationTest::IsDouble3AOneStrokePossibleTest6()
+TEST(StateEvaluationTest, IsDouble3AOneStrokePossibleTest6)
 {
 	// Double threat 3A: none
 	//                       1 1 1 1 1
@@ -5399,49 +5212,45 @@ void StateEvaluationTest::IsDouble3AOneStrokePossibleTest6()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 4, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 10 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	// none
 
 	Board::PositionXY double3AResult;
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult, false ) );
 }
 
-void StateEvaluationTest::IsDouble3AOneStrokePossibleTest7()
+TEST(StateEvaluationTest, IsDouble3AOneStrokePossibleTest7)
 {
 	// Double threat 3A: (4,5)
 	//                       1 1 1 1 1
@@ -5470,34 +5279,30 @@ void StateEvaluationTest::IsDouble3AOneStrokePossibleTest7()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 3, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY double3A = Board::PositionXY( 4, 5 );
@@ -5505,17 +5310,17 @@ void StateEvaluationTest::IsDouble3AOneStrokePossibleTest7()
 	Board::PositionXY double3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult ) );
-	CPPUNIT_ASSERT( double3AResult == double3A );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult ) );
+	CHECK( double3AResult == double3A );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult, false ) );
-	CPPUNIT_ASSERT( double3AResult == double3A );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult, false ) );
+	CHECK( double3AResult == double3A );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult, false ) );
 }
 
-void StateEvaluationTest::IsDouble3AOneStrokePossibleTest8()
+TEST(StateEvaluationTest, IsDouble3AOneStrokePossibleTest8)
 {
 	// Double threat 3A: (5,5)
 	//                       1 1 1 1 1
@@ -5544,34 +5349,30 @@ void StateEvaluationTest::IsDouble3AOneStrokePossibleTest8()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 3, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	const Board::PositionXY double3A = Board::PositionXY( 5, 5 );
@@ -5579,17 +5380,17 @@ void StateEvaluationTest::IsDouble3AOneStrokePossibleTest8()
 	Board::PositionXY double3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult ) );
-	CPPUNIT_ASSERT( double3AResult == double3A );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult ) );
+	CHECK( double3AResult == double3A );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult, false ) );
-	CPPUNIT_ASSERT( double3AResult == double3A );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult, false ) );
+	CHECK( double3AResult == double3A );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult, false ) );
 }
 
-void StateEvaluationTest::IsDouble3AOneStrokePossibleTest9()
+TEST(StateEvaluationTest, IsDouble3AOneStrokePossibleTest9)
 {
 	// Double threat 3A: (5,5)
 	//                       1 1 1 1 1
@@ -5617,29 +5418,25 @@ void StateEvaluationTest::IsDouble3AOneStrokePossibleTest9()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 5, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Head shot:
 	// none
@@ -5647,15 +5444,15 @@ void StateEvaluationTest::IsDouble3AOneStrokePossibleTest9()
 	Board::PositionXY double3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( true, double3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AOneStrokePossible( false, double3AResult, false ) );
 }
 
-void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest1()
+TEST(StateEvaluationTest, IsDoubleThreatMitigationPossibleTest1)
 {
 	// Mitigation move: none
 	//                       1 1 1 1 1
@@ -5684,59 +5481,55 @@ void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest1()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Mitigation move:
 	// none
@@ -5744,15 +5537,15 @@ void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest1()
 	Board::PositionXY mitigation2x3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, false ) );
 }
 
-void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest2a()
+TEST(StateEvaluationTest, IsDoubleThreatMitigationPossibleTest2a)
 {
 	// Mitigation move: (6,7)
 	//                       1 1 1 1 1
@@ -5780,58 +5573,54 @@ void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest2a()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	newMove = Board::PositionXY( 6, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Mitigation move:
 	const Board::PositionXY mitigationMove = Board::PositionXY( 6, 7 );
@@ -5839,17 +5628,17 @@ void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest2a()
 	Board::PositionXY mitigation2x3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult ) );
-	CPPUNIT_ASSERT( mitigation2x3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult ) );
+	CHECK( mitigation2x3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, false ) );
-	CPPUNIT_ASSERT( mitigation2x3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, false ) );
+	CHECK( mitigation2x3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, false ) );
 }
 
-void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest2b()
+TEST(StateEvaluationTest, IsDoubleThreatMitigationPossibleTest2b)
 {
 	// Mitigation move: (6,7)
 	//                       1 1 1 1 1
@@ -5877,80 +5666,76 @@ void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest2b()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 1, 2 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 2, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 9, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Mitigation move:
 	const Board::PositionXY mitigationMove = Board::PositionXY( 6, 7 );
@@ -5958,15 +5743,15 @@ void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest2b()
 	Board::PositionXY mitigation2x3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, true ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, true ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, true ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, true ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, false ) );
 }
 
-void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest3()
+TEST(StateEvaluationTest, IsDoubleThreatMitigationPossibleTest3)
 {
 	// Mitigation move: (6,6)
 	//                       1 1 1 1 1
@@ -5994,59 +5779,55 @@ void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest3()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 5, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 1 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 2 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Mitigation move:
 	// none
@@ -6054,15 +5835,15 @@ void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest3()
 	Board::PositionXY mitigation2x3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, false ) );
 }
 
-void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest4()
+TEST(StateEvaluationTest, IsDoubleThreatMitigationPossibleTest4)
 {
 	// Mitigation move: (6,6)
 	//                       1 1 1 1 1
@@ -6090,44 +5871,40 @@ void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest4()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 5, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Mitigation move:
 	const Board::PositionXY mitigationMove = Board::PositionXY( 6, 6 );
@@ -6135,17 +5912,17 @@ void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest4()
 	Board::PositionXY mitigation2x3AResult;
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult ) );
-	CPPUNIT_ASSERT( mitigation2x3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult ) );
+	CHECK( mitigation2x3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult ) );
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, false ) );
-	CPPUNIT_ASSERT( mitigation2x3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, false ) );
+	CHECK( mitigation2x3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, false ) );
 }
 
-void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest5()
+TEST(StateEvaluationTest, IsDoubleThreatMitigationPossibleTest5)
 {
 	// Mitigation move: none (assert)
 	//						   1 1 1 1 1
@@ -6174,59 +5951,55 @@ void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest5()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 8, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 0, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 1, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Mitigation move:
 	// none/assert
@@ -6234,15 +6007,15 @@ void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest5()
 	Board::PositionXY mitigation2x3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, false ) );
 }
 
-void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest6()
+TEST(StateEvaluationTest, IsDoubleThreatMitigationPossibleTest6)
 {
 	// Mitigation move: none
 	//                       1 1 1 1 1
@@ -6272,64 +6045,60 @@ void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest6()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Mitigation move:
 	// none
@@ -6337,15 +6106,15 @@ void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest6()
 	Board::PositionXY mitigation2x3AResult;
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult ) );
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, false ) );
 }
 
-void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest7()
+TEST(StateEvaluationTest, IsDoubleThreatMitigationPossibleTest7)
 {
 	// Mitigation move: none
 	//                       1 1 1 1 1
@@ -6374,64 +6143,60 @@ void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest7()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Mitigation move:
 	// none
@@ -6439,15 +6204,15 @@ void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest7()
 	Board::PositionXY mitigation2x3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, false ) );
 }
 
-void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest8()
+TEST(StateEvaluationTest, IsDoubleThreatMitigationPossibleTest8)
 {
 	// Mitigation move: (5,6)
 	//                       1 1 1 1 1
@@ -6475,64 +6240,60 @@ void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest8()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 3 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 9 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Mitigation move:
 	const Board::PositionXY mitigationMove = Board::PositionXY( 5, 6 );
@@ -6540,17 +6301,17 @@ void StateEvaluationTest::IsDoubleThreatMitigationPossibleTest8()
 	Board::PositionXY mitigation2x3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult ) );
-	CPPUNIT_ASSERT( mitigation2x3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult ) );
+	CHECK( mitigation2x3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, false ) );
-	CPPUNIT_ASSERT( mitigation2x3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsDouble3AMitigationPossible( true, mitigation2x3AResult, false ) );
+	CHECK( mitigation2x3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsDouble3AMitigationPossible( false, mitigation2x3AResult, false ) );
 }
 
-void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest1()
+TEST(StateEvaluationTest, IsSingle3AThreatMitigationPossibleTest1)
 {
 	// Mitigation move: (6,4)
 	//                       1 1 1 1 1
@@ -6579,39 +6340,35 @@ void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest1()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Mitigation move:
 	const Board::PositionXY mitigationMove = Board::PositionXY( 6, 4 );
@@ -6619,17 +6376,17 @@ void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest1()
 	Board::PositionXY mitigation3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult ) );
-	CPPUNIT_ASSERT( mitigation3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult ) );
+	CHECK( mitigation3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult, false ) );
-	CPPUNIT_ASSERT( mitigation3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult, false ) );
+	CHECK( mitigation3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult, false ) );
 }
 
-void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest2()
+TEST(StateEvaluationTest, IsSingle3AThreatMitigationPossibleTest2)
 {
 	// Mitigation move: (6,4)
 	//                       1 1 1 1 1
@@ -6658,39 +6415,35 @@ void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest2()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Mitigation move:
 	const Board::PositionXY mitigationMove = Board::PositionXY( 6, 4 );
@@ -6698,17 +6451,17 @@ void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest2()
 	Board::PositionXY mitigation3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult ) );
-	CPPUNIT_ASSERT( mitigation3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult ) );
+	CHECK( mitigation3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult, false ) );
-	CPPUNIT_ASSERT( mitigation3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult, false ) );
+	CHECK( mitigation3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult, false ) );
 }
 
-void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest3()
+TEST(StateEvaluationTest, IsSingle3AThreatMitigationPossibleTest3)
 {
 	// Mitigation move: none
 	//                       1 1 1 1 1
@@ -6737,39 +6490,35 @@ void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest3()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Mitigation move:
 	// none
@@ -6777,15 +6526,15 @@ void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest3()
 	Board::PositionXY mitigation3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult, false ) );
 }
 
-void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest4()
+TEST(StateEvaluationTest, IsSingle3AThreatMitigationPossibleTest4)
 {
 	// Mitigation move: (6,4)
 	//                       1 1 1 1 1
@@ -6814,49 +6563,45 @@ void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest4()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 2, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Mitigation move:
 	const Board::PositionXY mitigationMove = Board::PositionXY( 6, 4 );
@@ -6864,17 +6609,17 @@ void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest4()
 	Board::PositionXY mitigation3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult ) );
-	CPPUNIT_ASSERT( mitigation3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult ) );
+	CHECK( mitigation3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult, false ) );
-	CPPUNIT_ASSERT( mitigation3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult, false ) );
+	CHECK( mitigation3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult, false ) );
 }
 
-void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest5()
+TEST(StateEvaluationTest, IsSingle3AThreatMitigationPossibleTest5)
 {
 	// Mitigation move: (1,3)
 	//                       1 1 1 1 1
@@ -6902,44 +6647,40 @@ void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest5()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 1, 2 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 1, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 1, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 0, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 1 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 0 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Mitigation move:
 	const Board::PositionXY mitigationMove = Board::PositionXY( 1, 3 );
@@ -6947,17 +6688,17 @@ void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest5()
 	Board::PositionXY mitigation3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult ) );
-	CPPUNIT_ASSERT( mitigation3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult ) );
+	CHECK( mitigation3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult, false ) );
-	CPPUNIT_ASSERT( mitigation3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult, false ) );
+	CHECK( mitigation3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult, false ) );
 }
 
-void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest6()
+TEST(StateEvaluationTest, IsSingle3AThreatMitigationPossibleTest6)
 {
 	// Mitigation move: none
 	//                       1 1 1 1 1
@@ -6985,39 +6726,35 @@ void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest6()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 6, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Mitigation move:
 	// none
@@ -7025,15 +6762,15 @@ void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest6()
 	Board::PositionXY mitigation3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult ) );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult, false ) );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult, false ) );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult, false ) );
 }
 
-void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest7()
+TEST(StateEvaluationTest, IsSingle3AThreatMitigationPossibleTest7)
 {
 	// Mitigation move: (7,3)
 	//                       1 1 1 1 1
@@ -7061,49 +6798,45 @@ void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest7()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 2, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Mitigation move:
 	const Board::PositionXY mitigationMove = Board::PositionXY( 7, 3 );
@@ -7111,17 +6844,17 @@ void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest7()
 	Board::PositionXY mitigation3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult ) );
-	CPPUNIT_ASSERT( mitigation3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult ) );
+	CHECK( mitigation3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult, false ) );
-	CPPUNIT_ASSERT( mitigation3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult, false ) );
+	CHECK( mitigation3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult, false ) );
 }
 
-void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest8()
+TEST(StateEvaluationTest, IsSingle3AThreatMitigationPossibleTest8)
 {
 	// Mitigation move: (7,3)
 	//                       1 1 1 1 1
@@ -7149,49 +6882,45 @@ void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest8()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 2, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Mitigation move:
 	const Board::PositionXY mitigationMove = Board::PositionXY( 7, 3 );
@@ -7199,17 +6928,17 @@ void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest8()
 	Board::PositionXY mitigation3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult ) );
-	CPPUNIT_ASSERT( mitigation3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult ) );
+	CHECK( mitigation3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult, false ) );
-	CPPUNIT_ASSERT( mitigation3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult, false ) );
+	CHECK( mitigation3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult, false ) );
 }
 
-void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest9()
+TEST(StateEvaluationTest, IsSingle3AThreatMitigationPossibleTest9)
 {
 	// Mitigation move: (7,3)
 	//                       1 1 1 1 1
@@ -7237,64 +6966,60 @@ void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest9()
 	BoardScore boardScoreHuman( Board::PLAYER_B );
 	boardScoreComputer.SetBoard( *m_pGomokuBoard );
 	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-
-	// Get singletons.
-    Score* pScore = Score::GetInstance();
-    StateEvaluation* pStateEvaluation = StateEvaluation::GetInstance();
-    pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
+    m_pStateEvaluation->SetBoards(boardScoreComputer, boardScoreHuman);
 
 	Board::PositionXY newMove;
 
 	// Put movies into the board.
 	newMove = Board::PositionXY( 2, 8 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 4 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 7, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 3, 7 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 6 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 5 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 4, 12 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 5, 12 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	newMove = Board::PositionXY( 6, 12 );
 	m_pGomokuBoard->PutMove( newMove, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, newMove );
-	pScore->UpdateScore( boardScoreHuman, newMove );
+	m_pScore->UpdateScore( boardScoreComputer, newMove );
+	m_pScore->UpdateScore( boardScoreHuman, newMove );
 
 	// Mitigation move:
 	const Board::PositionXY mitigationMove = Board::PositionXY( 7, 3 );
@@ -7302,13 +7027,13 @@ void StateEvaluationTest::IsSingle3AThreatMitigationPossibleTest9()
 	Board::PositionXY mitigation3AResult;
 
 	// CheckWinnerMoveCondition == true
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult ) );
-	CPPUNIT_ASSERT( mitigation3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult ) );
+	CHECK_TRUE( m_pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult ) );
+	CHECK( mitigation3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult ) );
 
 	// CheckWinnerMoveCondition == false
-	CPPUNIT_ASSERT( true == pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult, false ) );
-	CPPUNIT_ASSERT( mitigation3AResult == mitigationMove );
-	CPPUNIT_ASSERT( false == pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult, false ) );
+	CHECK_TRUE( m_pStateEvaluation->IsBlockAndAttack3APossible( true, mitigation3AResult, false ) );
+	CHECK( mitigation3AResult == mitigationMove );
+	CHECK_FALSE( m_pStateEvaluation->IsBlockAndAttack3APossible( false, mitigation3AResult, false ) );
 }
 

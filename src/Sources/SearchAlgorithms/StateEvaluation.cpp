@@ -1,31 +1,6 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-/// @file StateEvaluation.cpp
-///
-/// Board state evaluation.
-///
-/// @par Full Description.
-/// Estimate how good a board state is.
-///
-/// @if REVISION_HISTORY_INCLUDED
-/// @par Edit History
-/// - zhalat 30-Jul-2017 Initial revision.
-/// - zhalat 25-Oct-2017 Implement IsHeadShot3AAPossible() and add to decisions method.
-/// @endif
-///
-/// @ingroup.
-///
-/// @par non-Copyright (c) 2017 HalSoft
-///////////////////////////////////////////////////////////////////////////////////////////
-
-// SYSTEM INCLUDES
-#include <algorithm>  // For find().
-#include <assert.h>   // For assert.
+#include <algorithm>  				// For find().
+#include <assert.h>   				// For assert.
 #include <math.h>
-
-// C PROJECT INCLUDES
-// <none>
-
-// C++ PROJECT INCLUDES
 #include "ThreatsBloodRelation.hpp"  //
 #include "VectorUnique.hpp"          // For VectorUnique definitions.
 #include "StateEvaluation.hpp"       // For declaration.
@@ -94,7 +69,6 @@ StateEvaluation::HeadShotActionState StateEvaluation::m_HeadShotActionStateMinCo
     {false, false, XY_OUT_OF_BOARD, &StateEvaluation::IsBlockAndAttack3APossible},
 };
 
-/// Check if there is a winner.
 bool StateEvaluation::IsWinner(const bool isMaxPlayer, Board::PositionXY& rBuildUpMove, int& rStateScore) const
 {
     bool retVal = false;
@@ -125,7 +99,6 @@ bool StateEvaluation::IsWinner(const bool isMaxPlayer, Board::PositionXY& rBuild
     return retVal;
 }
 
-/// Check if you are looser.
 bool StateEvaluation::IsLooser(const bool isMaxPlayer, Board::PositionXY& rBuildUpMove, int& rStateScore) const
 {
     bool retVal       = false;
@@ -302,7 +275,6 @@ bool StateEvaluation::ImpliciteWinner(const bool isMaxPlayer, Board::PositionXY&
     return retVal;
 }
 
-/// Predict the looser.
 bool StateEvaluation::ImpliciteLooser(const bool isMaxPlayer, Board::PositionXY& rBuildUpMove, int& rStateScore) const
 {
     bool retVal       = false;
@@ -388,14 +360,12 @@ bool StateEvaluation::ImpliciteLooser(const bool isMaxPlayer, Board::PositionXY&
     return retVal;
 }
 
-/// Asses the board in regular manner.
 bool StateEvaluation::RegularEval(const bool isMaxPlayer, Board::PositionXY& rBuildUpMove, int& rStateScore) const
 {
     rStateScore = (static_cast<int>(m_pBoardScoreCpu->GetScore() + GetBonus(true, rBuildUpMove)) -
                    static_cast<int>(m_pBoardScoreHuman->GetScore() + GetBonus(false, rBuildUpMove)));
 }
 
-/// Finds existing winner-threat and make it better.
 bool StateEvaluation::ExtendWinnerThreatMove(const bool isMaxPlayer, Board::PositionXY& rBuildUpMove,
                                              int& rStateScore) const
 {
@@ -491,7 +461,6 @@ bool StateEvaluation::ExtendWinnerThreatMove(const bool isMaxPlayer, Board::Posi
     return retVal;
 }
 
-/// Finds existing winner-action and make it better.
 bool StateEvaluation::ExtendWinnerActionMove(const bool isMaxPlayer, Board::PositionXY& rBuildUpMove,
                                              int& rStateScore) const
 {
@@ -557,7 +526,6 @@ bool StateEvaluation::ExtendWinnerActionMove(const bool isMaxPlayer, Board::Posi
     return retVal;
 }
 
-/// Set boards for evaluation.
 void StateEvaluation::SetBoards(const BoardScore& rBoardScoreCpu, const BoardScore& rBoardScoreHuman)
 {
     m_pBoardScoreCpu   = &rBoardScoreCpu;
@@ -569,21 +537,12 @@ void StateEvaluation::SetBoards(const BoardScore& rBoardScoreCpu, const BoardSco
     m_pBoard            = const_cast<Board*>(pBoard);
 }
 
-/// Get instance of StateEvaluation.
 StateEvaluation* StateEvaluation::GetInstance()
 {
-    if(NULL == m_pInstance)
-    {
-        m_pInstance = new StateEvaluation();
-        return m_pInstance;
-    }
-    else
-    {
-        return m_pInstance;
-    }
+	static StateEvaluation stateEvaluation;
+	return &stateEvaluation;
 }
 
-/// Fetching new data from Subject interface.
 void StateEvaluation::Update() const
 {
     // Boad state has changed. Clear state action.
@@ -596,7 +555,6 @@ void StateEvaluation::Update() const
     }
 }
 
-/// Check if provided head shot is possible.
 bool StateEvaluation::HeadShotRun(const HeadShotAction headShotAction, const bool isMaxPlayer,
                                   Board::PositionXY& rShotMove, const bool checkWinnerCondition) const
 {
@@ -646,7 +604,6 @@ bool StateEvaluation::HeadShotRun(const HeadShotAction headShotAction, const boo
     return retVal;
 }
 
-/// Check if isMaxPlayer is possible to create headshot4BC.
 bool StateEvaluation::IsHeadShot4BCPossible(const bool isMaxPlayer, Board::PositionXY& rBuildUpMove,
                                             const bool checkWinnerMoveCondition, const BoardScore* pCpuBoardScore,
                                             const BoardScore* pHumanBoardScore) const
@@ -730,7 +687,6 @@ bool StateEvaluation::IsHeadShot4BCPossible(const bool isMaxPlayer, Board::Posit
     return retVal;
 }
 
-/// Check if isMaxPlayer is possible to create 3A headshot.
 bool StateEvaluation::IsHeadShot3APossible(const bool isMaxPlayer, Board::PositionXY& rBuildUpMove,
                                            const bool checkWinnerMoveCondition, const BoardScore* pCpuBoardScore,
                                            const BoardScore* pHumanBoardScore) const
@@ -967,7 +923,6 @@ bool StateEvaluation::IsHeadShot3APossible(const bool isMaxPlayer, Board::Positi
     return retVal;
 }
 
-/// Check if isMaxPlayer is possible to create 3AA headshot.
 bool StateEvaluation::IsHeadShot3AAPossible(const bool isMaxPlayer, Board::PositionXY& rBuildUpMove,
                                             const bool checkWinnerMoveCondition, const BoardScore* pCpuBoardScore,
                                             const BoardScore* pHumanBoardScore) const
@@ -1151,7 +1106,6 @@ bool StateEvaluation::IsHeadShot3AAPossible(const bool isMaxPlayer, Board::Posit
     return retVal;
 }
 
-/// Check if isMaxPlayer is able to create 'Dragon' attack.
 bool StateEvaluation::IsHeadShotDragonPossible(const bool isMaxPlayer, Board::PositionXY& rBuildUpMove,
                                                const bool checkWinnerMoveCondition, const BoardScore* pCpuBoardScore,
                                                const BoardScore* pHumanBoardScore) const
@@ -1283,7 +1237,6 @@ bool StateEvaluation::IsHeadShotDragonPossible(const bool isMaxPlayer, Board::Po
     return retVal;
 }
 
-/// Check if isMaxPlayer is able to create 'Lizard' attack.
 bool StateEvaluation::IsHeadShotLizardPossible(const bool isMaxPlayer, Board::PositionXY& rBuildUpMove,
                                                const bool checkWinnerMoveCondition, const BoardScore* pCpuBoardScore,
                                                const BoardScore* pHumanBoardScore) const
@@ -1471,7 +1424,6 @@ exit:
     return retVal;
 }
 
-/// Check if isMaxPlayer is able to create double 3A threats.
 bool StateEvaluation::IsDouble3AOneStrokePossible(const bool isMaxPlayer, Board::PositionXY& rBuildUpMove,
                                                   const bool checkWinnerMoveCondition, const BoardScore* pCpuBoardScore,
                                                   const BoardScore* pHumanBoardScore) const
@@ -1626,7 +1578,6 @@ bool StateEvaluation::IsDouble3AOneStrokePossible(const bool isMaxPlayer, Board:
     return retVal;
 }
 
-/// Check if !isMaxPlayer is able to mitigate the opponent double threats.
 bool StateEvaluation::IsDouble3AMitigationPossible(const bool isMaxPlayer, Board::PositionXY& rBuildDownMove,
                                                    const bool checkWinnerMoveCondition,
                                                    const BoardScore* pCpuBoardScore,
@@ -1811,8 +1762,6 @@ bool StateEvaluation::IsDouble3AMitigationPossible(const bool isMaxPlayer, Board
     return retVal;
 }
 
-/// Check if isMaxPlayer is able to mitigate my 3A threat and attack building its own 3A at one stone.
-/// Your state 3A is being tried to be mitigated by opponent 2A->3A or 3BC->4BC
 bool StateEvaluation::IsBlockAndAttack3APossible(const bool isMaxPlayer, Board::PositionXY& rBuildDownMove,
                                                  const bool checkWinnerMoveCondition, const BoardScore* pCpuBoardScore,
                                                  const BoardScore* pHumanBoardScore) const
@@ -1950,7 +1899,6 @@ bool StateEvaluation::IsBlockAndAttack3APossible(const bool isMaxPlayer, Board::
     return retVal;
 }
 
-/// Adds extra points for good action. Action are not strong enough to be winner.
 int StateEvaluation::GetBonus(const bool isMaxPlayer, Board::PositionXY& rBuildDownMove,
                               const bool checkWinnerMoveCondition, const BoardScore* pCpuBoardScore,
                               const BoardScore* pHumanBoardScore) const

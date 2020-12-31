@@ -1,38 +1,40 @@
-/*
- * ScoreTest.cpp
- *
- *  Created on: 29 may, 2016
- *      Author: zby
- */
-#include <assert.h>     		// for assert.
 #include <algorithm>    		// std::find
 #include <ctime>
+#include <iterator>
 #include "MinMaxTest.hpp"
 #include "BoardScore.hpp"
 #include "ThreatsBloodRelation.hpp"
 #include "PriorityQueue.hpp"
+#include "GomokuBoard.hpp"
+#include "MinMax.hpp"
+#include "Score.hpp"
+//----------------------------------------------------------
+#include "CppUTest/TestHarness.h"
+#include "CppUTest/SimpleString.h"
+#include "CppUTest/PlatformSpecificFunctions.h"
+#include "CppUTest/TestMemoryAllocator.h"
+#include "CppUTest/MemoryLeakDetector.h"
 
-#define NUMELEM( x )    ( sizeof( x )/sizeof( x[ 0 ] ) )
-
-// Point beyond the board. Useful for initialization.
-const Board::PositionXY XY_OUT_OF_BOARD = Board::PositionXY( Board::PositionXY::INVALID_FIELD, Board::PositionXY::INVALID_FIELD );
-
-static bool Checker( const Board::PositionField positionField, const std::vector<Board::PositionField>& container )
+TEST_GROUP(MinMaxTest)
 {
-	bool isOK = false;
-
-	for( uint32_t i = 0; i < container.size(); ++i )
+	void setup()
 	{
-		if(container[i]==positionField)
-		{
-			isOK = true;
-		}
-	}
+		m_pBoard = new GomokuBoard( BOARD_SIZE );
+	};
 
-	return isOK;
-}
+	void teardown()
+	{
+		delete m_pBoard;
+	};
 
-void MinMaxTest::GenerateCandTestEmptyBoard()
+    GomokuBoard* m_pGomokuBoard;
+    GomokuBoard* m_pGomokuBoardStalemate;
+};
+
+const Board::PositionXY XY_OUT_OF_BOARD = Board::PositionXY( Board::PositionXY::INVALID_FIELD, Board::PositionXY::INVALID_FIELD );
+static bool Checker( const Board::PositionField positionField, const std::vector<Board::PositionField>& container );
+
+TEST(MinMaxTest,GenerateCandTestEmptyBoard)
 {
 	cout<< "GenerateCandTestEmptyBoard in progress.. "<<endl;
 
@@ -48,10 +50,10 @@ void MinMaxTest::GenerateCandTestEmptyBoard()
 	// Empty board - empty candidate.
 	pMinMax->BoardScoreCopyInitUT();
 	vector< Board::PositionField > candidate = pMinMax->GenerateCand();
-	CPPUNIT_ASSERT( 0 == candidate.size() );
+	CHECK( 0 == candidate.size() );
 }
 
-void MinMaxTest::GenerateCandTestCorner()
+TEST(MinMaxTest,GenerateCandTestCorner)
 {
 	cout<< "GenerateCandTestCorner in progress.. "<<endl;
 
@@ -80,10 +82,10 @@ void MinMaxTest::GenerateCandTestCorner()
 	const vector< Board::PositionField > expected = { 1, 15, 16 };
 
 	vector< Board::PositionField > candidate = pMinMax->GenerateCand();
-	CPPUNIT_ASSERT( expected == candidate );
+	CHECK( expected == candidate );
 }
 
-void MinMaxTest::GenerateCandTesCenter()
+TEST(MinMaxTest,GenerateCandTesCenter)
 {
 	cout<< "GenerateCandTesCenter in progress.. "<<endl;
 
@@ -114,10 +116,10 @@ void MinMaxTest::GenerateCandTesCenter()
 	const vector< Board::PositionField > expected = { 64, 65, 66, 79, 81, 94, 95, 96 };
 
 	vector< Board::PositionField > candidate = pMinMax->GenerateCand();
-	CPPUNIT_ASSERT( expected == candidate );
+	CHECK( expected == candidate );
 }
 
-void MinMaxTest::GenerateCandTesConcatenatedMoves()
+TEST(MinMaxTest,GenerateCandTesConcatenatedMoves)
 {
 	cout<< "GenerateCandTesConcatenatedMoves in progress.. "<<endl;
 
@@ -149,10 +151,10 @@ void MinMaxTest::GenerateCandTesConcatenatedMoves()
 
 	vector< Board::PositionField > candidate = pMinMax->GenerateCand();
 
-	CPPUNIT_ASSERT( expected == candidate );
+	CHECK( expected == candidate );
 }
 
-void MinMaxTest::GenerateCandTesMixed1()
+TEST(MinMaxTest,GenerateCandTesMixed1)
 {
 	cout<< "GenerateCandTesMixed1 in progress.. "<<endl;
 
@@ -184,10 +186,10 @@ void MinMaxTest::GenerateCandTesMixed1()
 
 	vector< Board::PositionField > candidate = pMinMax->GenerateCand();
 
-	CPPUNIT_ASSERT( expected == candidate );
+	CHECK( expected == candidate );
 }
 
-void MinMaxTest::GenerateCandTesMixed2()
+TEST(MinMaxTest,GenerateCandTesMixed2)
 {
 	cout<< "GenerateCandTesMixed2 in progress.. "<<endl;
 
@@ -213,7 +215,7 @@ void MinMaxTest::GenerateCandTesMixed2()
 
 	const vector< Board::PositionField > expected1 = { 1, 15, 16 };
 	vector< Board::PositionField > candidate1 = pMinMax->GenerateCand();
-	CPPUNIT_ASSERT( expected1 == candidate1 );
+	CHECK( expected1 == candidate1 );
 
 	// Put one additional move.
     // -----------------------
@@ -229,10 +231,10 @@ void MinMaxTest::GenerateCandTesMixed2()
 
 	const vector< Board::PositionField > expected2 = { 2, 15, 16, 17 };
 	vector< Board::PositionField > candidate2 = pMinMax->GenerateCand();
-	CPPUNIT_ASSERT( expected2 == candidate2 );
+	CHECK( expected2 == candidate2 );
 }
 
-void MinMaxTest::UpdateCandTest1()
+TEST(MinMaxTest,UpdateCandTest1)
 {
 	cout<< "UpdateCandTest1 in progress.. "<<endl;
 
@@ -288,7 +290,7 @@ void MinMaxTest::UpdateCandTest1()
 			const Board& board = boardScoreComputer.GetBoard();
 			const Board::PositionXY xy = Board::PositionXY( board.GetSize(), *it2 );
 			const bool isDifferent = !( *it1 == xy );
-			CPPUNIT_ASSERT( isDifferent );
+			CHECK( isDifferent );
 		}
 	}
 
@@ -310,7 +312,7 @@ void MinMaxTest::UpdateCandTest1()
 	const uint32_t expectedSize = expected.size();
 
 	// The size should be larger because of adding new neighborhood but smaller because of putting newMove move.
-	CPPUNIT_ASSERT( updatedCandidatsSize == ( initCandidatesStlSize + expectedSize - 1 ) );
+	CHECK( updatedCandidatsSize == ( initCandidatesStlSize + expectedSize - 1 ) );
 
 	// Check that 'updatedCandidats' includes neighborhood of the newMove: {(3,1) (4,1) (5,1)}.
 	for ( vector< Board::PositionXY >::const_iterator pIteratorExpectation = expected.begin(); pIteratorExpectation != expected.end(); ++pIteratorExpectation )
@@ -329,11 +331,11 @@ void MinMaxTest::UpdateCandTest1()
 			}
 		}
 
-		CPPUNIT_ASSERT( true == isInclude );
+		CHECK( true == isInclude );
 	}
 }
 
-void MinMaxTest::UpdateCandTest2()
+TEST(MinMaxTest,UpdateCandTest2)
 {
 	cout<< "UpdateCandTest2 in progress.. "<<endl;
 
@@ -391,7 +393,7 @@ void MinMaxTest::UpdateCandTest2()
 			const Board& board = boardScoreComputer.GetBoard();
 			const Board::PositionXY xy = Board::PositionXY( board.GetSize(), *it2 );
 			const bool isDifferent = !( *it1 == xy );
-			CPPUNIT_ASSERT( isDifferent );
+			CHECK( isDifferent );
 		}
 	}
 
@@ -415,7 +417,7 @@ void MinMaxTest::UpdateCandTest2()
 	const uint32_t expectedSize = expected.size();
 
 	// The size should be larger because of adding new neighborhood but smaller because of putting newMove move.
-	CPPUNIT_ASSERT( updatedCandidatsSize == ( initCandidatesStlSize + expectedSize - 1 ) );
+	CHECK( updatedCandidatsSize == ( initCandidatesStlSize + expectedSize - 1 ) );
 
 	// Check that 'updatedCandidats' includes neighborhood of the newMove: {(3,1) (5,1)}.
 	for ( vector< Board::PositionXY >::const_iterator pIteratorExpectation = expected.begin(); pIteratorExpectation != expected.end(); ++pIteratorExpectation )
@@ -434,11 +436,11 @@ void MinMaxTest::UpdateCandTest2()
 			}
 		}
 
-		CPPUNIT_ASSERT( true == isInclude );
+		CHECK( true == isInclude );
 	}
 }
 
-void MinMaxTest::SwitchPlayerTest()
+TEST(MinMaxTest,SwitchPlayerTest)
 {
 	cout<< "SwitchPlayerTest in progress.. "<<endl;
 
@@ -453,20 +455,20 @@ void MinMaxTest::SwitchPlayerTest()
 	pMinMax->SetInitialPlayer( Board::PLAYER_B );
 
 	// Check who's current move is.
-	CPPUNIT_ASSERT( Board::PLAYER_B == pMinMax->WhoIsCurrentMove() );
+	CHECK( Board::PLAYER_B == pMinMax->WhoIsCurrentMove() );
 
 	pMinMax->SwitchPlayer();
 
 	// Check who's current move is.
-	CPPUNIT_ASSERT( Board::PLAYER_A == pMinMax->WhoIsCurrentMove() );
+	CHECK( Board::PLAYER_A == pMinMax->WhoIsCurrentMove() );
 
 	pMinMax->SwitchPlayer();
 
 	// Check who's current move is.
-	CPPUNIT_ASSERT( Board::PLAYER_B == pMinMax->WhoIsCurrentMove() );
+	CHECK( Board::PLAYER_B == pMinMax->WhoIsCurrentMove() );
 }
 
-void MinMaxTest::GameTreeBrowsingBasicDeep2Test()
+TEST(MinMaxTest,GameTreeBrowsingBasicDeep2Test)
 {
 	cout<< "GameTreeBrowsingBasicDeep2Test in progress.. "<<endl;
 
@@ -531,12 +533,12 @@ void MinMaxTest::GameTreeBrowsingBasicDeep2Test()
     pMinMax->SetDeep( 3 );
     const Board::PositionXY result3 = pMinMax->FindBestMove(nBestMove);
 
-    CPPUNIT_ASSERT( expected.end() != std::find( expected.begin(), expected.end(), result1 ) );
-    CPPUNIT_ASSERT( expected.end() != std::find( expected.begin(), expected.end(), result2 ) );
-    CPPUNIT_ASSERT( expected.end() != std::find( expected.begin(), expected.end(), result3 ) );
+    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result1 ) );
+    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result2 ) );
+    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result3 ) );
 }
 
-void MinMaxTest::GameTreeBrowsingBasicDeep3Test()
+TEST(MinMaxTest,GameTreeBrowsingBasicDeep3Test)
 {
 	cout<< "GameTreeBrowsingBasicDeep3Test in progress.. "<<endl;
 
@@ -602,12 +604,12 @@ void MinMaxTest::GameTreeBrowsingBasicDeep3Test()
     const Board::PositionXY result3 = pMinMax->FindBestMove(nBestMove);
 
     // Check if the move 'result' is on the expected list.
-    CPPUNIT_ASSERT( expected.end() != std::find( expected.begin(), expected.end(), result1 ) );
-    CPPUNIT_ASSERT( expected.end() != std::find( expected.begin(), expected.end(), result2 ) );
-    CPPUNIT_ASSERT( expected.end() != std::find( expected.begin(), expected.end(), result3 ) );
+    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result1 ) );
+    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result2 ) );
+    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result3 ) );
 }
 
-void MinMaxTest::GameTreeBrowsingBestMoveTest1()
+TEST(MinMaxTest,GameTreeBrowsingBestMoveTest1)
 {
 	cout<< "GameTreeBrowsingBestMoveTest1 in progress.. "<<endl;
 
@@ -690,12 +692,12 @@ void MinMaxTest::GameTreeBrowsingBestMoveTest1()
     pMinMax->SetDeep( 3 );
     const Board::PositionXY result3 = pMinMax->FindBestMove(nBestMove);
 
-    CPPUNIT_ASSERT( expected.end() != std::find( expected.begin(), expected.end(), result1 ) );
-    CPPUNIT_ASSERT( expected.end() != std::find( expected.begin(), expected.end(), result2 ) );
-    CPPUNIT_ASSERT( expected.end() != std::find( expected.begin(), expected.end(), result3 ) );
+    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result1 ) );
+    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result2 ) );
+    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result3 ) );
 }
 
-void MinMaxTest::GameTreeBrowsingBestMoveTest2()
+TEST(MinMaxTest,GameTreeBrowsingBestMoveTest2)
 {
 	cout<< "GameTreeBrowsingBestMoveTest2 in progress.. "<<endl;
 
@@ -764,12 +766,12 @@ void MinMaxTest::GameTreeBrowsingBestMoveTest2()
     const Board::PositionXY result3 = pMinMax->FindBestMove(nBestMove);
 
     // Check if the move 'result' is on the expected list.
-    CPPUNIT_ASSERT( expected.end() != std::find( expected.begin(), expected.end(), result1 ) );
-    CPPUNIT_ASSERT( expected.end() != std::find( expected.begin(), expected.end(), result2 ) );
-    CPPUNIT_ASSERT( expected.end() != std::find( expected.begin(), expected.end(), result3 ) );
+    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result1 ) );
+    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result2 ) );
+    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result3 ) );
 }
 
-void MinMaxTest::GameTreeBrowsingBestMoveTest3()
+TEST(MinMaxTest,GameTreeBrowsingBestMoveTest3)
 {
 	cout<< "GameTreeBrowsingBestMoveTest3 in progress.. "<<endl;
 
@@ -840,12 +842,12 @@ void MinMaxTest::GameTreeBrowsingBestMoveTest3()
     const Board::PositionXY result3 = pMinMax->FindBestMove(nBestMove);
 
     // Check if the move 'result' is on the expected list.
-    CPPUNIT_ASSERT( expected.end() != std::find( expected.begin(), expected.end(), result1 ) );
-    CPPUNIT_ASSERT( expected.end() != std::find( expected.begin(), expected.end(), result2 ) );
-    CPPUNIT_ASSERT( expected.end() != std::find( expected.begin(), expected.end(), result3 ) );
+    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result1 ) );
+    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result2 ) );
+    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result3 ) );
 }
 
-void MinMaxTest::GameTreeBrowsingBestMoveTest4()
+TEST(MinMaxTest,GameTreeBrowsingBestMoveTest4)
 {
 	cout<< "GameTreeBrowsingBestMoveTest4 in progress.. "<<endl;
 
@@ -925,20 +927,20 @@ void MinMaxTest::GameTreeBrowsingBestMoveTest4()
     // Check depth == 1
     pMinMax->SetDeep( 1 );
     const Board::PositionXY result1 = pMinMax->FindBestMove(nBestMove);
-    CPPUNIT_ASSERT( expected == result1 );
+    CHECK( expected == result1 );
 
     // Check depth == 2
     pMinMax->SetDeep( 2 );
     const Board::PositionXY result2 = pMinMax->FindBestMove(nBestMove);
-    CPPUNIT_ASSERT( expected == result2 );
+    CHECK( expected == result2 );
 
     // Check depth == 3
     pMinMax->SetDeep( 3 );
     const Board::PositionXY result3 = pMinMax->FindBestMove(nBestMove);
-    CPPUNIT_ASSERT( expected == result3 );
+    CHECK( expected == result3 );
 }
 
-void MinMaxTest::GameTreeBrowsingBestMoveTest5()
+TEST(MinMaxTest,GameTreeBrowsingBestMoveTest5)
 {
 	cout<< "GameTreeBrowsingBestMoveTest5 in progress.. "<<endl;
 
@@ -1029,22 +1031,22 @@ void MinMaxTest::GameTreeBrowsingBestMoveTest5()
 	pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
 	pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
     const Board::PositionXY result1 = pMinMax->FindBestMove(nBestMove);
-    CPPUNIT_ASSERT( bestMove == result1 );
+    CHECK( bestMove == result1 );
 
 	pMinMax->SetDeep( 2 );
 	pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
 	pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
     const Board::PositionXY result2 = pMinMax->FindBestMove(nBestMove);
-    CPPUNIT_ASSERT( bestMove == result2 );
+    CHECK( bestMove == result2 );
 
 	pMinMax->SetDeep( 3 );
 	pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
 	pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
     const Board::PositionXY result3 = pMinMax->FindBestMove(nBestMove);
-    CPPUNIT_ASSERT( bestMove == result3 );
+    CHECK( bestMove == result3 );
 }
 
-void MinMaxTest::GameTreeBrowsingBestMoveTest6()
+TEST(MinMaxTest,GameTreeBrowsingBestMoveTest6)
 {
 	cout<< "GameTreeBrowsingBestMoveTest6 in progress.. "<<endl;
 
@@ -1128,20 +1130,20 @@ void MinMaxTest::GameTreeBrowsingBestMoveTest6()
 	pMinMax->SetDeep( 1 );
     const Board::PositionXY result1 = pMinMax->FindBestMove(nBestMove);
     nBestMove.ClearAll();
-    CPPUNIT_ASSERT( bestMove1 == result1 || bestMove2 == result1 );
+    CHECK( bestMove1 == result1 || bestMove2 == result1 );
 
 	pMinMax->SetDeep( 2 );
     const Board::PositionXY result2 = pMinMax->FindBestMove(nBestMove);
     nBestMove.ClearAll();
-    CPPUNIT_ASSERT( bestMove1 == result2 || bestMove2 == result2 );
+    CHECK( bestMove1 == result2 || bestMove2 == result2 );
 
 	pMinMax->SetDeep( 3 );
     const Board::PositionXY result3 = pMinMax->FindBestMove(nBestMove);
     nBestMove.ClearAll();
-    CPPUNIT_ASSERT( bestMove1 == result3 || bestMove2 == result3 );
+    CHECK( bestMove1 == result3 || bestMove2 == result3 );
 }
 
-void MinMaxTest::GameTreeBrowsingBestMoveTest7()
+TEST(MinMaxTest,GameTreeBrowsingBestMoveTest7)
 {
 	cout<< "GameTreeBrowsingBestMoveTest7 in progress.. "<<endl;
 
@@ -1219,20 +1221,20 @@ void MinMaxTest::GameTreeBrowsingBestMoveTest7()
 //	pMinMax->SetDeep( 1 );
 //    const Board::PositionXY result1 = pMinMax->FindBestMove(nBestMove);
 //    nBestMove.ClearAll();
-//    CPPUNIT_ASSERT( bestMove == result1 );
+//    CHECK( bestMove == result1 );
 
 	pMinMax->SetDeep( 2 );
     const Board::PositionXY result2 = pMinMax->FindBestMove(nBestMove);
     nBestMove.ClearAll();
-    CPPUNIT_ASSERT( bestMove == result2  );
+    CHECK( bestMove == result2  );
 
 	pMinMax->SetDeep( 3 );
     const Board::PositionXY result3 = pMinMax->FindBestMove(nBestMove);
     nBestMove.ClearAll();
-    CPPUNIT_ASSERT( bestMove == result3 );
+    CHECK( bestMove == result3 );
 }
 
-void MinMaxTest::GameTreeBrowsingBestMoveTest8()
+TEST(MinMaxTest,GameTreeBrowsingBestMoveTest8)
 {
 	cout<< "GameTreeBrowsingBestMoveTest8 in progress.. "<<endl;
 
@@ -1350,7 +1352,7 @@ void MinMaxTest::GameTreeBrowsingBestMoveTest8()
     pMinMax->SetDeep( 4 );
     nBestMove.ClearAll();
     Board::PositionXY retVal = pMinMax->FindBestMove( nBestMove, candidates );
-    CPPUNIT_ASSERT( retVal == bestMoveStage1  );
+    CHECK( retVal == bestMoveStage1  );
 
 	m_pGomokuBoard->PutMove( bestMoveStage1, boardScoreComputer.GetPlayer() );
 	pScore->UpdateScore( boardScoreHuman, bestMoveStage1 );
@@ -1375,11 +1377,11 @@ void MinMaxTest::GameTreeBrowsingBestMoveTest8()
     pMinMax->SetDeep( 4 );
     nBestMove.ClearAll();
     retVal = pMinMax->FindBestMove( nBestMove, candidates );
-    CPPUNIT_ASSERT( retVal == bestMoveStage2  );
+    CHECK( retVal == bestMoveStage2  );
 
 }
 
-void MinMaxTest::GenerateCandidateExtendGapsTest1()
+TEST(MinMaxTest,GenerateCandidateExtendGapsTest1)
 {
 	cout<< "GenerateCandidateExtendGapsTest1 in progress.. "<<endl;
 
@@ -1423,18 +1425,18 @@ void MinMaxTest::GenerateCandidateExtendGapsTest1()
 	uint32_t expectedExGapsNumber = 3;
 
 	boardScoreComputer.GetExGaps(exGaps, ThreatFinder::THREAT_2_CASE_A);
-	CPPUNIT_ASSERT( exGaps.size() == expectedExGapsNumber );
+	CHECK( exGaps.size() == expectedExGapsNumber );
 
 	Board::PositionXY expectedExGapsList2A[] = { Board::PositionXY( 1, 4 ), Board::PositionXY( 4, 2 ), Board::PositionXY( 4, 4 ) };
-	for( uint32_t i = 0; i < NUMELEM( expectedExGapsList2A ); ++i )
+	for( uint32_t i = 0; i < std::size( expectedExGapsList2A ); ++i )
 	{
 		const Board::PositionField positionField( m_pGomokuBoard->GetSize(), expectedExGapsList2A[ i ] );
 		const bool isOnGapsList = Checker( positionField, exGaps );
-		CPPUNIT_ASSERT( isOnGapsList == true );
+		CHECK( isOnGapsList == true );
 	}
 }
 
-void MinMaxTest::GenerateCandidateExtendGapsTest2()
+TEST(MinMaxTest,GenerateCandidateExtendGapsTest2)
 {
 	cout<< "GenerateCandidateExtendGapsTest2 in progress.. "<<endl;
 
@@ -1558,19 +1560,19 @@ void MinMaxTest::GenerateCandidateExtendGapsTest2()
 	{
 		boardScoreComputer.GetExGaps(exGaps, ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD[i]);
 	}
-	CPPUNIT_ASSERT( exGaps.size() == expectedExGapsNumber );
+	CHECK( exGaps.size() == expectedExGapsNumber );
 
 	Board::PositionXY expectedExGapsList[] = { Board::PositionXY( 1, 5 ), Board::PositionXY( 2, 12 ), Board::PositionXY( 3, 11 ),Board::PositionXY( 4, 5 ),
 											    Board::PositionXY( 4, 3 ), Board::PositionXY( 4, 11 )  };
-	for( uint32_t i = 0; i < NUMELEM( expectedExGapsList ); ++i )
+	for( uint32_t i = 0; i < std::size( expectedExGapsList ); ++i )
 	{
 		const Board::PositionField positionField( m_pGomokuBoard->GetSize(), expectedExGapsList[ i ] );
 		const bool isOnGapsList = Checker( positionField, exGaps );
-		CPPUNIT_ASSERT( isOnGapsList == true );
+		CHECK( isOnGapsList == true );
 	}
 }
 
-void MinMaxTest::GenerateCandidateExtendGapsTest3()
+TEST(MinMaxTest,GenerateCandidateExtendGapsTest3)
 {
 	cout<< "GenerateCandidateExtendGapsTest3 in progress.. "<<endl;
 
@@ -1625,18 +1627,18 @@ void MinMaxTest::GenerateCandidateExtendGapsTest3()
 	{
 		boardScoreComputer.GetExGaps(exGaps, ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD[i]);
 	}
-	CPPUNIT_ASSERT( exGaps.size() == expectedExGapsNumber );
+	CHECK( exGaps.size() == expectedExGapsNumber );
 
 	Board::PositionXY expectedExGapsList[] = { Board::PositionXY( 1, 1 ), Board::PositionXY( 1, 7 ), Board::PositionXY( 3, 8 ), Board::PositionXY( 3, 13 )  };
-	for( uint32_t i = 0; i < NUMELEM( expectedExGapsList ); ++i )
+	for( uint32_t i = 0; i < std::size( expectedExGapsList ); ++i )
 	{
 		const Board::PositionField positionField( m_pGomokuBoard->GetSize(), expectedExGapsList[ i ] );
 		const bool isOnGapsList = Checker( positionField, exGaps );
-		CPPUNIT_ASSERT( isOnGapsList == true );
+		CHECK( isOnGapsList == true );
 	}
 }
 
-void MinMaxTest::GenerateCandidateExtendGapsTest4()
+TEST(MinMaxTest,GenerateCandidateExtendGapsTest4)
 {
 	cout<< "GenerateCandidateExtendGapsTest4 in progress.. "<<endl;
 
@@ -1716,17 +1718,17 @@ void MinMaxTest::GenerateCandidateExtendGapsTest4()
 	pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
 
 	vector< Board::PositionField > candidate = pMinMax->GenerateCand();
-	CPPUNIT_ASSERT( expectedCandidates.size() == candidate.size() );
+	CHECK( expectedCandidates.size() == candidate.size() );
 
 	for( uint32_t i = 0; i <  expectedCandidates.size(); ++i )
 	{
 		Board::PositionField temp( m_pGomokuBoard->GetSize(), expectedCandidates[i]);
 		const bool isOnList = Checker( temp, candidate );
-		CPPUNIT_ASSERT( isOnList == true );
+		CHECK( isOnList == true );
 	}
 }
 
-void MinMaxTest::GenerateCandidateExtendGapsTest5()
+TEST(MinMaxTest,GenerateCandidateExtendGapsTest5)
 {
 	cout<< "GenerateCandidateExtendGapsTest5 in progress.. "<<endl;
 
@@ -1775,15 +1777,15 @@ void MinMaxTest::GenerateCandidateExtendGapsTest5()
 	{
 		boardScoreComputer.GetExGaps(exGaps, ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD[i]);
 	}
-	CPPUNIT_ASSERT( exGaps.size() == expectedExGapsNumber );
+	CHECK( exGaps.size() == expectedExGapsNumber );
 
 	Board::PositionXY expectedExGapsList[] = { Board::PositionXY( 3, 3 ), Board::PositionXY( 3, 8 ) };
 
-	for( uint32_t i = 0; i < NUMELEM( expectedExGapsList ); ++i )
+	for( uint32_t i = 0; i < std::size( expectedExGapsList ); ++i )
 	{
 		const Board::PositionField positionField( m_pGomokuBoard->GetSize(), expectedExGapsList[ i ] );
 		const bool isOnGapsList = Checker( positionField, exGaps );
-		CPPUNIT_ASSERT( isOnGapsList == true );
+		CHECK( isOnGapsList == true );
 	}
 	exGaps.clear();
 
@@ -1800,10 +1802,10 @@ void MinMaxTest::GenerateCandidateExtendGapsTest5()
 	{
 		boardScoreComputer.GetExGaps(exGaps, ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD[i]);
 	}
-	CPPUNIT_ASSERT( exGaps.size() == expectedExGapsNumber );
+	CHECK( exGaps.size() == expectedExGapsNumber );
 }
 
-void MinMaxTest::StalemateTest1()
+TEST(MinMaxTest,StalemateTest1)
 {
 	cout<< "StalemateTest1 in progress.. "<<endl;
 
@@ -1937,7 +1939,7 @@ void MinMaxTest::StalemateTest1()
 
 }
 
-void MinMaxTest::StalemateTest2()
+TEST(MinMaxTest,StalemateTest2)
 {
 	cout<< "StalemateTest2 in progress.. "<<endl;
 
@@ -2079,7 +2081,7 @@ void MinMaxTest::StalemateTest2()
     const Board::PositionXY result1 = pMinMax->FindBestMove(nBestMove);
 }
 
-void MinMaxTest::PerformanceTest1()
+TEST(MinMaxTest,PerformanceTest1)
 {
 	//TIME TOO EXPENSIVE
 
@@ -2302,7 +2304,7 @@ void MinMaxTest::PerformanceTest1()
 ////    FindBestMove: depth == 3 took 158.018000 seconds to execute
 }
 
-void MinMaxTest::AnomalyReproduction1()
+TEST(MinMaxTest,AnomalyReproduction1)
 {
 	cout<< "AnomalyReproduction1 in progress.. "<<endl;
 
@@ -2444,10 +2446,10 @@ void MinMaxTest::AnomalyReproduction1()
 
     pMinMax->SetDeep( 4 );
     const Board::PositionXY result = pMinMax->FindBestMove( nBestMoves, candidates );
-    CPPUNIT_ASSERT( XY_OUT_OF_BOARD != result );
+    CHECK( XY_OUT_OF_BOARD != result );
 }
 
-void MinMaxTest::AnomalyReproduction2()
+TEST(MinMaxTest,AnomalyReproduction2)
 {
 	cout<< "AnomalyReproduction2 in progress.. "<<endl;
 
@@ -2527,15 +2529,15 @@ void MinMaxTest::AnomalyReproduction2()
 //	pMinMax->SetDeep( 2 );
 //    const Board::PositionXY result2 = pMinMax->FindBestMove(nBestMove);
 //    nBestMove.ClearAll();
-//    CPPUNIT_ASSERT( bestMove1 == result2 || bestMove2 == result2 || bestMove3 == result2 );
+//    CHECK( bestMove1 == result2 || bestMove2 == result2 || bestMove3 == result2 );
 //
 //	pMinMax->SetDeep( 4 );
 //    const Board::PositionXY result4 = pMinMax->FindBestMove(nBestMove);
 //    nBestMove.ClearAll();
-//    CPPUNIT_ASSERT( bestMove1 == result4 || bestMove2 == result4 || bestMove3 == result4 );
+//    CHECK( bestMove1 == result4 || bestMove2 == result4 || bestMove3 == result4 );
 }
 
-void MinMaxTest::AnomalyReproduction3()
+TEST(MinMaxTest,AnomalyReproduction3)
 {
 	cout<< "AnomalyReproduction3 in progress.. "<<endl;
 
@@ -2648,25 +2650,25 @@ void MinMaxTest::AnomalyReproduction3()
 //	//	pMinMax->SetDeep( 1 );
 //	//    const Board::PositionXY result1 = pMinMax->FindBestMove(nBestMove, candidates);
 //	//    nBestMove.ClearAll();
-//	//    CPPUNIT_ASSERT( bestMove1 == result1 || bestMove2 == result1 );
+//	//    CHECK( bestMove1 == result1 || bestMove2 == result1 );
 //
 //	//	pMinMax->SetDeep( 2 );
 //	//    const Board::PositionXY result2 = pMinMax->FindBestMove( nBestMove, candidates );
 //	//    nBestMove.ClearAll();
-//	//    CPPUNIT_ASSERT( bestMove1 == result2 || bestMove2 == result2 || bestMove3 == result2 );
+//	//    CHECK( bestMove1 == result2 || bestMove2 == result2 || bestMove3 == result2 );
 //
 //	//	pMinMax->SetDeep( 3 );
 //	//    const Board::PositionXY result3 = pMinMax->FindBestMove( nBestMove, candidates );
 //	//    nBestMove.ClearAll();
-//	//    CPPUNIT_ASSERT( bestMove1 == result3 || bestMove2 == result3  || bestMove3 == result3 );
+//	//    CHECK( bestMove1 == result3 || bestMove2 == result3  || bestMove3 == result3 );
 //
 //	pMinMax->SetDeep( 4 );
 //    const Board::PositionXY result4 = pMinMax->FindBestMove( nBestMove,candidates );
 //    nBestMove.ClearAll();
-//    CPPUNIT_ASSERT( bestMove1 == result4 || bestMove2 == result4  || bestMove3 == result4 );
+//    CHECK( bestMove1 == result4 || bestMove2 == result4  || bestMove3 == result4 );
 }
 
-void MinMaxTest::AnomalyReproduction4()
+TEST(MinMaxTest,AnomalyReproduction4)
 {
 	cout<< "AnomalyReproduction4 in progress.. "<<endl;
 
@@ -2778,10 +2780,10 @@ void MinMaxTest::AnomalyReproduction4()
 //	pMinMax->SetDeep( 5 );
 //    const Board::PositionXY result5 = pMinMax->FindBestMove( nBestMove, candidates );
 //    nBestMove.ClearAll();
-//    CPPUNIT_ASSERT( bestMove1 == result5 || bestMove2 == result5 || bestMove3 == result5 );
+//    CHECK( bestMove1 == result5 || bestMove2 == result5 || bestMove3 == result5 );
 }
 
-void MinMaxTest::AnomalyReproduction5()
+TEST(MinMaxTest,AnomalyReproduction5)
 {
 	cout<< "AnomalyReproduction5 in progress.. "<<endl;
 
@@ -2911,11 +2913,11 @@ void MinMaxTest::AnomalyReproduction5()
 						( 0 < boardScoreComputer.GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
 
 
-    CPPUNIT_ASSERT( defend || attack );
+    CHECK( defend || attack );
 
 }
 
-void MinMaxTest::AnomalyReproduction6()
+TEST(MinMaxTest,AnomalyReproduction6)
 {
 	cout<< "AnomalyReproduction6 in progress.. "<<endl;
 
@@ -3016,5 +3018,20 @@ void MinMaxTest::AnomalyReproduction6()
 //	pMinMax->SetDeep( 5 );
 //    const Board::PositionXY result5 = pMinMax->FindBestMove( nBestMove, candidates );
 //    nBestMove.ClearAll();
-//    CPPUNIT_ASSERT( bestMove1 == result5 );
+//    CHECK( bestMove1 == result5 );
+}
+
+bool Checker( const Board::PositionField positionField, const std::vector<Board::PositionField>& container )
+{
+	bool isOK = false;
+
+	for( uint32_t i = 0; i < container.size(); ++i )
+	{
+		if(container[i]==positionField)
+		{
+			isOK = true;
+		}
+	}
+
+	return isOK;
 }

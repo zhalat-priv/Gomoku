@@ -1,12 +1,14 @@
+#include <assert.h>
+#include "Board.hpp"
+#include "GomokuBoard.hpp"
+
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/SimpleString.h"
 #include "CppUTest/PlatformSpecificFunctions.h"
 #include "CppUTest/TestMemoryAllocator.h"
 #include "CppUTest/MemoryLeakDetector.h"
 
-#include <assert.h>
-#include "Board.hpp"
-#include "GomokuBoard.hpp"
+
 
 TEST_GROUP(GomokuBoardTest)
 {
