@@ -52,12 +52,15 @@ add_executable( ci
 	"${UT_GOMOKUGAME_SRC}/ScoreTest/ScoreTest.cpp"
 	"${UT_GOMOKUGAME_SRC}/OpenBookTest/OpenBookTest.cpp"
 	"${UT_GOMOKUGAME_SRC}/BoardScoreTest/BoardScoreTest.cpp"
-	
 	"${UT_GOMOKUGAME_SRC}/StateEvaluationTest/StateEvaluationTest.cpp"
-	#"${UT_GOMOKUGAME_SRC}/SearchAlgorithms/MinMax.cpp"
+	#"${UT_GOMOKUGAME_SRC}/MinMaxTest/MinMaxTest.cpp"
+	
+	"${UT_GOMOKUGAME_SRC}/AlphaBetaTest/AlphaBetaTest.cpp"
     # Unit under test
     "${GOMOKUGAME_SRC}/GomokuBoard.cpp"
 	"${GOMOKUGAME_SRC}/BoardScore.cpp"
+	"${GOMOKUGAME_SRC}/BoardIterator.cpp"
+	"${GOMOKUGAME_SRC}/DataContainers/GraphIterator.cpp"
 	"${GOMOKUGAME_SRC}/OpenBook.cpp"
     "${GOMOKUGAME_SRC}/DataContainers/Graph.cpp"
     "${GOMOKUGAME_SRC}/DataContainers/VectorLight.cpp"
@@ -81,10 +84,11 @@ add_executable( ci
     "${GOMOKUGAME_SRC}/Threats/Threat2CaseC.cpp"
     "${GOMOKUGAME_SRC}/Threats/ThreatsBloodRelation.cpp"
     "${GOMOKUGAME_SRC}/SearchAlgorithms/StateEvaluation.cpp"
-    #${GOMOKUGAME_SRC}/SearchAlgorithms/MinMax.cpp"
+    "${GOMOKUGAME_SRC}/SearchAlgorithms/MinMax.cpp"
+    "${GOMOKUGAME_SRC}/SearchAlgorithms/AlphaBeta.cpp"
     # Stubs
-    "${STUBS_GLOBAL}/StubBoardIterator.cpp"
-    "${STUBS_GLOBAL}/StubGraphIterator.cpp"
+    #"${STUBS_GLOBAL}/StubBoardIterator.cpp"
+    #"${STUBS_GLOBAL}/StubGraphIterator.cpp"
  )
  
  target_include_directories(

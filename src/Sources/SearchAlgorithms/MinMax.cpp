@@ -1,40 +1,8 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-/// @file MinMax.cpp
-///
-/// MinMax algorithm implementation.
-///
-/// @par Full Description.
-/// MinMax algorithm implementation.
-///
-/// @if REVISION_HISTORY_INCLUDED
-/// @par Edit History
-/// - zhalat 03-May-2016 Initial revision.
-/// - zhalat 20-May-2016 Implementation of GameTreeBrowsing() with recursion.
-/// - zhalat 04-Oct-2016 Increases performance of generating candidates by introduce VectorLight
-///                      instead of stl::vector in time critical region code.
-/// - zhalat 12-Dec-2016 UpdateCandidate updated for extended gaps for threats from EXTENDED_NEIGHBORHOOD list.
-/// - zhalat 21-Dec-2016 Algorithm chooses not only move that maximalize cpu score but also minimalize opponent score.
-/// - zhalat 21-Dec-2017 Adjusting coefficients.
-/// - zhalat 29-Dec-2017 Add game tree logs.
-/// - zhalat 04-Feb-2018 VectorLight repleaced by VectorUnique.
-/// @endif
-///
-/// @ingroup.
-///
-/// @par non-Copyright (c) 2017 HalSoft
-///////////////////////////////////////////////////////////////////////////////////////////
-
-// SYSTEM INCLUDES
 #include <vector>     // For vector container.
 #include <set>        // For set container.
 #include <ctime>      // For time to set seed for random.
 #include <limits>     // For numeric_limits.
 #include <algorithm>  // std::sort, uses in debbug mode.
-
-// C PROJECT INCLUDES
-// <none>
-
-// C++ PROJECT INCLUDES
 #include "MinMax.hpp"                // For MinMax declaration.
 #include "IteratorIf.hpp"            // For iterator interface.
 #include "Score.hpp"                 // For Score instance.
@@ -42,33 +10,18 @@
 #include "VectorUnique.hpp"          // For VectorUnique container.
 #include "ThreatsBloodRelation.hpp"  // For EXTENDED_NEIGHBORHOOD[].
 
-// FORWARD REFERENCES
-//#define DEBBUG_MODE
-// Use those flags to prints board while debbuging. Change to true via debbguger.
 static bool LogStart = false;
 
 /// Converts vector xy to vector fieldPosition.
 static void VctrXy2VctrPosition(const vector<Board::PositionXY>& rVctrXy, vector<Board::PositionField>& rVctrPos,
                                 const uint32_t size);
 
-/// Handler for instance.
-MinMax* MinMax::m_pInstance = NULL;
-
-/// Get instance of Score.
 MinMax* MinMax::GetInstance()
 {
-    if(NULL == m_pInstance)
-    {
-        m_pInstance = new MinMax(SearchTreeAlgorithmIf::DEFAULT_DEPTH, "MinMax");
-        return m_pInstance;
-    }
-    else
-    {
-        return m_pInstance;
-    }
+	static MinMax minMax{SearchTreeAlgorithmIf::DEFAULT_DEPTH, "MinMax"};
+	return &minMax;
 }
 
-/// Finds the best possible move.
 Board::PositionXY MinMax::FindBestMove(PriorityQueueScore& rBestMove, const vector<Board::PositionXY>& rInitCandidates)
 {
     using namespace std;
@@ -148,7 +101,6 @@ Board::PositionXY MinMax::FindBestMove(PriorityQueueScore& rBestMove, const vect
     return retVal.m_move;
 }
 
-/// Browses the game-tree to find best move.
 SearchTreeAlgorithmIf::ScoreForMove MinMax::GameTreeBrowsing(VectorUniqueType& rCandidates,
                                                              PriorityQueueScore& bestMoves,
                                                              vector<Board::PositionXY>& treeTracker,
@@ -329,7 +281,6 @@ SearchTreeAlgorithmIf::ScoreForMove MinMax::GameTreeBrowsing(VectorUniqueType& r
     return bestMove;
 }
 
-/// Generate list of candidate moves.
 vector<Board::PositionField> MinMax::GenerateCand() const
 {
     // Algorithm finds those fields which:
@@ -411,7 +362,6 @@ vector<Board::PositionField> MinMax::GenerateCand() const
     return retVal;
 }
 
-/// Generate list of candidate moves.
 MinMax::VectorUniqueType MinMax::UpdateCand(const VectorUniqueType& rCandidates, uint32_t position) const
 {
     const Board& board = *m_pBoardCopy;
@@ -475,7 +425,6 @@ MinMax::VectorUniqueType MinMax::UpdateCand(const VectorUniqueType& rCandidates,
     return neighborhood;
 }
 
-/// Do deep copy of Board Score.
 void MinMax::BoardScoreCopy()
 {
     assert(NULL != m_pBoardScoreCpu);
@@ -498,7 +447,6 @@ void MinMax::BoardScoreCopy()
     m_pBoardScoreHumanCopy->SetBoard(*m_pBoardCopy);
 }
 
-/// Make snapshot on provided depth.
 void MinMax::MakeSnapshot(uint32_t depth)
 {
     assert(NULL != m_pBoardScoreCpuCopy);
@@ -522,7 +470,6 @@ void MinMax::RetreiveSnapshot(uint32_t depth)
     *m_pBoardScoreHumanCopy = *m_SnapshotContainerHuman[depth];
 }
 
-/// Remove snapshot on provided depth.
 void MinMax::RemoveSnapshot(uint32_t depth)
 {
     assert(NULL != m_SnapshotContainerCpu[depth]);
@@ -533,7 +480,6 @@ void MinMax::RemoveSnapshot(uint32_t depth)
     m_SnapshotContainerHuman[depth] = NULL;
 }
 
-// Converts vector xy to vectro fieldPosition.
 static void VctrXy2VctrPosition(const vector<Board::PositionXY>& rVctrXy, vector<Board::PositionField>& rVctrPos,
                                 const uint32_t boardSize)
 {

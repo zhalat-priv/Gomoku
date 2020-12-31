@@ -1,42 +1,9 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-/// @file MinMax.hpp
-///
-/// MinMax algorithm declaration.
-///
-/// @par Full Description.
-/// MinMax algorithm implementation.
-/// Implemented as singleton pattern.
-///
-/// @if REVISION_HISTORY_INCLUDED
-/// @par Edit History
-/// - zhalat 03-May-2016 Initial revision.
-/// - zhalat 21-Dec-2016 Up to ten best move kept in FIFO.
-/// - zhalat 31-Dec-2016 Priority queue instead of FIFO.
-/// - zhalat 04-Feb-2018 VectorLight repleaced by VectorUnique.
-/// @endif
-///
-/// @ingroup.
-///
-/// @par non-Copyright (c) 2016 HalSoft
-///////////////////////////////////////////////////////////////////////////////////////////
+#pragma once
 
-#if !defined(MIN_MAX_HPP_)
-#define MIN_MAX_HPP_
-
-// SYSTEM INCLUDES
-// <none>
-
-// C PROJECT INCLUDES
-// <none>
-
-// C++ PROJECT INCLUDES
 #include "SearchTreeAlgorithmIf.hpp"  // For SearchTreeAlgorithmIf definitions.
 #include "VectorUnique.hpp"           // For VectorUnique definitions.
 #include "Logger.hpp"                 // For debbuging.
 #include "StateEvaluation.hpp"        // For StateEvaluation definitions.
-
-// FORWARD REFERENCES
-// <none>
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 /// CLASS NAME: MinMax
@@ -117,6 +84,16 @@ class MinMax : public SearchTreeAlgorithmIf
 
     /// Only for unit test. DO NOT USE IT.
     void BoardScoreCopyInitUT() { BoardScoreCopy(); }
+    void ResetInstance() {
+    	// Do not use ~MinMax due to it calls its ancesstors destructor
+        delete m_pBoardScoreCpuCopy;
+        delete m_pBoardScoreHumanCopy;
+        delete m_pBoardCopy;
+
+        m_pBoardScoreCpuCopy   = NULL;
+        m_pBoardScoreHumanCopy = NULL;
+        m_pBoardCopy           = NULL;
+    }
 
     /// Destructor.
     virtual ~MinMax()
@@ -180,9 +157,6 @@ class MinMax : public SearchTreeAlgorithmIf
     void RetreiveSnapshot(uint32_t depth);
     void RemoveSnapshot(uint32_t depth);
 
-    /// Handler for instance.
-    static MinMax* m_pInstance;
-
     // BoardScore state - copy.
     BoardScore* m_pBoardScoreCpuCopy;
     BoardScore* m_pBoardScoreHumanCopy;
@@ -195,7 +169,6 @@ class MinMax : public SearchTreeAlgorithmIf
     // For debbugging. Record game tree.
     Logger m_Logger;
 };
-#endif /* MIN_MAX_HPP_ */
 
 /***************************************************************************
  *   Copyright (C) 2018 by Zbigniew Halat                                  *

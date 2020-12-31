@@ -1,35 +1,5 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-/// @file AlphaBeta.hpp
-///
-/// AlphaBeta algorithm declaration.
-///
-/// @par Full Description.
-/// AlphaBeta algorithm implementation. Enhanced MinMax algorithm by recognizing
-/// actions on board rather using brute force.
-/// Implemented as singleton pattern.
-///
-/// @if REVISION_HISTORY_INCLUDED
-/// @par Edit History
-/// - zhalat 11-Jun-2017 Initial revision.
-/// - zhalat 10-Oct-2017 UpdateCand moved to private section.
-/// - zhalat 04-Feb-2018 VectorLight repleaced by VectorUnique.
-/// @endif
-///
-/// @ingroup.
-///
-/// @par non-Copyright (c) 2017 HalSoft
-///////////////////////////////////////////////////////////////////////////////////////////
+#pragma once
 
-#if !defined(ALPHA_BETA_HPP_)
-#define ALPHA_BETA_HPP_
-
-// SYSTEM INCLUDES
-// <none>
-
-// C PROJECT INCLUDES
-// <none>
-
-// C++ PROJECT INCLUDES
 #include "SearchTreeAlgorithmIf.hpp"  // For SearchTreeAlgorithmIf definitions.
 #include "VectorUnique.hpp"           // For VectorUnique definitions.
 #include "Logger.hpp"                 // For debbuging.
@@ -99,6 +69,16 @@ class AlphaBeta : public SearchTreeAlgorithmIf
 
     /// Only for unit test. DO NOT USE IT.
     void BoardScoreCopyInitUT() { BoardScoreCopy(); }
+    void ResetInstance() {
+    	// Do not use ~AlphaBeta due to it calls its ancesstors destructor
+        delete m_pBoardScoreCpuCopy;
+        delete m_pBoardScoreHumanCopy;
+        delete m_pBoardCopy;
+
+        m_pBoardScoreCpuCopy   = NULL;
+        m_pBoardScoreHumanCopy = NULL;
+        m_pBoardCopy           = NULL;
+    }
 
     /// Destructor.
     virtual ~AlphaBeta()
@@ -205,9 +185,6 @@ class AlphaBeta : public SearchTreeAlgorithmIf
     void RetreiveSnapshot(uint32_t depth);
     void RemoveSnapshot(uint32_t depth);
 
-    /// Handler for instance.
-    static AlphaBeta* m_pInstance;
-
     // BoardScore state - copy.
     BoardScore* m_pBoardScoreCpuCopy;
     BoardScore* m_pBoardScoreHumanCopy;
@@ -222,8 +199,9 @@ class AlphaBeta : public SearchTreeAlgorithmIf
 
     // For UT.
     friend AlphaBetaTest;
+    friend class TEST_AlphaBetaTest_UpdateCandTest1_Test;
+    friend class TEST_AlphaBetaTest_UpdateCandTest2_Test;
 };
-#endif /* ALPHA_BETA_HPP_ */
 
 /***************************************************************************
  *   Copyright (C) 2018 by Zbigniew Halat                                  *

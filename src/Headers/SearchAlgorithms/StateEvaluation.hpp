@@ -383,9 +383,6 @@ class StateEvaluation
     int GetBonus(const bool isMaxPlayer, Board::PositionXY& rBuildDownMove, const bool checkWinnerMoveCondition = true,
                  const BoardScore* pCpuBoardScore = NULL, const BoardScore* pHumanBoardScore = NULL) const;
 
-    /// Handler for instance.
-    static StateEvaluation* m_pInstance;
-
     /// Head shot action state for max and min player.
     static HeadShotActionState m_HeadShotActionStateMaxConditionCheckerEnabled[HEAD_SHOT_ACTION_NUMBER];
     static HeadShotActionState m_HeadShotActionStateMinConditionCheckerEnabled[HEAD_SHOT_ACTION_NUMBER];

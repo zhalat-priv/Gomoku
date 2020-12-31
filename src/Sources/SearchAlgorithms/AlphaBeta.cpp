@@ -50,9 +50,6 @@ static void VctrXy2VctrPosition(const vector<Board::PositionXY>& rVctrXy, vector
 static void nBestMoveLogger(const uint32_t deep, SearchTreeAlgorithmIf::PriorityQueueScore& rPriorityQueueScore,
                             const SearchTreeAlgorithmIf::ScoreForMove scoreForMove);
 
-/// Handler for instance.
-AlphaBeta* AlphaBeta::m_pInstance = NULL;
-
 /// Finds the best possible move.
 Board::PositionXY AlphaBeta::FindBestMove(PriorityQueueScore& rBestMove,
                                           const vector<Board::PositionXY>& rInitCandidates)
@@ -248,15 +245,8 @@ AlphaBeta::VectorUniqueType AlphaBeta::UpdateCand(const VectorUniqueType& rCandi
 /// Get instance of Score.
 AlphaBeta* AlphaBeta::GetInstance()
 {
-    if(NULL == m_pInstance)
-    {
-        m_pInstance = new AlphaBeta(SearchTreeAlgorithmIf::DEFAULT_DEPTH, "AlphaBeta");
-        return m_pInstance;
-    }
-    else
-    {
-        return m_pInstance;
-    }
+	static AlphaBeta alphaBeta{SearchTreeAlgorithmIf::DEFAULT_DEPTH, "AlphaBeta"};
+	return &alphaBeta;
 }
 
 /// Browses the game-tree to find best move.

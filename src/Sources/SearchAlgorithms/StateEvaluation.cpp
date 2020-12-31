@@ -23,8 +23,6 @@ static const Board::PositionField POSITION_OUT_OF_BOARD = Board::PositionField(B
 static const Board::PositionXY XY_OUT_OF_BOARD =
     Board::PositionXY(Board::PositionXY::INVALID_FIELD, Board::PositionXY::INVALID_FIELD);
 
-/// Static members initialization.
-StateEvaluation* StateEvaluation::m_pInstance                                                           = NULL;
 StateEvaluation::HeadShotActionState StateEvaluation::m_HeadShotActionStateMaxConditionCheckerEnabled[] = {
     {false, false, XY_OUT_OF_BOARD, &StateEvaluation::IsHeadShot4BCPossible},
     {false, false, XY_OUT_OF_BOARD, &StateEvaluation::IsHeadShot3APossible},
