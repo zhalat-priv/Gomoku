@@ -1,32 +1,6 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-/// @file AlphaBeta.cpp
-///
-/// AlphaBeta algorithm implementation.
-///
-/// @par Full Description.
-/// AlphaBeta algorithm implementation.
-///
-/// @if REVISION_HISTORY_INCLUDED
-/// @par Edit History
-/// - zhalat 11-Jun-2017 Initial revision.
-/// - zhalat 11-Aug-2017 Delegate state evaluation to StateEvaluation class.
-/// - zhalat 04-Feb-2018 VectorLight repleaced by VectorUnique.
-/// @endif
-///
-/// @ingroup.
-///
-/// @par non-Copyright (c) 2017 HalSoft
-///////////////////////////////////////////////////////////////////////////////////////////
-
-// SYSTEM INCLUDES
-#include <vector>     // For vector container.
-#include <algorithm>  // std::sort, uses in debbug mode.
-#include <set>        // For set container.
-
-// C PROJECT INCLUDES
-// <none>
-
-// C++ PROJECT INCLUDES
+#include <vector>     				 // For vector container.
+#include <algorithm>  				 // std::sort, uses in debbug mode.
+#include <set>        				 // For set container.
 #include "AlphaBeta.hpp"             // For AlphaBeta declaration.
 #include "IteratorIf.hpp"            // For iterator interface.
 #include "ThreatsBloodRelation.hpp"  // For EXTENDED_NEIGHBORHOOD[].

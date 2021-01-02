@@ -198,7 +198,6 @@ class AlphaBeta : public SearchTreeAlgorithmIf
     Logger m_Logger;
 
     // For UT.
-    friend AlphaBetaTest;
     friend class TEST_AlphaBetaTest_UpdateCandTest1_Test;
     friend class TEST_AlphaBetaTest_UpdateCandTest2_Test;
 };

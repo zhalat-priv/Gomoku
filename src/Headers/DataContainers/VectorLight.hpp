@@ -128,7 +128,7 @@ class VectorLight
     IteratorIf<uint32_t>* m_pIterator;
 
 #warning "Such dependency should be removed."
-    friend class VectorLightTest;
+    friend class TEST_VectorLightTest_InitTest_Test;
 };
 
 

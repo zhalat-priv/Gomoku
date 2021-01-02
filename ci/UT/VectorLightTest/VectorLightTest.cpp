@@ -1,11 +1,11 @@
+#include "VectorLight.hpp"
+#include "Board.hpp"
+//-------------------------------
 #include "CppUTest/TestHarness.h"
 #include "CppUTest/SimpleString.h"
 #include "CppUTest/PlatformSpecificFunctions.h"
 #include "CppUTest/TestMemoryAllocator.h"
 #include "CppUTest/MemoryLeakDetector.h"
-//-------------------------------
-#include "VectorLight.hpp"
-#include "Board.hpp"
 
 TEST_GROUP(VectorLightTest)
 {
@@ -23,43 +23,43 @@ public:
     VectorLight* m_pVectorLight;
 };
 
-//TEST(VectorLightTest,InitTest)
-//{
-////	const uint32_t data = 0x5;
-////
-////	m_pVectorLight->Insert( data );
-////
-////	CHECK( data == m_pVectorLight->m_Array[ 0 ] );
-////	CHECK( Board::PositionField::INVALID_FIELD == m_pVectorLight->m_Array[ VectorLight::VECTOR_SIZE - 1 ] );
-////
-////	CHECK( Board::PositionField::INVALID_FIELD == m_pVectorLight->m_MarkArray[ 0 ] );
-////	CHECK( Board::PositionField::INVALID_FIELD == m_pVectorLight->m_MarkArray[ VectorLight::VECTOR_SIZE - 1 ] );
-////
-////	// Check the copy constructor.
-////	VectorLight vectorLightCopy = *m_pVectorLight;
-////
-////	CHECK( data == vectorLightCopy.m_Array[ 0 ] );
-////
-////	CHECK( Board::PositionField::INVALID_FIELD == vectorLightCopy.m_MarkArray[ 0 ] );
-////	CHECK( Board::PositionField::INVALID_FIELD == vectorLightCopy.m_MarkArray[ VectorLight::VECTOR_SIZE - 1 ] );
-////
-////	// Check assign operator.
-////	const Board::PositionField initialData[] = { 3, 4 ,5 };
-////
-////	vector<Board::PositionField> vectorStl{ initialData[0], initialData[1], initialData[2] };
-////	VectorLight vectorLight( Board::PositionField::INVALID_FIELD );
-////	vectorLight = vectorStl;
-////
-////	CHECK( vectorLight.GetNumberOfElements() == sizeof( initialData )/sizeof(initialData[0]) );
-////
-////	IteratorIf<uint32_t>* pIterator = vectorLight.GetIterator();
-////	uint32_t index = 0;
-////	for ( pIterator->SetToBase(); pIterator->HasNext(); ++index )
-////	{
-////		CHECK( initialData[ index ] == pIterator->GetNext() );
-////	}
-//}
-//
+TEST(VectorLightTest,InitTest)
+{
+	const uint32_t data = 0x5;
+
+	m_pVectorLight->Insert( data );
+
+	CHECK( data == m_pVectorLight->m_Array[ 0 ] );
+	CHECK( Board::PositionField::INVALID_FIELD == m_pVectorLight->m_Array[ VectorLight::VECTOR_SIZE - 1 ] );
+
+	CHECK( Board::PositionField::INVALID_FIELD == m_pVectorLight->m_MarkArray[ 0 ] );
+	CHECK( Board::PositionField::INVALID_FIELD == m_pVectorLight->m_MarkArray[ VectorLight::VECTOR_SIZE - 1 ] );
+
+	// Check the copy constructor.
+	VectorLight vectorLightCopy = *m_pVectorLight;
+
+	CHECK( data == vectorLightCopy.m_Array[ 0 ] );
+
+	CHECK( Board::PositionField::INVALID_FIELD == vectorLightCopy.m_MarkArray[ 0 ] );
+	CHECK( Board::PositionField::INVALID_FIELD == vectorLightCopy.m_MarkArray[ VectorLight::VECTOR_SIZE - 1 ] );
+
+	// Check assign operator.
+	const Board::PositionField initialData[] = { 3, 4 ,5 };
+
+	vector<Board::PositionField> vectorStl{ initialData[0], initialData[1], initialData[2] };
+	VectorLight vectorLight( Board::PositionField::INVALID_FIELD );
+	vectorLight = vectorStl;
+
+	CHECK( vectorLight.GetNumberOfElements() == sizeof( initialData )/sizeof(initialData[0]) );
+
+	IteratorIf<uint32_t>* pIterator = vectorLight.GetIterator();
+	uint32_t index = 0;
+	for ( pIterator->SetToBase(); pIterator->HasNext(); ++index )
+	{
+		CHECK( initialData[ index ] == pIterator->GetNext() );
+	}
+}
+
 TEST(VectorLightTest,InsertTest)
 {
 	uint32_t data[ VectorLight::VECTOR_SIZE ]= { 0 };
