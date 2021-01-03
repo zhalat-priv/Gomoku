@@ -1,5 +1,5 @@
-#include <algorithm>  				// For find().
-#include <assert.h>   				// For assert.
+#include <algorithm>  // For find().
+#include <assert.h>   // For assert.
 #include <math.h>
 #include "ThreatsBloodRelation.hpp"  //
 #include "VectorUnique.hpp"          // For VectorUnique definitions.
@@ -537,8 +537,8 @@ void StateEvaluation::SetBoards(const BoardScore& rBoardScoreCpu, const BoardSco
 
 StateEvaluation* StateEvaluation::GetInstance()
 {
-	static StateEvaluation stateEvaluation;
-	return &stateEvaluation;
+    static StateEvaluation stateEvaluation;
+    return &stateEvaluation;
 }
 
 void StateEvaluation::Update() const

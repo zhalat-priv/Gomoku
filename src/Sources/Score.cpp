@@ -1,4 +1,4 @@
-#include <assert.h>  // For assert.
+#include <assert.h>           // For assert.
 #include "Score.hpp"          // For Score definition.
 #include "BoardScore.hpp"     // For BoardScore definition.
 #include "Threat2CaseA.hpp"   // For Threat2CaseA declaration.
@@ -32,7 +32,7 @@ static Threat2CaseC threat2CaseC;
 
 const Score::ThreatScore Score::m_ThreatScore[] = {
     /*0 */ {ThreatFinder::THREAT_WINNER, &threatWinner, THREAT_WINNER_SCORE},
-    /*1 */ {ThreatFinder::THREAT_4_CASE_A, &threat4CaseA,THREAT_4_CASE_A_SCORE},
+    /*1 */ {ThreatFinder::THREAT_4_CASE_A, &threat4CaseA, THREAT_4_CASE_A_SCORE},
     /*2 */ {ThreatFinder::THREAT_4_CASE_AA, &threat4CaseAA, THREAT_4_CASE_AA_SCORE},
     /*3 */ {ThreatFinder::THREAT_4_CASE_B, &threat4CaseB, THREAT_4_CASE_B_SCORE},
     /*4 */ {ThreatFinder::THREAT_4_CASE_C, &threat4CaseC, THREAT_4_CASE_C_SCORE},
@@ -48,8 +48,8 @@ const Score::ThreatScore Score::m_ThreatScore[] = {
 
 Score* Score::GetInstance()
 {
-	static Score score{};
-	return &score;
+    static Score score{};
+    return &score;
 }
 
 void Score::UpdateScore(BoardScore& boardScore, const vector<Board::PositionXY>& xyList, const uint32_t multiplier)

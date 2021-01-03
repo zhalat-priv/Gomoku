@@ -1,6 +1,6 @@
-#include <vector>     				 // For vector container.
-#include <algorithm>  				 // std::sort, uses in debbug mode.
-#include <set>        				 // For set container.
+#include <vector>                    // For vector container.
+#include <algorithm>                 // std::sort, uses in debbug mode.
+#include <set>                       // For set container.
 #include "AlphaBeta.hpp"             // For AlphaBeta declaration.
 #include "IteratorIf.hpp"            // For iterator interface.
 #include "ThreatsBloodRelation.hpp"  // For EXTENDED_NEIGHBORHOOD[].
@@ -219,8 +219,8 @@ AlphaBeta::VectorUniqueType AlphaBeta::UpdateCand(const VectorUniqueType& rCandi
 /// Get instance of Score.
 AlphaBeta* AlphaBeta::GetInstance()
 {
-	static AlphaBeta alphaBeta{SearchTreeAlgorithmIf::DEFAULT_DEPTH, "AlphaBeta"};
-	return &alphaBeta;
+    static AlphaBeta alphaBeta{SearchTreeAlgorithmIf::DEFAULT_DEPTH, "AlphaBeta"};
+    return &alphaBeta;
 }
 
 /// Browses the game-tree to find best move.

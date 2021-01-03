@@ -96,7 +96,6 @@ class Spotter
     // Destructor.
     virtual ~Spotter();
 
-
    private:
     // Prevent either copying or assigning (>= C++11).
     Spotter(const Spotter& rSpotter) = delete;

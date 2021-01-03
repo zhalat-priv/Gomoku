@@ -4,7 +4,8 @@
 #include "Board.hpp"     // For Board interface.
 
 // Point beyond the board. Useful for initialization.
-static const Board::PositionXY XY_OUT_OF_BOARD = Board::PositionXY(Board::PositionXY::INVALID_FIELD, Board::PositionXY::INVALID_FIELD);
+static const Board::PositionXY XY_OUT_OF_BOARD =
+    Board::PositionXY(Board::PositionXY::INVALID_FIELD, Board::PositionXY::INVALID_FIELD);
 
 const OpenBook::Openings OpenBook::DIRECT_OPEN[] = {{Board::UP, OpenBook::m_CrawlingChainUp},
                                                     {Board::RIGHT, OpenBook::m_CrawlingChainRight},
@@ -32,40 +33,30 @@ const uint32_t OpenBook::INDIRECT_OPEN_SIZE        = std::size(OpenBook::INDIREC
 // 8 |. . . . . . F . . . . . . . .|
 // 9 |. . . . . . . . . . . . . . .|
 OpenBook::CrawlingChain OpenBook::m_CrawlingChainUp[] = {
-	{'A', {{Board::UP, 2},{Board::DIRECTION_NONE,0}}},
-	{'B', {{Board::UP_LEFT, 1},{Board::DIRECTION_NONE,0}}},
-	{'C', {{Board::UP_RIGHT, 1},{Board::DIRECTION_NONE,0}}},
-	{'D', {{Board::LEFT, 2},{Board::DIRECTION_NONE,0}}},
-	{'E', {{Board::RIGHT, 2},{Board::DIRECTION_NONE,0}}},
-	{'F', {{Board::DOWN, 2},{Board::DIRECTION_NONE,0}}}
-};
+    {'A', {{Board::UP, 2}, {Board::DIRECTION_NONE, 0}}},       {'B', {{Board::UP_LEFT, 1}, {Board::DIRECTION_NONE, 0}}},
+    {'C', {{Board::UP_RIGHT, 1}, {Board::DIRECTION_NONE, 0}}}, {'D', {{Board::LEFT, 2}, {Board::DIRECTION_NONE, 0}}},
+    {'E', {{Board::RIGHT, 2}, {Board::DIRECTION_NONE, 0}}},    {'F', {{Board::DOWN, 2}, {Board::DIRECTION_NONE, 0}}}};
 
-OpenBook::CrawlingChain OpenBook::m_CrawlingChainRight[] = {
-	{'A', {{Board::RIGHT, 2},{Board::DIRECTION_NONE,0}}},
-	{'B', {{Board::UP_RIGHT, 1},{Board::DIRECTION_NONE,0}}},
-	{'C', {{Board::DOWN_RIGHT, 1},{Board::DIRECTION_NONE,0}}},
-	{'D', {{Board::UP, 2},{Board::DIRECTION_NONE,0}}},
-	{'E', {{Board::DOWN, 2},{Board::DIRECTION_NONE,0}}},
-	{'F', {{Board::LEFT, 2},{Board::DIRECTION_NONE,0}}}
-};
+OpenBook::CrawlingChain OpenBook::m_CrawlingChainRight[] = {{'A', {{Board::RIGHT, 2}, {Board::DIRECTION_NONE, 0}}},
+                                                            {'B', {{Board::UP_RIGHT, 1}, {Board::DIRECTION_NONE, 0}}},
+                                                            {'C', {{Board::DOWN_RIGHT, 1}, {Board::DIRECTION_NONE, 0}}},
+                                                            {'D', {{Board::UP, 2}, {Board::DIRECTION_NONE, 0}}},
+                                                            {'E', {{Board::DOWN, 2}, {Board::DIRECTION_NONE, 0}}},
+                                                            {'F', {{Board::LEFT, 2}, {Board::DIRECTION_NONE, 0}}}};
 
-OpenBook::CrawlingChain OpenBook::m_CrawlingChainDown[] = {
-	{'A', {{Board::DOWN, 2},{Board::DIRECTION_NONE,0}}},
-	{'B', {{Board::DOWN_RIGHT, 1},{Board::DIRECTION_NONE,0}}},
-	{'C', {{Board::DOWN_LEFT, 1},{Board::DIRECTION_NONE,0}}},
-	{'D', {{Board::RIGHT, 2},{Board::DIRECTION_NONE,0}}},
-	{'E', {{Board::LEFT, 2},{Board::DIRECTION_NONE,0}}},
-	{'F', {{Board::UP, 2},{Board::DIRECTION_NONE,0}}}
-};
+OpenBook::CrawlingChain OpenBook::m_CrawlingChainDown[] = {{'A', {{Board::DOWN, 2}, {Board::DIRECTION_NONE, 0}}},
+                                                           {'B', {{Board::DOWN_RIGHT, 1}, {Board::DIRECTION_NONE, 0}}},
+                                                           {'C', {{Board::DOWN_LEFT, 1}, {Board::DIRECTION_NONE, 0}}},
+                                                           {'D', {{Board::RIGHT, 2}, {Board::DIRECTION_NONE, 0}}},
+                                                           {'E', {{Board::LEFT, 2}, {Board::DIRECTION_NONE, 0}}},
+                                                           {'F', {{Board::UP, 2}, {Board::DIRECTION_NONE, 0}}}};
 
-OpenBook::CrawlingChain OpenBook::m_CrawlingChainLeft[] = {
-	{'A', {{Board::LEFT, 2},{Board::DIRECTION_NONE,0}}},
-	{'B', {{Board::DOWN_LEFT, 1},{Board::DIRECTION_NONE,0}}},
-	{'C', {{Board::UP_LEFT, 1},{Board::DIRECTION_NONE,0}}},
-	{'D', {{Board::DOWN, 2},{Board::DIRECTION_NONE,0}}},
-	{'E', {{Board::UP, 2},{Board::DIRECTION_NONE,0}}},
-	{'F', {{Board::RIGHT, 2},{Board::DIRECTION_NONE,0}}}
-};
+OpenBook::CrawlingChain OpenBook::m_CrawlingChainLeft[] = {{'A', {{Board::LEFT, 2}, {Board::DIRECTION_NONE, 0}}},
+                                                           {'B', {{Board::DOWN_LEFT, 1}, {Board::DIRECTION_NONE, 0}}},
+                                                           {'C', {{Board::UP_LEFT, 1}, {Board::DIRECTION_NONE, 0}}},
+                                                           {'D', {{Board::DOWN, 2}, {Board::DIRECTION_NONE, 0}}},
+                                                           {'E', {{Board::UP, 2}, {Board::DIRECTION_NONE, 0}}},
+                                                           {'F', {{Board::RIGHT, 2}, {Board::DIRECTION_NONE, 0}}}};
 
 const uint32_t OpenBook::CRAWLING_DIRECT_SIZE = std::size(m_CrawlingChainUp);
 
@@ -83,63 +74,44 @@ const uint32_t OpenBook::CRAWLING_DIRECT_SIZE = std::size(m_CrawlingChainUp);
 // 8 |. . . . . N . . . . . . . . .|
 // 9 |. . . . . . . . . . . . . . .|
 OpenBook::CrawlingChain OpenBook::m_CrawlingChainUpRight[] = {
-	{'G', {{Board::LEFT, 1},{Board::UP, 2},{Board::DIRECTION_NONE,0}}},
-	{'H', {{Board::UP, 2},{Board::DIRECTION_NONE,0}}},
-	{'I', {{Board::LEFT, 1},{Board::UP, 1},{Board::DIRECTION_NONE,0}}},
-	{'J', {{Board::RIGHT, 2},{Board::DIRECTION_NONE,0}}},
-	{'M', {{Board::DOWN_RIGHT, 1},{Board::DIRECTION_NONE,0}}},
-	{'K', {{Board::RIGHT, 2},{Board::DOWN, 1},{Board::DIRECTION_NONE,0}}},
-	{'L', {{Board::DOWN, 1},{Board::LEFT, 2},{Board::DIRECTION_NONE,0}}},
-	{'N', {{Board::DOWN, 2},{Board::LEFT, 1},{Board::DIRECTION_NONE,0}}}
-};
+    {'G', {{Board::LEFT, 1}, {Board::UP, 2}, {Board::DIRECTION_NONE, 0}}},
+    {'H', {{Board::UP, 2}, {Board::DIRECTION_NONE, 0}}},
+    {'I', {{Board::LEFT, 1}, {Board::UP, 1}, {Board::DIRECTION_NONE, 0}}},
+    {'J', {{Board::RIGHT, 2}, {Board::DIRECTION_NONE, 0}}},
+    {'M', {{Board::DOWN_RIGHT, 1}, {Board::DIRECTION_NONE, 0}}},
+    {'K', {{Board::RIGHT, 2}, {Board::DOWN, 1}, {Board::DIRECTION_NONE, 0}}},
+    {'L', {{Board::DOWN, 1}, {Board::LEFT, 2}, {Board::DIRECTION_NONE, 0}}},
+    {'N', {{Board::DOWN, 2}, {Board::LEFT, 1}, {Board::DIRECTION_NONE, 0}}}};
 
 OpenBook::CrawlingChain OpenBook::m_CrawlingChainDownRight[] = {
-	{'G', {{Board::RIGHT, 2},
-		  {Board::UP, 1},{Board::DIRECTION_NONE,0}}},
-	{'H', {{Board::RIGHT, 2},{Board::DIRECTION_NONE,0}}},
-	{'I', {{Board::RIGHT, 1},
-		  {Board::UP, 1},{Board::DIRECTION_NONE,0}}},
-	{'J', {{Board::DOWN, 2},{Board::DIRECTION_NONE,0}}},
-	{'M', {{Board::DOWN_LEFT, 1},{Board::DIRECTION_NONE,0}}},
-	{'K', {{Board::DOWN, 2},
-		  {Board::LEFT, 1},{Board::DIRECTION_NONE,0}}},
-	{'L', {{Board::UP, 2},
-		  {Board::LEFT, 1},{Board::DIRECTION_NONE,0}}},
-	{'N', {{Board::UP, 1},
-	      {Board::LEFT, 2},{Board::DIRECTION_NONE,0}}}
-};
+    {'G', {{Board::RIGHT, 2}, {Board::UP, 1}, {Board::DIRECTION_NONE, 0}}},
+    {'H', {{Board::RIGHT, 2}, {Board::DIRECTION_NONE, 0}}},
+    {'I', {{Board::RIGHT, 1}, {Board::UP, 1}, {Board::DIRECTION_NONE, 0}}},
+    {'J', {{Board::DOWN, 2}, {Board::DIRECTION_NONE, 0}}},
+    {'M', {{Board::DOWN_LEFT, 1}, {Board::DIRECTION_NONE, 0}}},
+    {'K', {{Board::DOWN, 2}, {Board::LEFT, 1}, {Board::DIRECTION_NONE, 0}}},
+    {'L', {{Board::UP, 2}, {Board::LEFT, 1}, {Board::DIRECTION_NONE, 0}}},
+    {'N', {{Board::UP, 1}, {Board::LEFT, 2}, {Board::DIRECTION_NONE, 0}}}};
 
 OpenBook::CrawlingChain OpenBook::m_CrawlingChainDownLeft[] = {
-	{'G', {{Board::RIGHT, 1},
-		   {Board::DOWN, 2},{Board::DIRECTION_NONE,0}}},
-	{'H', {{Board::DOWN, 2},{Board::DIRECTION_NONE,0}}},
-	{'I', {{Board::RIGHT, 1},
-		   {Board::DOWN, 1},{Board::DIRECTION_NONE,0}}},
-	{'J', {{Board::LEFT, 2},{Board::DIRECTION_NONE,0}}},
-	{'M', {{Board::UP_LEFT, 1},{Board::DIRECTION_NONE,0}}},
-	{'K', {{Board::UP, 1},
-		   {Board::LEFT, 2},{Board::DIRECTION_NONE,0}}},
-	{'L', {{Board::UP, 1},
-			{Board::RIGHT, 2},{Board::DIRECTION_NONE,0}}},
-	{'N', {{Board::UP, 2},
-			{Board::RIGHT, 1},{Board::DIRECTION_NONE,0}}}
-};
+    {'G', {{Board::RIGHT, 1}, {Board::DOWN, 2}, {Board::DIRECTION_NONE, 0}}},
+    {'H', {{Board::DOWN, 2}, {Board::DIRECTION_NONE, 0}}},
+    {'I', {{Board::RIGHT, 1}, {Board::DOWN, 1}, {Board::DIRECTION_NONE, 0}}},
+    {'J', {{Board::LEFT, 2}, {Board::DIRECTION_NONE, 0}}},
+    {'M', {{Board::UP_LEFT, 1}, {Board::DIRECTION_NONE, 0}}},
+    {'K', {{Board::UP, 1}, {Board::LEFT, 2}, {Board::DIRECTION_NONE, 0}}},
+    {'L', {{Board::UP, 1}, {Board::RIGHT, 2}, {Board::DIRECTION_NONE, 0}}},
+    {'N', {{Board::UP, 2}, {Board::RIGHT, 1}, {Board::DIRECTION_NONE, 0}}}};
 
 OpenBook::CrawlingChain OpenBook::m_CrawlingChainUpLeft[] = {
-	{'G', {{Board::LEFT, 2},
-		  {Board::DOWN, 1},{Board::DIRECTION_NONE,0}}},
-	{'H', {{Board::LEFT, 2},{Board::DIRECTION_NONE,0}}},
-	{'I', {{Board::LEFT, 1},
-		  {Board::DOWN, 1},{Board::DIRECTION_NONE,0}}},
-	{'J', {{Board::UP, 2},{Board::DIRECTION_NONE,0}}},
-	{'M', {{Board::UP_RIGHT, 1},{Board::DIRECTION_NONE,0}}},
-	{'K', {{Board::RIGHT, 1},
-		  {Board::UP, 2},{Board::DIRECTION_NONE,0}}},
-	{'L', {{Board::DOWN, 2},
-		  {Board::RIGHT, 1},{Board::DIRECTION_NONE,0}}},
-	{'N', {{Board::RIGHT, 2},
-		  {Board::DOWN, 1},{Board::DIRECTION_NONE,0}}}
-};
+    {'G', {{Board::LEFT, 2}, {Board::DOWN, 1}, {Board::DIRECTION_NONE, 0}}},
+    {'H', {{Board::LEFT, 2}, {Board::DIRECTION_NONE, 0}}},
+    {'I', {{Board::LEFT, 1}, {Board::DOWN, 1}, {Board::DIRECTION_NONE, 0}}},
+    {'J', {{Board::UP, 2}, {Board::DIRECTION_NONE, 0}}},
+    {'M', {{Board::UP_RIGHT, 1}, {Board::DIRECTION_NONE, 0}}},
+    {'K', {{Board::RIGHT, 1}, {Board::UP, 2}, {Board::DIRECTION_NONE, 0}}},
+    {'L', {{Board::DOWN, 2}, {Board::RIGHT, 1}, {Board::DIRECTION_NONE, 0}}},
+    {'N', {{Board::RIGHT, 2}, {Board::DOWN, 1}, {Board::DIRECTION_NONE, 0}}}};
 
 const uint32_t OpenBook::CRAWLING_INDIRECT_SIZE = std::size(m_CrawlingChainUpRight);
 
@@ -181,7 +153,7 @@ Board::PositionXY OpenBook::GetBestThirdWhiteMove(const Board& rBoard)
             {
                 // Draw lots to chose one of the open game letter: A,B,C,D,E,F. Don't matter which one.
                 const uint32_t randomIndex = (rand() % CRAWLING_DIRECT_SIZE);
-                pCrawlingList = DIRECT_OPEN[i].m_pCrawlingChain[randomIndex].m_CrawlingList;
+                pCrawlingList              = DIRECT_OPEN[i].m_pCrawlingChain[randomIndex].m_CrawlingList;
                 break;
             }
         }
@@ -191,8 +163,8 @@ Board::PositionXY OpenBook::GetBestThirdWhiteMove(const Board& rBoard)
         Board::PositionXY xyCrawling = xyFirst;
 
         // Find out the position on board associated with letter that has just been drawn.
-        Crawling endList{Board::DIRECTION_NONE,0};
-        for(; *pCrawlingList!=endList;pCrawlingList++)
+        Crawling endList{Board::DIRECTION_NONE, 0};
+        for(; *pCrawlingList != endList; pCrawlingList++)
         {
             rBoard.GoDirection(xyCrawling, pCrawlingList->m_Direction, pCrawlingList->m_Shift);
             assert(rBoard.IsOnBoard(xyCrawling));
@@ -224,7 +196,7 @@ Board::PositionXY OpenBook::GetBestThirdWhiteMove(const Board& rBoard)
             {
                 // Draw lots to chose one of the open game letter: A,B,C,D,E,F. Don't matter which one.
                 const uint32_t randomIndex = (rand() % CRAWLING_INDIRECT_SIZE);
-                pCrawlingList = INDIRECT_OPEN[i].m_pCrawlingChain[randomIndex].m_CrawlingList;
+                pCrawlingList              = INDIRECT_OPEN[i].m_pCrawlingChain[randomIndex].m_CrawlingList;
                 break;
             }
         }
@@ -234,8 +206,8 @@ Board::PositionXY OpenBook::GetBestThirdWhiteMove(const Board& rBoard)
         Board::PositionXY xyCrawling = xyFirst;
 
         // Find out the position on board associated with letter that has just been drawn.
-        Crawling endList{Board::DIRECTION_NONE,0};
-        for(; *pCrawlingList!=endList;pCrawlingList++)
+        Crawling endList{Board::DIRECTION_NONE, 0};
+        for(; *pCrawlingList != endList; pCrawlingList++)
         {
             rBoard.GoDirection(xyCrawling, pCrawlingList->m_Direction, pCrawlingList->m_Shift);
             assert(rBoard.IsOnBoard(xyCrawling));

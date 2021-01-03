@@ -1,6 +1,6 @@
 #pragma once
 
-#include <assert.h>  			  // For assert.
+#include <assert.h>               // For assert.
 #include "BoardScore.hpp"         // For Board Score.
 #include "StateEvaluationIf.hpp"  // For StateEvaluationIf interface.
 #include "ObserverIf.hpp"         // For Observer design pattern interface.
@@ -472,7 +472,6 @@ class StateEvaluation
     friend class TEST_StateEvaluationTest_IsSingle3AThreatMitigationPossibleTest8_Test;
     friend class TEST_StateEvaluationTest_IsSingle3AThreatMitigationPossibleTest9_Test;
 };
-
 
 /***************************************************************************
  *   Copyright (C) 2018 by Zbigniew Halat                                  *

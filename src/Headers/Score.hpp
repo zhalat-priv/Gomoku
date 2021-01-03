@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string.h>    // For memset.
-#include "Board.hpp"   // For Board declaration.
+#include <string.h>   // For memset.
+#include "Board.hpp"  // For Board declaration.
 #include "ThreatFinder.hpp"
 
 class BoardScore;
@@ -109,12 +109,12 @@ class Score
     ///////////////////////////////////////////////////////////////////////
     void UpdateScore(BoardScore& boardScore, const Board::PositionXY xy,
                      const uint32_t multiplier = ThreatFinder::ThreatLocation::DEFAULT_MULTIPLIER);
-    virtual ~Score()= default;
+    virtual ~Score() = default;
 
    private:
-    Score(const Score&)= delete;
-    Score& operator=(const Score&)=delete;
-    Score()=default;
+    Score(const Score&) = delete;
+    Score& operator=(const Score&) = delete;
+    Score()                        = default;
     void SetBoard(const Board& rBoard);
 };
 

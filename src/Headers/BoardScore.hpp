@@ -337,11 +337,7 @@ class BoardScore
 
     // Constructor.
     BoardScore(const Board::Player player) :
-        m_pBoard(NULL),
-        m_player(player),
-        m_ThreatsOnBoard(),
-        m_Score(0),
-        m_Spotter(*this)
+        m_pBoard(NULL), m_player(player), m_ThreatsOnBoard(), m_Score(0), m_Spotter(*this)
     {
         // Nothing to do.
     }
@@ -361,7 +357,7 @@ class BoardScore
     virtual ~BoardScore()
     {
         // Nothing to do.
-		m_Spotter.~Spotter();
+        m_Spotter.~Spotter();
     }
 
    private:

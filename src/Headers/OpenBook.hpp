@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iterator>		   // For std::size()
+#include <iterator>        // For std::size()
 #include "Board.hpp"       // For PositionXY declaration.
 #include "SingleList.hpp"  // For SingleList definition.
 
@@ -31,22 +31,19 @@ class OpenBook
         Crawling() : m_Direction(Board::DIRECTION_NONE), m_Shift(0) {}
         Crawling(const Board::Direction direction, const uint32_t shift) : m_Direction(direction), m_Shift(shift) {}
 
-        bool operator ==(const Crawling& el)
-		{
-        	bool retVal {false};
+        bool operator==(const Crawling& el)
+        {
+            bool retVal{false};
 
-        	if(this->m_Direction==el.m_Direction and this->m_Shift==el.m_Shift)
-        	{
-        		retVal = true;
-        	}
+            if(this->m_Direction == el.m_Direction and this->m_Shift == el.m_Shift)
+            {
+                retVal = true;
+            }
 
-        	return retVal;
-		}
+            return retVal;
+        }
 
-        bool operator!=(const Crawling& el)
-		{
-        	return !(*this==el);
-		}
+        bool operator!=(const Crawling& el) { return !(*this == el); }
     };
 
     struct CrawlingChain
@@ -62,8 +59,7 @@ class OpenBook
         CrawlingChain* m_pCrawlingChain;
 
         Openings(const Board::Direction direction, CrawlingChain* const pCrawlingChain) :
-            m_MainDirection(direction),
-            m_pCrawlingChain(pCrawlingChain)
+            m_MainDirection(direction), m_pCrawlingChain(pCrawlingChain)
         {}
     };
 
@@ -115,10 +111,11 @@ class OpenBook
     OpenBook& operator=(const OpenBook& rOpenBook) = delete;
 
     // Directions to find direct or indirect kind of opening game.
-    static constexpr Board::Direction DIRECT_PATH[] = {Board::UP, Board::RIGHT, Board::DOWN, Board::LEFT};
-    static constexpr Board::Direction INDIRECT_PATH[] = {Board::UP_RIGHT, Board::DOWN_RIGHT, Board::DOWN_LEFT, Board::UP_LEFT};
-    static constexpr auto DIRECT_PATH_SIZE {std::size(DIRECT_PATH)};
-    static constexpr auto INDIRECT_PATH_SIZE {std::size(INDIRECT_PATH)};
+    static constexpr Board::Direction DIRECT_PATH[]   = {Board::UP, Board::RIGHT, Board::DOWN, Board::LEFT};
+    static constexpr Board::Direction INDIRECT_PATH[] = {Board::UP_RIGHT, Board::DOWN_RIGHT, Board::DOWN_LEFT,
+                                                         Board::UP_LEFT};
+    static constexpr auto DIRECT_PATH_SIZE{std::size(DIRECT_PATH)};
+    static constexpr auto INDIRECT_PATH_SIZE{std::size(INDIRECT_PATH)};
 
     // Containers for direct open game.
     static const Openings DIRECT_OPEN[];

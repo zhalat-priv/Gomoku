@@ -84,8 +84,9 @@ class MinMax : public SearchTreeAlgorithmIf
 
     /// Only for unit test. DO NOT USE IT.
     void BoardScoreCopyInitUT() { BoardScoreCopy(); }
-    void ResetInstance() {
-    	// Do not use ~MinMax due to it calls its ancesstors destructor
+    void ResetInstance()
+    {
+        // Do not use ~MinMax due to it calls its ancesstors destructor
         delete m_pBoardScoreCpuCopy;
         delete m_pBoardScoreHumanCopy;
         delete m_pBoardCopy;
@@ -110,10 +111,7 @@ class MinMax : public SearchTreeAlgorithmIf
    private:
     /// Constructor.
     MinMax(const uint32_t deep, const char* const pName) :
-        SearchTreeAlgorithmIf(deep, pName),
-        m_pBoardScoreCpuCopy(NULL),
-        m_pBoardScoreHumanCopy(NULL),
-        m_pBoardCopy(NULL)
+        SearchTreeAlgorithmIf(deep, pName), m_pBoardScoreCpuCopy(NULL), m_pBoardScoreHumanCopy(NULL), m_pBoardCopy(NULL)
     {
         memset(m_SnapshotContainerCpu, 0, sizeof(m_SnapshotContainerCpu));
         memset(m_SnapshotContainerHuman, 0, sizeof(m_SnapshotContainerHuman));

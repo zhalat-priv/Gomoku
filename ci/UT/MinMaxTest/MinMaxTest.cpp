@@ -1,4 +1,4 @@
-#include <algorithm>    		// std::find
+#include <algorithm>  // std::find
 #include <ctime>
 #include <iterator>
 #include "BoardScore.hpp"
@@ -16,44 +16,45 @@
 
 TEST_GROUP(MinMaxTest)
 {
-	void setup()
-	{
-		m_pGomokuBoard = new GomokuBoard( 15 );
-		m_pGomokuBoardStalemate = new GomokuBoard( 5 );
-		m_pMinMax = MinMax::GetInstance();
-	};
+    void setup()
+    {
+        m_pGomokuBoard          = new GomokuBoard(15);
+        m_pGomokuBoardStalemate = new GomokuBoard(5);
+        m_pMinMax               = MinMax::GetInstance();
+    };
 
-	void teardown()
-	{
-		delete m_pGomokuBoard;
-		delete m_pGomokuBoardStalemate;
-		m_pMinMax->ResetInstance();
-	};
+    void teardown()
+    {
+        delete m_pGomokuBoard;
+        delete m_pGomokuBoardStalemate;
+        m_pMinMax->ResetInstance();
+    };
 
-	GomokuBoard* m_pGomokuBoard;
-	GomokuBoard* m_pGomokuBoardStalemate;
-	MinMax* m_pMinMax{};
+    GomokuBoard* m_pGomokuBoard;
+    GomokuBoard* m_pGomokuBoardStalemate;
+    MinMax* m_pMinMax{};
 };
 
-const Board::PositionXY XY_OUT_OF_BOARD = Board::PositionXY( Board::PositionXY::INVALID_FIELD, Board::PositionXY::INVALID_FIELD );
-static bool Checker( const Board::PositionField positionField, const std::vector<Board::PositionField>& container );
+const Board::PositionXY XY_OUT_OF_BOARD =
+    Board::PositionXY(Board::PositionXY::INVALID_FIELD, Board::PositionXY::INVALID_FIELD);
+static bool Checker(const Board::PositionField positionField, const std::vector<Board::PositionField>& container);
 
-TEST(MinMaxTest,GenerateCandTestEmptyBoard)
+TEST(MinMaxTest, GenerateCandTestEmptyBoard)
 {
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( Board::PLAYER_A );
-	// Empty board - empty candidate.
-	m_pMinMax->BoardScoreCopyInitUT();
-	vector< Board::PositionField > candidate = m_pMinMax->GenerateCand();
-	CHECK( 0 == candidate.size() );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(Board::PLAYER_A);
+    // Empty board - empty candidate.
+    m_pMinMax->BoardScoreCopyInitUT();
+    vector<Board::PositionField> candidate = m_pMinMax->GenerateCand();
+    CHECK(0 == candidate.size());
 }
 
-TEST(MinMaxTest,GenerateCandTestCorner)
+TEST(MinMaxTest, GenerateCandTestCorner)
 {
     // -----------------------
     //  | x | . |   |   |   |
@@ -63,25 +64,25 @@ TEST(MinMaxTest,GenerateCandTestCorner)
     //  |   |   |   |   |   |
     // -----------------------
 
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( Board::PLAYER_A );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(Board::PLAYER_A);
 
-	// Put move into the corner.
-	m_pGomokuBoard->PutMove( Board::PositionXY( 0, 0 ), Board::PLAYER_A );
+    // Put move into the corner.
+    m_pGomokuBoard->PutMove(Board::PositionXY(0, 0), Board::PLAYER_A);
 
-	// Corner has only 3 neighbors.
-	const vector< Board::PositionField > expected = { 1, 15, 16 };
+    // Corner has only 3 neighbors.
+    const vector<Board::PositionField> expected = {1, 15, 16};
 
-	vector< Board::PositionField > candidate = m_pMinMax->GenerateCand();
-	CHECK( expected == candidate );
+    vector<Board::PositionField> candidate = m_pMinMax->GenerateCand();
+    CHECK(expected == candidate);
 }
 
-TEST(MinMaxTest,GenerateCandTesCenter)
+TEST(MinMaxTest, GenerateCandTesCenter)
 {
     // -----------------------
     //  |   |   |   |   |   |
@@ -95,23 +96,23 @@ TEST(MinMaxTest,GenerateCandTesCenter)
     //  |   |   |   |   |   |
     // -----------------------
 
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	// Put move into the center.
-	m_pGomokuBoard->PutMove( Board::PositionXY( 5, 5 ), Board::PLAYER_A );
+    // Put move into the center.
+    m_pGomokuBoard->PutMove(Board::PositionXY(5, 5), Board::PLAYER_A);
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	// Corner has only 8 neighbors.
-	const vector< Board::PositionField > expected = { 64, 65, 66, 79, 81, 94, 95, 96 };
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    // Corner has only 8 neighbors.
+    const vector<Board::PositionField> expected = {64, 65, 66, 79, 81, 94, 95, 96};
 
-	vector< Board::PositionField > candidate = m_pMinMax->GenerateCand();
-	CHECK( expected == candidate );
+    vector<Board::PositionField> candidate = m_pMinMax->GenerateCand();
+    CHECK(expected == candidate);
 }
 
-TEST(MinMaxTest,GenerateCandTesConcatenatedMoves)
+TEST(MinMaxTest, GenerateCandTesConcatenatedMoves)
 {
     // -----------------------
     //  | . | . | . |   |   |
@@ -124,25 +125,25 @@ TEST(MinMaxTest,GenerateCandTesConcatenatedMoves)
     // -----------------------
     //  |   |   |   |   |   |
     // -----------------------
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	// Put move into the center.
-	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 1 ), Board::PLAYER_A );
-	m_pGomokuBoard->PutMove( Board::PositionXY( 2, 2 ), Board::PLAYER_A );
+    // Put move into the center.
+    m_pGomokuBoard->PutMove(Board::PositionXY(1, 1), Board::PLAYER_A);
+    m_pGomokuBoard->PutMove(Board::PositionXY(2, 2), Board::PLAYER_A);
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
 
-	const vector< Board::PositionField > expected = { 0, 1, 2, 15, 17, 18, 30, 31, 33, 46, 47, 48 };
+    const vector<Board::PositionField> expected = {0, 1, 2, 15, 17, 18, 30, 31, 33, 46, 47, 48};
 
-	vector< Board::PositionField > candidate = m_pMinMax->GenerateCand();
+    vector<Board::PositionField> candidate = m_pMinMax->GenerateCand();
 
-	CHECK( expected == candidate );
+    CHECK(expected == candidate);
 }
 
-TEST(MinMaxTest,GenerateCandTesMixed1)
+TEST(MinMaxTest, GenerateCandTesMixed1)
 {
     // -----------------------
     //  | x | . | x | . |   |
@@ -153,33 +154,33 @@ TEST(MinMaxTest,GenerateCandTesMixed1)
     // -----------------------
     //  |   |   |   |   |   |
     // -----------------------
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	// Put move into the center.
-	m_pGomokuBoard->PutMove( Board::PositionXY( 0, 0 ), Board::PLAYER_A );
-	m_pGomokuBoard->PutMove( Board::PositionXY( 0, 2 ), Board::PLAYER_A );
-	m_pGomokuBoard->PutMove( Board::PositionXY( 1, 2 ), Board::PLAYER_B );
+    // Put move into the center.
+    m_pGomokuBoard->PutMove(Board::PositionXY(0, 0), Board::PLAYER_A);
+    m_pGomokuBoard->PutMove(Board::PositionXY(0, 2), Board::PLAYER_A);
+    m_pGomokuBoard->PutMove(Board::PositionXY(1, 2), Board::PLAYER_B);
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
 
-	const vector< Board::PositionField > expected = { 1, 3, 15, 16, 18, 31, 32, 33 };
+    const vector<Board::PositionField> expected = {1, 3, 15, 16, 18, 31, 32, 33};
 
-	vector< Board::PositionField > candidate = m_pMinMax->GenerateCand();
+    vector<Board::PositionField> candidate = m_pMinMax->GenerateCand();
 
-	CHECK( expected == candidate );
+    CHECK(expected == candidate);
 }
 
-TEST(MinMaxTest,GenerateCandTesMixed2)
+TEST(MinMaxTest, GenerateCandTesMixed2)
 {
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	// Put move into the corner.
+    // Put move into the corner.
     // -----------------------
     //  | x | . |   |   |   |
     // -----------------------
@@ -189,14 +190,14 @@ TEST(MinMaxTest,GenerateCandTesMixed2)
     // -----------------------
     //  |   |   |   |   |   |
     // -----------------------
-	m_pGomokuBoard->PutMove( Board::PositionXY( 0, 0 ), Board::PLAYER_A );
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
+    m_pGomokuBoard->PutMove(Board::PositionXY(0, 0), Board::PLAYER_A);
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
 
-	const vector< Board::PositionField > expected1 = { 1, 15, 16 };
-	vector< Board::PositionField > candidate1 = m_pMinMax->GenerateCand();
-	CHECK( expected1 == candidate1 );
+    const vector<Board::PositionField> expected1 = {1, 15, 16};
+    vector<Board::PositionField> candidate1      = m_pMinMax->GenerateCand();
+    CHECK(expected1 == candidate1);
 
-	// Put one additional move.
+    // Put one additional move.
     // -----------------------
     //  | x | x | . |   |   |
     // -----------------------
@@ -206,32 +207,32 @@ TEST(MinMaxTest,GenerateCandTesMixed2)
     // -----------------------
     //  |   |   |   |   |   |
     // -----------------------
-	m_pGomokuBoard->PutMove( Board::PositionXY( 0, 1 ), Board::PLAYER_A );
+    m_pGomokuBoard->PutMove(Board::PositionXY(0, 1), Board::PLAYER_A);
 
-	const vector< Board::PositionField > expected2 = { 2, 15, 16, 17 };
-	vector< Board::PositionField > candidate2 = m_pMinMax->GenerateCand();
-	CHECK( expected2 == candidate2 );
+    const vector<Board::PositionField> expected2 = {2, 15, 16, 17};
+    vector<Board::PositionField> candidate2      = m_pMinMax->GenerateCand();
+    CHECK(expected2 == candidate2);
 }
 
-TEST(MinMaxTest,UpdateCandTest1)
+TEST(MinMaxTest, UpdateCandTest1)
 {
-	// The scenario:
-	// 1. On the board where are 3 move run initCandidates = GenerateCand()
-	// 2. The result is initCandidates vector which contains (unique) neighborhood of each move.
-	// 3. Put a new move to one of neighbor.
-	// 4. The result shall be that the neighbor shall be removed from initCandidates and
-	//    his unique neighbors will be added to initial initCandidates.
+    // The scenario:
+    // 1. On the board where are 3 move run initCandidates = GenerateCand()
+    // 2. The result is initCandidates vector which contains (unique) neighborhood of each move.
+    // 3. Put a new move to one of neighbor.
+    // 4. The result shall be that the neighbor shall be removed from initCandidates and
+    //    his unique neighbors will be added to initial initCandidates.
 
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
 
-	const Board& board = boardScoreComputer.GetBoard();
+    const Board& board = boardScoreComputer.GetBoard();
 
-	// Put move into the board.
+    // Put move into the board.
     // ----------------------------------------------
     //  |   |   |   |   |   |   |   |   |   |   |
     // ----------------------------------------------
@@ -247,91 +248,90 @@ TEST(MinMaxTest,UpdateCandTest1)
     // ----------------------------------------------
     //  |   |   |   |   |   |   |   |   |   |   |
     // ----------------------------------------------
-	m_pGomokuBoard->PutMove( Board::PositionXY( 3, 3 ), Board::PLAYER_A );
-	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 4 ), Board::PLAYER_A );
-	m_pGomokuBoard->PutMove( Board::PositionXY( 5, 3 ), Board::PLAYER_A );
+    m_pGomokuBoard->PutMove(Board::PositionXY(3, 3), Board::PLAYER_A);
+    m_pGomokuBoard->PutMove(Board::PositionXY(4, 4), Board::PLAYER_A);
+    m_pGomokuBoard->PutMove(Board::PositionXY(5, 3), Board::PLAYER_A);
 
-	vector< Board::PositionField > initCandidatesStl = m_pMinMax->GenerateCand();
+    vector<Board::PositionField> initCandidatesStl = m_pMinMax->GenerateCand();
 
-	vector< Board::PositionXY > expected = { Board::PositionXY( 3, 1 ),
-											 Board::PositionXY( 4, 1 ),
-											 Board::PositionXY( 5, 1 )
-											};
+    vector<Board::PositionXY> expected = {Board::PositionXY(3, 1), Board::PositionXY(4, 1), Board::PositionXY(5, 1)};
 
-	// Check that 'initCandidates' does not include yet: {(3,1) (4,1) (5,1)}.
-	for ( vector< Board::PositionXY >::const_iterator it1 = expected.begin(); it1 != expected.end(); ++it1 )
-	{
-		for ( vector< Board::PositionField >::const_iterator it2 = initCandidatesStl.begin(); it2 != initCandidatesStl.end(); ++it2 )
-		{
-			const Board& board = boardScoreComputer.GetBoard();
-			const Board::PositionXY xy = Board::PositionXY( board.GetSize(), *it2 );
-			const bool isDifferent = !( *it1 == xy );
-			CHECK( isDifferent );
-		}
-	}
+    // Check that 'initCandidates' does not include yet: {(3,1) (4,1) (5,1)}.
+    for(vector<Board::PositionXY>::const_iterator it1 = expected.begin(); it1 != expected.end(); ++it1)
+    {
+        for(vector<Board::PositionField>::const_iterator it2 = initCandidatesStl.begin();
+            it2 != initCandidatesStl.end(); ++it2)
+        {
+            const Board& board         = boardScoreComputer.GetBoard();
+            const Board::PositionXY xy = Board::PositionXY(board.GetSize(), *it2);
+            const bool isDifferent     = !(*it1 == xy);
+            CHECK(isDifferent);
+        }
+    }
 
-	// Converts stl vector to VectorLight
-	MinMax::VectorUniqueType initCandidates;
+    // Converts stl vector to VectorLight
+    MinMax::VectorUniqueType initCandidates;
     initCandidates = initCandidatesStl;
 
-	// The position where a new move will be put.
-	const Board::PositionField newMove = Board::PositionField( board.GetSize(), Board::PositionXY( 4, 2 ) );
+    // The position where a new move will be put.
+    const Board::PositionField newMove = Board::PositionField(board.GetSize(), Board::PositionXY(4, 2));
 
-	// Needs for UpdateCand() initialization.
-	m_pMinMax->BoardScoreCopyInitUT();
+    // Needs for UpdateCand() initialization.
+    m_pMinMax->BoardScoreCopyInitUT();
 
-	// Put move and update candidates.
-	MinMax::VectorUniqueType updatedCandidats = m_pMinMax->UpdateCand( initCandidates, newMove );
+    // Put move and update candidates.
+    MinMax::VectorUniqueType updatedCandidats = m_pMinMax->UpdateCand(initCandidates, newMove);
 
-	const uint32_t initCandidatesStlSize = initCandidatesStl.size();
-	const uint32_t updatedCandidatsSize = updatedCandidats.GetNumberOfElements();
-	const uint32_t expectedSize = expected.size();
+    const uint32_t initCandidatesStlSize = initCandidatesStl.size();
+    const uint32_t updatedCandidatsSize  = updatedCandidats.GetNumberOfElements();
+    const uint32_t expectedSize          = expected.size();
 
-	// The size should be larger because of adding new neighborhood but smaller because of putting newMove move.
-	CHECK( updatedCandidatsSize == ( initCandidatesStlSize + expectedSize - 1 ) );
+    // The size should be larger because of adding new neighborhood but smaller because of putting newMove move.
+    CHECK(updatedCandidatsSize == (initCandidatesStlSize + expectedSize - 1));
 
-	// Check that 'updatedCandidats' includes neighborhood of the newMove: {(3,1) (4,1) (5,1)}.
-	for ( vector< Board::PositionXY >::const_iterator pIteratorExpectation = expected.begin(); pIteratorExpectation != expected.end(); ++pIteratorExpectation )
-	{
-		bool isInclude = false;
+    // Check that 'updatedCandidats' includes neighborhood of the newMove: {(3,1) (4,1) (5,1)}.
+    for(vector<Board::PositionXY>::const_iterator pIteratorExpectation = expected.begin();
+        pIteratorExpectation != expected.end(); ++pIteratorExpectation)
+    {
+        bool isInclude = false;
 
-		MinMax::VectorUniqueTypeIterator pIterator = updatedCandidats.GetIteratorBegin();
-		for ( ; pIterator != updatedCandidats.GetIteratorEnd(); ++pIterator)
-		{
-			const Board& board = boardScoreComputer.GetBoard();
-			const Board::PositionXY xy = Board::PositionXY( board.GetSize(), *pIterator );
+        MinMax::VectorUniqueTypeIterator pIterator = updatedCandidats.GetIteratorBegin();
+        for(; pIterator != updatedCandidats.GetIteratorEnd(); ++pIterator)
+        {
+            const Board& board         = boardScoreComputer.GetBoard();
+            const Board::PositionXY xy = Board::PositionXY(board.GetSize(), *pIterator);
 
-			if( xy == *pIteratorExpectation  )
-			{
-				isInclude = true;
-			}
-		}
+            if(xy == *pIteratorExpectation)
+            {
+                isInclude = true;
+            }
+        }
 
-		CHECK( true == isInclude );
-	}
+        CHECK(true == isInclude);
+    }
 }
 
-TEST(MinMaxTest,UpdateCandTest2)
+TEST(MinMaxTest, UpdateCandTest2)
 {
-	// The scenario:
-	// 1. On the board where are 3 move run initCandidates = GenerateCand()
-	// 2. The result is initCandidates vector which contains (unique) neighborhood of each move.
-	// 3. Put a new move to one of neighbor.
-	// 2. THEN add an extra move into a board just next to the neighborhood.
-	// 4. The result shall be that the neighbor shall be removed from initCandidates and
-	//    his unique neighbors will be added to initial initCandidates.
-	// 	  The extra move should not be included as it's not vacant position.
+    // The scenario:
+    // 1. On the board where are 3 move run initCandidates = GenerateCand()
+    // 2. The result is initCandidates vector which contains (unique) neighborhood of each move.
+    // 3. Put a new move to one of neighbor.
+    // 2. THEN add an extra move into a board just next to the neighborhood.
+    // 4. The result shall be that the neighbor shall be removed from initCandidates and
+    //    his unique neighbors will be added to initial initCandidates.
+    // 	  The extra move should not be included as it's not vacant position.
 
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
 
-	const Board& board = boardScoreComputer.GetBoard();
+    const Board& board = boardScoreComputer.GetBoard();
 
-	// Put move into the board.
+    // Put move into the board.
     // ----------------------------------------------
     //  |   |   |   |   |   |   |   |   |   |   |
     // ----------------------------------------------
@@ -347,109 +347,110 @@ TEST(MinMaxTest,UpdateCandTest2)
     // ----------------------------------------------
     //  |   |   |   |   |   |   |   |   |   |   |
     // ----------------------------------------------
-	m_pGomokuBoard->PutMove( Board::PositionXY( 3, 3 ), Board::PLAYER_A );
-	m_pGomokuBoard->PutMove( Board::PositionXY( 4, 4 ), Board::PLAYER_A );
-	m_pGomokuBoard->PutMove( Board::PositionXY( 5, 3 ), Board::PLAYER_A );
+    m_pGomokuBoard->PutMove(Board::PositionXY(3, 3), Board::PLAYER_A);
+    m_pGomokuBoard->PutMove(Board::PositionXY(4, 4), Board::PLAYER_A);
+    m_pGomokuBoard->PutMove(Board::PositionXY(5, 3), Board::PLAYER_A);
 
-	vector< Board::PositionField > initCandidatesStl = m_pMinMax->GenerateCand();
+    vector<Board::PositionField> initCandidatesStl = m_pMinMax->GenerateCand();
 
-	vector< Board::PositionXY > expected = { Board::PositionXY( 3, 1 ),
-											 //Board::PositionXY( 4, 1 ),
-											 Board::PositionXY( 5, 1 )
-											};
+    vector<Board::PositionXY> expected = {Board::PositionXY(3, 1),
+                                          // Board::PositionXY( 4, 1 ),
+                                          Board::PositionXY(5, 1)};
 
-	// Check that 'initCandidates' does not include yet: {(3,1) (5,1)}.
-	for ( vector< Board::PositionXY >::const_iterator it1 = expected.begin(); it1 != expected.end(); ++it1 )
-	{
-		for ( vector< Board::PositionField >::const_iterator it2 = initCandidatesStl.begin(); it2 != initCandidatesStl.end(); ++it2 )
-		{
-			const Board& board = boardScoreComputer.GetBoard();
-			const Board::PositionXY xy = Board::PositionXY( board.GetSize(), *it2 );
-			const bool isDifferent = !( *it1 == xy );
-			CHECK( isDifferent );
-		}
-	}
+    // Check that 'initCandidates' does not include yet: {(3,1) (5,1)}.
+    for(vector<Board::PositionXY>::const_iterator it1 = expected.begin(); it1 != expected.end(); ++it1)
+    {
+        for(vector<Board::PositionField>::const_iterator it2 = initCandidatesStl.begin();
+            it2 != initCandidatesStl.end(); ++it2)
+        {
+            const Board& board         = boardScoreComputer.GetBoard();
+            const Board::PositionXY xy = Board::PositionXY(board.GetSize(), *it2);
+            const bool isDifferent     = !(*it1 == xy);
+            CHECK(isDifferent);
+        }
+    }
 
-	// The position where an extra move will be put.
-	const Board::PositionXY extraMove = Board::PositionXY( 4, 1 );
-	m_pGomokuBoard->PutMove( extraMove, Board::PLAYER_B );
+    // The position where an extra move will be put.
+    const Board::PositionXY extraMove = Board::PositionXY(4, 1);
+    m_pGomokuBoard->PutMove(extraMove, Board::PLAYER_B);
 
-	// Converts stl vector to VectorLight
-	MinMax::VectorUniqueType initCandidates;
+    // Converts stl vector to VectorLight
+    MinMax::VectorUniqueType initCandidates;
     initCandidates = initCandidatesStl;
 
-	// The position where a new move will be put.
-	const Board::PositionField newMove = Board::PositionField( board.GetSize(), Board::PositionXY( 4, 2 ) );
+    // The position where a new move will be put.
+    const Board::PositionField newMove = Board::PositionField(board.GetSize(), Board::PositionXY(4, 2));
 
-	// Needs for initialize UpdateCand().
-	m_pMinMax->BoardScoreCopyInitUT();
-	MinMax::VectorUniqueType updatedCandidats = m_pMinMax->UpdateCand( initCandidates, newMove );
+    // Needs for initialize UpdateCand().
+    m_pMinMax->BoardScoreCopyInitUT();
+    MinMax::VectorUniqueType updatedCandidats = m_pMinMax->UpdateCand(initCandidates, newMove);
 
-	const uint32_t initCandidatesStlSize = initCandidatesStl.size();
-	const uint32_t updatedCandidatsSize = updatedCandidats.GetNumberOfElements();
-	const uint32_t expectedSize = expected.size();
+    const uint32_t initCandidatesStlSize = initCandidatesStl.size();
+    const uint32_t updatedCandidatsSize  = updatedCandidats.GetNumberOfElements();
+    const uint32_t expectedSize          = expected.size();
 
-	// The size should be larger because of adding new neighborhood but smaller because of putting newMove move.
-	CHECK( updatedCandidatsSize == ( initCandidatesStlSize + expectedSize - 1 ) );
+    // The size should be larger because of adding new neighborhood but smaller because of putting newMove move.
+    CHECK(updatedCandidatsSize == (initCandidatesStlSize + expectedSize - 1));
 
-	// Check that 'updatedCandidats' includes neighborhood of the newMove: {(3,1) (5,1)}.
-	for ( vector< Board::PositionXY >::const_iterator pIteratorExpectation = expected.begin(); pIteratorExpectation != expected.end(); ++pIteratorExpectation )
-	{
-		bool isInclude = false;
+    // Check that 'updatedCandidats' includes neighborhood of the newMove: {(3,1) (5,1)}.
+    for(vector<Board::PositionXY>::const_iterator pIteratorExpectation = expected.begin();
+        pIteratorExpectation != expected.end(); ++pIteratorExpectation)
+    {
+        bool isInclude = false;
 
-		MinMax::VectorUniqueTypeIterator pIterator = updatedCandidats.GetIteratorBegin();
-		for ( ; pIterator != updatedCandidats.GetIteratorEnd(); ++pIterator)
-		{
-			const Board& board = boardScoreComputer.GetBoard();
-			const Board::PositionXY xy = Board::PositionXY( board.GetSize(), *pIterator );
+        MinMax::VectorUniqueTypeIterator pIterator = updatedCandidats.GetIteratorBegin();
+        for(; pIterator != updatedCandidats.GetIteratorEnd(); ++pIterator)
+        {
+            const Board& board         = boardScoreComputer.GetBoard();
+            const Board::PositionXY xy = Board::PositionXY(board.GetSize(), *pIterator);
 
-			if( xy == *pIteratorExpectation  )
-			{
-				isInclude = true;
-			}
-		}
+            if(xy == *pIteratorExpectation)
+            {
+                isInclude = true;
+            }
+        }
 
-		CHECK( true == isInclude );
-	}
+        CHECK(true == isInclude);
+    }
 }
 
-TEST(MinMaxTest,SwitchPlayerTest)
+TEST(MinMaxTest, SwitchPlayerTest)
 {
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( Board::PLAYER_B );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(Board::PLAYER_B);
 
-	// Check who's current move is.
-	CHECK( Board::PLAYER_B == m_pMinMax->WhoIsCurrentMove() );
+    // Check who's current move is.
+    CHECK(Board::PLAYER_B == m_pMinMax->WhoIsCurrentMove());
 
-	m_pMinMax->SwitchPlayer();
+    m_pMinMax->SwitchPlayer();
 
-	// Check who's current move is.
-	CHECK( Board::PLAYER_A == m_pMinMax->WhoIsCurrentMove() );
+    // Check who's current move is.
+    CHECK(Board::PLAYER_A == m_pMinMax->WhoIsCurrentMove());
 
-	m_pMinMax->SwitchPlayer();
+    m_pMinMax->SwitchPlayer();
 
-	// Check who's current move is.
-	CHECK( Board::PLAYER_B == m_pMinMax->WhoIsCurrentMove() );
+    // Check who's current move is.
+    CHECK(Board::PLAYER_B == m_pMinMax->WhoIsCurrentMove());
 }
 
-TEST(MinMaxTest,GameTreeBrowsingBasicDeep2Test)
+TEST(MinMaxTest, GameTreeBrowsingBasicDeep2Test)
 {
-	// Get singletons.
+    // Get singletons.
     Score* pScore = Score::GetInstance();
 
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	// Put some moves into board.
+    // Put some moves into board.
     // -----------------------
     //  |   |   |   |   |   |
     // -----------------------
@@ -462,61 +463,58 @@ TEST(MinMaxTest,GameTreeBrowsingBasicDeep2Test)
     //  |   |   |   |   |   |
     // -----------------------
 
-	// Update score for current state.
-    vector< Board::PositionXY > xyList{ Board::PositionXY( 2, 2 ),
-    									Board::PositionXY( 3, 3 ),
-    									Board::PositionXY( 4, 4 )
-    								   };
+    // Update score for current state.
+    vector<Board::PositionXY> xyList{Board::PositionXY(2, 2), Board::PositionXY(3, 3), Board::PositionXY(4, 4)};
 
-	m_pGomokuBoard->PutMove( xyList[0], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyList[0] );
-	pScore->UpdateScore( boardScoreHuman, xyList[0] );
+    m_pGomokuBoard->PutMove(xyList[0], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyList[0]);
+    pScore->UpdateScore(boardScoreHuman, xyList[0]);
 
-	m_pGomokuBoard->PutMove( xyList[1], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyList[1] );
-	pScore->UpdateScore( boardScoreHuman, xyList[1] );
+    m_pGomokuBoard->PutMove(xyList[1], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyList[1]);
+    pScore->UpdateScore(boardScoreHuman, xyList[1]);
 
-	m_pGomokuBoard->PutMove( xyList[2], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyList[2] );
-	pScore->UpdateScore( boardScoreHuman, xyList[2] );
-	xyList.clear();
+    m_pGomokuBoard->PutMove(xyList[2], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyList[2]);
+    pScore->UpdateScore(boardScoreHuman, xyList[2]);
+    xyList.clear();
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(boardScoreComputer.GetPlayer());
 
     // One of the following move is expected.
-    const vector< Board::PositionXY > expected = { Board::PositionXY( 1, 1 ), Board::PositionXY( 5, 5 ) };
+    const vector<Board::PositionXY> expected = {Board::PositionXY(1, 1), Board::PositionXY(5, 5)};
     SearchTreeAlgorithmIf::PriorityQueueScore nBestMove(1);
 
     // Check depth == 1
-    m_pMinMax->SetDeep( 1 );
+    m_pMinMax->SetDeep(1);
     const Board::PositionXY result1 = m_pMinMax->FindBestMove(nBestMove);
 
     // Check depth == 2
-    m_pMinMax->SetDeep( 2 );
+    m_pMinMax->SetDeep(2);
     const Board::PositionXY result2 = m_pMinMax->FindBestMove(nBestMove);
 
     // Check depth == 3
-    m_pMinMax->SetDeep( 3 );
+    m_pMinMax->SetDeep(3);
     const Board::PositionXY result3 = m_pMinMax->FindBestMove(nBestMove);
 
-    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result1 ) );
-    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result2 ) );
-    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result3 ) );
+    CHECK(expected.end() != std::find(expected.begin(), expected.end(), result1));
+    CHECK(expected.end() != std::find(expected.begin(), expected.end(), result2));
+    CHECK(expected.end() != std::find(expected.begin(), expected.end(), result3));
 }
 
-TEST(MinMaxTest,GameTreeBrowsingBasicDeep3Test)
+TEST(MinMaxTest, GameTreeBrowsingBasicDeep3Test)
 {
-	// Get singletons.
+    // Get singletons.
     Score* pScore = Score::GetInstance();
 
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	// Put some moves into board.
+    // Put some moves into board.
     // -----------------------
     //  |   |   |   |   |   |
     // -----------------------
@@ -529,62 +527,59 @@ TEST(MinMaxTest,GameTreeBrowsingBasicDeep3Test)
     //  |   |   |   |   |   |
     // -----------------------
 
-	// Update score for current state.
-    vector< Board::PositionXY > xyList{ Board::PositionXY( 2, 2 ),
-    									Board::PositionXY( 3, 3 ),
-    									Board::PositionXY( 4, 4 )
-    								   };
+    // Update score for current state.
+    vector<Board::PositionXY> xyList{Board::PositionXY(2, 2), Board::PositionXY(3, 3), Board::PositionXY(4, 4)};
 
-	m_pGomokuBoard->PutMove( xyList[0], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyList[0] );
-	pScore->UpdateScore( boardScoreHuman, xyList[0] );
+    m_pGomokuBoard->PutMove(xyList[0], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyList[0]);
+    pScore->UpdateScore(boardScoreHuman, xyList[0]);
 
-	m_pGomokuBoard->PutMove( xyList[1], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyList[1] );
-	pScore->UpdateScore( boardScoreHuman, xyList[1] );
+    m_pGomokuBoard->PutMove(xyList[1], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyList[1]);
+    pScore->UpdateScore(boardScoreHuman, xyList[1]);
 
-	m_pGomokuBoard->PutMove( xyList[2], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyList[2] );
-	pScore->UpdateScore( boardScoreHuman, xyList[2] );
-	xyList.clear();
+    m_pGomokuBoard->PutMove(xyList[2], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyList[2]);
+    pScore->UpdateScore(boardScoreHuman, xyList[2]);
+    xyList.clear();
 
     // One of the following move is expected.
-    const vector< Board::PositionXY > expected = { Board::PositionXY( 1, 1 ), Board::PositionXY( 5, 5 ) };
+    const vector<Board::PositionXY> expected = {Board::PositionXY(1, 1), Board::PositionXY(5, 5)};
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(boardScoreComputer.GetPlayer());
     SearchTreeAlgorithmIf::PriorityQueueScore nBestMove(1);
 
-	// Check depth == 1
-    m_pMinMax->SetDeep( 1 );
+    // Check depth == 1
+    m_pMinMax->SetDeep(1);
     const Board::PositionXY result1 = m_pMinMax->FindBestMove(nBestMove);
 
-	// Check depth == 2
-    m_pMinMax->SetDeep( 2 );
+    // Check depth == 2
+    m_pMinMax->SetDeep(2);
     const Board::PositionXY result2 = m_pMinMax->FindBestMove(nBestMove);
 
-	// Check depth == 3
-    m_pMinMax->SetDeep( 3 );
+    // Check depth == 3
+    m_pMinMax->SetDeep(3);
     const Board::PositionXY result3 = m_pMinMax->FindBestMove(nBestMove);
 
     // Check if the move 'result' is on the expected list.
-    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result1 ) );
-    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result2 ) );
-    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result3 ) );
+    CHECK(expected.end() != std::find(expected.begin(), expected.end(), result1));
+    CHECK(expected.end() != std::find(expected.begin(), expected.end(), result2));
+    CHECK(expected.end() != std::find(expected.begin(), expected.end(), result3));
 }
 
-TEST(MinMaxTest,GameTreeBrowsingBestMoveTest1)
+TEST(MinMaxTest, GameTreeBrowsingBestMoveTest1)
 {
-	// Get singletons.
+    // Get singletons.
     Score* pScore = Score::GetInstance();
 
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	// Put some moves into board.
+    // Put some moves into board.
     // ----------------------------------
     //  |   | o |   |   |   |   |   |   |
     // ----------------------------------
@@ -598,77 +593,69 @@ TEST(MinMaxTest,GameTreeBrowsingBestMoveTest1)
     // ----------------------------------
     //  |   |   |   |   |   |   |   |   |
     // ----------------------------------
-	// Update score for current state.
-    vector< Board::PositionXY > xyListCpu{
-										 	Board::PositionXY( 1, 1 ),
-											Board::PositionXY( 2, 1 ),
-											Board::PositionXY( 3, 1 ),
-											Board::PositionXY( 4, 1 ),
-											Board::PositionXY( 1, 6 ),
-											Board::PositionXY( 2, 6 )
-    								   	  };
+    // Update score for current state.
+    vector<Board::PositionXY> xyListCpu{Board::PositionXY(1, 1), Board::PositionXY(2, 1), Board::PositionXY(3, 1),
+                                        Board::PositionXY(4, 1), Board::PositionXY(1, 6), Board::PositionXY(2, 6)};
 
-    vector< Board::PositionXY > xyListUser{
-										 	Board::PositionXY( 0, 1 )
-    								   	 };
+    vector<Board::PositionXY> xyListUser{Board::PositionXY(0, 1)};
 
-	m_pGomokuBoard->PutMove( xyListCpu[0], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[0] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[0] );
-	m_pGomokuBoard->PutMove( xyListCpu[1], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[1] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[1] );
-	m_pGomokuBoard->PutMove( xyListCpu[2], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[2] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[2] );
-	m_pGomokuBoard->PutMove( xyListCpu[3], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[3] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[3] );
-	m_pGomokuBoard->PutMove( xyListCpu[4], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[4] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[4] );
-	m_pGomokuBoard->PutMove( xyListCpu[5], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[5] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[5] );
-	m_pGomokuBoard->PutMove( xyListUser[0], Board::PLAYER_B );
-	pScore->UpdateScore( boardScoreComputer, xyListUser[0] );
-	pScore->UpdateScore( boardScoreHuman, xyListUser[0] );
+    m_pGomokuBoard->PutMove(xyListCpu[0], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[0]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[0]);
+    m_pGomokuBoard->PutMove(xyListCpu[1], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[1]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[1]);
+    m_pGomokuBoard->PutMove(xyListCpu[2], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[2]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[2]);
+    m_pGomokuBoard->PutMove(xyListCpu[3], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[3]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[3]);
+    m_pGomokuBoard->PutMove(xyListCpu[4], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[4]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[4]);
+    m_pGomokuBoard->PutMove(xyListCpu[5], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[5]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[5]);
+    m_pGomokuBoard->PutMove(xyListUser[0], Board::PLAYER_B);
+    pScore->UpdateScore(boardScoreComputer, xyListUser[0]);
+    pScore->UpdateScore(boardScoreHuman, xyListUser[0]);
 
     // One of the following best move is expected.
-    const vector< Board::PositionXY > expected = { Board::PositionXY( 5, 1 ) };
+    const vector<Board::PositionXY> expected = {Board::PositionXY(5, 1)};
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(boardScoreComputer.GetPlayer());
     SearchTreeAlgorithmIf::PriorityQueueScore nBestMove(1);
 
-	// Check for depth == 1.
-    m_pMinMax->SetDeep( 1 );
+    // Check for depth == 1.
+    m_pMinMax->SetDeep(1);
     const Board::PositionXY result1 = m_pMinMax->FindBestMove(nBestMove);
 
-	// Check for depth == 2.
-    m_pMinMax->SetDeep( 2 );
+    // Check for depth == 2.
+    m_pMinMax->SetDeep(2);
     const Board::PositionXY result2 = m_pMinMax->FindBestMove(nBestMove);
 
-	// Check for depth == 3.
-    m_pMinMax->SetDeep( 3 );
+    // Check for depth == 3.
+    m_pMinMax->SetDeep(3);
     const Board::PositionXY result3 = m_pMinMax->FindBestMove(nBestMove);
 
-    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result1 ) );
-    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result2 ) );
-    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result3 ) );
+    CHECK(expected.end() != std::find(expected.begin(), expected.end(), result1));
+    CHECK(expected.end() != std::find(expected.begin(), expected.end(), result2));
+    CHECK(expected.end() != std::find(expected.begin(), expected.end(), result3));
 }
 
-TEST(MinMaxTest,GameTreeBrowsingBestMoveTest2)
+TEST(MinMaxTest, GameTreeBrowsingBestMoveTest2)
 {
     Score* pScore = Score::GetInstance();
 
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	// Put some moves into board.
+    // Put some moves into board.
     // ----------------------------------
     //  |   |   |   |   |   |   |   |   |
     // ----------------------------------
@@ -682,64 +669,60 @@ TEST(MinMaxTest,GameTreeBrowsingBestMoveTest2)
     // ----------------------------------
     //  |   |   |   |   |   |   |   |   |
     // ----------------------------------
-	// Update score for current state.
-    vector< Board::PositionXY > xyListCpu{
-											Board::PositionXY( 5, 2 ),
-											Board::PositionXY( 4, 3 ),
-											Board::PositionXY( 5, 6 ),
-											Board::PositionXY( 4, 5 )
-    								   	  };
+    // Update score for current state.
+    vector<Board::PositionXY> xyListCpu{Board::PositionXY(5, 2), Board::PositionXY(4, 3), Board::PositionXY(5, 6),
+                                        Board::PositionXY(4, 5)};
 
-	m_pGomokuBoard->PutMove( xyListCpu[0], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[0] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[0] );
-	m_pGomokuBoard->PutMove( xyListCpu[1], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[1] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[1] );
-	m_pGomokuBoard->PutMove( xyListCpu[2], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[2] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[2] );
-	m_pGomokuBoard->PutMove( xyListCpu[3], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[3] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[3] );
+    m_pGomokuBoard->PutMove(xyListCpu[0], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[0]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[0]);
+    m_pGomokuBoard->PutMove(xyListCpu[1], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[1]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[1]);
+    m_pGomokuBoard->PutMove(xyListCpu[2], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[2]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[2]);
+    m_pGomokuBoard->PutMove(xyListCpu[3], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[3]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[3]);
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(boardScoreComputer.GetPlayer());
     SearchTreeAlgorithmIf::PriorityQueueScore nBestMove(1);
 
     // One of the following move is expected.
-    const vector< Board::PositionXY > expected = { Board::PositionXY( 3, 4 ) };
+    const vector<Board::PositionXY> expected = {Board::PositionXY(3, 4)};
 
     // Set depth == 1
-    m_pMinMax->SetDeep( 1 );
+    m_pMinMax->SetDeep(1);
     const Board::PositionXY result1 = m_pMinMax->FindBestMove(nBestMove);
 
     // Set depth == 2
-    m_pMinMax->SetDeep( 2 );
+    m_pMinMax->SetDeep(2);
     const Board::PositionXY result2 = m_pMinMax->FindBestMove(nBestMove);
 
     // Set depth == 3
-    m_pMinMax->SetDeep( 3 );
+    m_pMinMax->SetDeep(3);
     const Board::PositionXY result3 = m_pMinMax->FindBestMove(nBestMove);
 
     // Check if the move 'result' is on the expected list.
-    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result1 ) );
-    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result2 ) );
-    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result3 ) );
+    CHECK(expected.end() != std::find(expected.begin(), expected.end(), result1));
+    CHECK(expected.end() != std::find(expected.begin(), expected.end(), result2));
+    CHECK(expected.end() != std::find(expected.begin(), expected.end(), result3));
 }
 
-TEST(MinMaxTest,GameTreeBrowsingBestMoveTest3)
+TEST(MinMaxTest, GameTreeBrowsingBestMoveTest3)
 {
-	// Get singletons.
+    // Get singletons.
     Score* pScore = Score::GetInstance();
 
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	// Put some moves into board.
+    // Put some moves into board.
     // ----------------------------------
     //  |   |   |   |   |   |   |   |   |
     // ----------------------------------
@@ -753,66 +736,57 @@ TEST(MinMaxTest,GameTreeBrowsingBestMoveTest3)
     // ----------------------------------
     //  |   |   |   |   |   |   |   |   |
     // ----------------------------------
-	// Update score for current state.
-    vector< Board::PositionXY > xyListCpu{
-    									   Board::PositionXY( 3, 3 )
-    								   	 };
+    // Update score for current state.
+    vector<Board::PositionXY> xyListCpu{Board::PositionXY(3, 3)};
 
-    vector< Board::PositionXY > xyListHuman{
-    										 Board::PositionXY( 4, 4 )
-    								   	   };
+    vector<Board::PositionXY> xyListHuman{Board::PositionXY(4, 4)};
 
-	m_pGomokuBoard->PutMove( xyListCpu[0], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[0] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[0] );
-	m_pGomokuBoard->PutMove( xyListHuman[0], Board::PLAYER_B );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[0] );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[0] );
+    m_pGomokuBoard->PutMove(xyListCpu[0], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[0]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[0]);
+    m_pGomokuBoard->PutMove(xyListHuman[0], Board::PLAYER_B);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[0]);
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[0]);
 
     // One of the following move is expected.
-    const vector< Board::PositionXY > expected = { Board::PositionXY( 2, 3 ),
-												   Board::PositionXY( 2, 4 ),
-												   Board::PositionXY( 3, 2 ),
-												   Board::PositionXY( 3, 4 ),
-												   Board::PositionXY( 3, 5 ),
-												   Board::PositionXY( 4, 2 ),
-												   Board::PositionXY( 4, 3 )
-												  };
+    const vector<Board::PositionXY> expected = {
+        Board::PositionXY(2, 3), Board::PositionXY(2, 4), Board::PositionXY(3, 2), Board::PositionXY(3, 4),
+        Board::PositionXY(3, 5), Board::PositionXY(4, 2), Board::PositionXY(4, 3)};
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(boardScoreComputer.GetPlayer());
     SearchTreeAlgorithmIf::PriorityQueueScore nBestMove(1);
 
-	// Set depth == 1
-    m_pMinMax->SetDeep( 1 );
+    // Set depth == 1
+    m_pMinMax->SetDeep(1);
     const Board::PositionXY result1 = m_pMinMax->FindBestMove(nBestMove);
 
-	// Set depth == 2
-    m_pMinMax->SetDeep( 2 );
+    // Set depth == 2
+    m_pMinMax->SetDeep(2);
     const Board::PositionXY result2 = m_pMinMax->FindBestMove(nBestMove);
 
-	// Set depth == 3
-    m_pMinMax->SetDeep( 3 );
+    // Set depth == 3
+    m_pMinMax->SetDeep(3);
     const Board::PositionXY result3 = m_pMinMax->FindBestMove(nBestMove);
 
     // Check if the move 'result' is on the expected list.
-    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result1 ) );
-    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result2 ) );
-    CHECK( expected.end() != std::find( expected.begin(), expected.end(), result3 ) );
+    CHECK(expected.end() != std::find(expected.begin(), expected.end(), result1));
+    CHECK(expected.end() != std::find(expected.begin(), expected.end(), result2));
+    CHECK(expected.end() != std::find(expected.begin(), expected.end(), result3));
 }
 
-TEST(MinMaxTest,GameTreeBrowsingBestMoveTest4)
+TEST(MinMaxTest, GameTreeBrowsingBestMoveTest4)
 {
-	// Get singletons.
+    // Get singletons.
     Score* pScore = Score::GetInstance();
 
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	// Put some moves into board.
+    // Put some moves into board.
     // ----------------------------------
     //  |   |   |   |   |   |   |   |   |
     // ----------------------------------
@@ -832,1443 +806,1271 @@ TEST(MinMaxTest,GameTreeBrowsingBestMoveTest4)
     // ----------------------------------
     //  |   |   |   |   |   |   |   |   |
     // ----------------------------------
-	// Update score for current state.
-    vector< Board::PositionXY > xyListCpu{  Board::PositionXY( 6, 6 ),
-    										Board::PositionXY( 7, 5 ),
-    										Board::PositionXY( 8, 4 ),
-    										Board::PositionXY( 9, 3 )
-    									};
+    // Update score for current state.
+    vector<Board::PositionXY> xyListCpu{Board::PositionXY(6, 6), Board::PositionXY(7, 5), Board::PositionXY(8, 4),
+                                        Board::PositionXY(9, 3)};
 
-    vector< Board::PositionXY > xyListHuman{
-											  Board::PositionXY( 5, 7 ),
-											  Board::PositionXY( 4, 6 ),
-											  Board::PositionXY( 5, 5 )
-											};
+    vector<Board::PositionXY> xyListHuman{Board::PositionXY(5, 7), Board::PositionXY(4, 6), Board::PositionXY(5, 5)};
 
-	m_pGomokuBoard->PutMove( xyListCpu[0], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[0] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[0] );
-	m_pGomokuBoard->PutMove( xyListCpu[1], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[1] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[1] );
-	m_pGomokuBoard->PutMove( xyListCpu[2], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[2] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[2] );
-	m_pGomokuBoard->PutMove( xyListCpu[3], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[3] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[3] );
+    m_pGomokuBoard->PutMove(xyListCpu[0], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[0]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[0]);
+    m_pGomokuBoard->PutMove(xyListCpu[1], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[1]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[1]);
+    m_pGomokuBoard->PutMove(xyListCpu[2], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[2]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[2]);
+    m_pGomokuBoard->PutMove(xyListCpu[3], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[3]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[3]);
 
-	m_pGomokuBoard->PutMove( xyListHuman[0], Board::PLAYER_B );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[0] );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[0] );
-	m_pGomokuBoard->PutMove( xyListHuman[1], Board::PLAYER_B );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[1] );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[1] );
-	m_pGomokuBoard->PutMove( xyListHuman[2], Board::PLAYER_B );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[2] );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[2] );
+    m_pGomokuBoard->PutMove(xyListHuman[0], Board::PLAYER_B);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[0]);
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[0]);
+    m_pGomokuBoard->PutMove(xyListHuman[1], Board::PLAYER_B);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[1]);
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[1]);
+    m_pGomokuBoard->PutMove(xyListHuman[2], Board::PLAYER_B);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[2]);
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[2]);
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(boardScoreComputer.GetPlayer());
 
-	// There is only one expected best move:
-    const Board::PositionXY expected = Board::PositionXY( 10, 2 );
+    // There is only one expected best move:
+    const Board::PositionXY expected = Board::PositionXY(10, 2);
     SearchTreeAlgorithmIf::PriorityQueueScore nBestMove(1);
 
     // Check depth == 1
-    m_pMinMax->SetDeep( 1 );
+    m_pMinMax->SetDeep(1);
     const Board::PositionXY result1 = m_pMinMax->FindBestMove(nBestMove);
-    CHECK( expected == result1 );
+    CHECK(expected == result1);
 
     // Check depth == 2
-    m_pMinMax->SetDeep( 2 );
+    m_pMinMax->SetDeep(2);
     const Board::PositionXY result2 = m_pMinMax->FindBestMove(nBestMove);
-    CHECK( expected == result2 );
+    CHECK(expected == result2);
 
     // Check depth == 3
-    m_pMinMax->SetDeep( 3 );
+    m_pMinMax->SetDeep(3);
     const Board::PositionXY result3 = m_pMinMax->FindBestMove(nBestMove);
-    CHECK( expected == result3 );
+    CHECK(expected == result3);
 }
 
-TEST(MinMaxTest,GameTreeBrowsingBestMoveTest5)
+TEST(MinMaxTest, GameTreeBrowsingBestMoveTest5)
 {
-	// Get singletons.
+    // Get singletons.
     Score* pScore = Score::GetInstance();
 
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-//
-//	   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
-//	   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-//	0 |. . . . . . . . . . . . . . .|
-//	1 |. . . . . . . . . . . . . . .|
-//	2 |. . . . . . . . . . . . . . .|
-//	3 |. . . . . . . . . . . . . . .|
-//	4 |. . . . . . . . . . . . . . .|
-//	5 |. . . . . x . . . . . . . . .|
-//	6 |. . . . . x x x o . . . . . .|
-//	7 |. . . . . . . x . . . . . . .|
-//	8 |. . . . . . . . o . . . . . .|
-//	9 |. . . . . . . o o . . . . . .|
-//	10|. . . . . . . . o . . . . . .|
-//	11|. . . . . . . . . . . . . . .|
-//	12|. . . . . . . . . . . . . . .|
-//	13|. . . . . . . . . . . . . . .|
-//	14|. . . . . . . . . . . . . . .|
-//	  |_ _ _ _ _ _ _ _ _ _ _ _ _ _ _|
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
+    //
+    //	   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
+    //	   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+    //	0 |. . . . . . . . . . . . . . .|
+    //	1 |. . . . . . . . . . . . . . .|
+    //	2 |. . . . . . . . . . . . . . .|
+    //	3 |. . . . . . . . . . . . . . .|
+    //	4 |. . . . . . . . . . . . . . .|
+    //	5 |. . . . . x . . . . . . . . .|
+    //	6 |. . . . . x x x o . . . . . .|
+    //	7 |. . . . . . . x . . . . . . .|
+    //	8 |. . . . . . . . o . . . . . .|
+    //	9 |. . . . . . . o o . . . . . .|
+    //	10|. . . . . . . . o . . . . . .|
+    //	11|. . . . . . . . . . . . . . .|
+    //	12|. . . . . . . . . . . . . . .|
+    //	13|. . . . . . . . . . . . . . .|
+    //	14|. . . . . . . . . . . . . . .|
+    //	  |_ _ _ _ _ _ _ _ _ _ _ _ _ _ _|
 
-    vector< Board::PositionXY > xyListCpu{  Board::PositionXY( 5, 5 ),
-    										Board::PositionXY( 6, 5 ),
-    										Board::PositionXY( 6, 6 ),
-    										Board::PositionXY( 6, 7 ),
-    										Board::PositionXY( 7, 7 )
-    									};
+    vector<Board::PositionXY> xyListCpu{Board::PositionXY(5, 5), Board::PositionXY(6, 5), Board::PositionXY(6, 6),
+                                        Board::PositionXY(6, 7), Board::PositionXY(7, 7)};
 
-    vector< Board::PositionXY > xyListHuman{
-											  Board::PositionXY( 6, 8 ),
-											  Board::PositionXY( 8, 8 ),
-											  Board::PositionXY( 9, 8 ),
-											  Board::PositionXY( 10, 8 ),
-											  Board::PositionXY( 9, 7 )
-											};
+    vector<Board::PositionXY> xyListHuman{Board::PositionXY(6, 8), Board::PositionXY(8, 8), Board::PositionXY(9, 8),
+                                          Board::PositionXY(10, 8), Board::PositionXY(9, 7)};
 
-	m_pGomokuBoard->PutMove( xyListCpu[0], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[0] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[0] );
-	m_pGomokuBoard->PutMove( xyListCpu[1], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[1] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[1] );
-	m_pGomokuBoard->PutMove( xyListCpu[2], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[2] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[2] );
-	m_pGomokuBoard->PutMove( xyListCpu[3], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[3] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[3] );
-	m_pGomokuBoard->PutMove( xyListCpu[4], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[4] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[4] );
+    m_pGomokuBoard->PutMove(xyListCpu[0], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[0]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[0]);
+    m_pGomokuBoard->PutMove(xyListCpu[1], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[1]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[1]);
+    m_pGomokuBoard->PutMove(xyListCpu[2], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[2]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[2]);
+    m_pGomokuBoard->PutMove(xyListCpu[3], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[3]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[3]);
+    m_pGomokuBoard->PutMove(xyListCpu[4], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[4]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[4]);
 
-	m_pGomokuBoard->PutMove( xyListHuman[0], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[0] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[0] );
-	m_pGomokuBoard->PutMove( xyListHuman[1], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[1] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[1] );
-	m_pGomokuBoard->PutMove( xyListHuman[2], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[2] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[2] );
-	m_pGomokuBoard->PutMove( xyListHuman[3], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[3] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[3] );
-	m_pGomokuBoard->PutMove( xyListHuman[4], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[4] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[4] );
+    m_pGomokuBoard->PutMove(xyListHuman[0], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[0]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[0]);
+    m_pGomokuBoard->PutMove(xyListHuman[1], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[1]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[1]);
+    m_pGomokuBoard->PutMove(xyListHuman[2], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[2]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[2]);
+    m_pGomokuBoard->PutMove(xyListHuman[3], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[3]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[3]);
+    m_pGomokuBoard->PutMove(xyListHuman[4], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[4]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[4]);
 
-	m_pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
+    m_pMinMax->SetInitialPlayer(boardScoreComputer.GetPlayer());
 
-	// Action: User created dead threat. It must be blocked
-	const Board::PositionXY bestMove = Board::PositionXY( 7, 8 );
+    // Action: User created dead threat. It must be blocked
+    const Board::PositionXY bestMove = Board::PositionXY(7, 8);
     SearchTreeAlgorithmIf::PriorityQueueScore nBestMove(1);
 
-	// Find best move.
-	m_pMinMax->SetDeep( 1 );
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
+    // Find best move.
+    m_pMinMax->SetDeep(1);
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(boardScoreComputer.GetPlayer());
     const Board::PositionXY result1 = m_pMinMax->FindBestMove(nBestMove);
-    CHECK( bestMove == result1 );
+    CHECK(bestMove == result1);
 
-	m_pMinMax->SetDeep( 2 );
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
+    m_pMinMax->SetDeep(2);
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(boardScoreComputer.GetPlayer());
     const Board::PositionXY result2 = m_pMinMax->FindBestMove(nBestMove);
-    CHECK( bestMove == result2 );
+    CHECK(bestMove == result2);
 
-	m_pMinMax->SetDeep( 3 );
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
+    m_pMinMax->SetDeep(3);
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(boardScoreComputer.GetPlayer());
     const Board::PositionXY result3 = m_pMinMax->FindBestMove(nBestMove);
-    CHECK( bestMove == result3 );
+    CHECK(bestMove == result3);
 }
 
-TEST(MinMaxTest,GameTreeBrowsingBestMoveTest6)
+TEST(MinMaxTest, GameTreeBrowsingBestMoveTest6)
 {
-	// Get singletons.
+    // Get singletons.
     Score* pScore = Score::GetInstance();
 
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-//                       1 1 1 1 1
-//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
-//   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-//0 |. . . . . . . . . . . . . . .|
-//1 |. . . . . . . . . . . . . . .|
-//2 |. . . . . . . . . . . . . . .|
-//3 |. . . . . . . . . . . . . . .|
-//4 |. . . . . . . . x . . . . . .|
-//5 |. . . . . . . x . . . . . . .|
-//6 |. . . . . . x . . . . . . . .|
-//7 |. . . . . x . . . . . . . . .|
-//8 |. . . . . . . . . . . . . . .|
-//9 |. . . . . . . o o o o . . . .|
-//10|. . . . . . . . . . . . . . .|
-//11|. . . . . . . . . . . . . . .|
-//12|. . . . . . . . . . . . . . .|
-//13|. . . . . . . . . . . . . . .|
-//14|. . . . . . . . . . . . . . .|
-//  |_ _ _ _ _ _ _ _ _ _ _ _ _ _ _|
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
+    //                       1 1 1 1 1
+    //   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
+    //   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+    // 0 |. . . . . . . . . . . . . . .|
+    // 1 |. . . . . . . . . . . . . . .|
+    // 2 |. . . . . . . . . . . . . . .|
+    // 3 |. . . . . . . . . . . . . . .|
+    // 4 |. . . . . . . . x . . . . . .|
+    // 5 |. . . . . . . x . . . . . . .|
+    // 6 |. . . . . . x . . . . . . . .|
+    // 7 |. . . . . x . . . . . . . . .|
+    // 8 |. . . . . . . . . . . . . . .|
+    // 9 |. . . . . . . o o o o . . . .|
+    // 10|. . . . . . . . . . . . . . .|
+    // 11|. . . . . . . . . . . . . . .|
+    // 12|. . . . . . . . . . . . . . .|
+    // 13|. . . . . . . . . . . . . . .|
+    // 14|. . . . . . . . . . . . . . .|
+    //  |_ _ _ _ _ _ _ _ _ _ _ _ _ _ _|
 
+    vector<Board::PositionXY> xyListCpu{Board::PositionXY(5, 7), Board::PositionXY(6, 6), Board::PositionXY(7, 5),
+                                        Board::PositionXY(4, 8)};
 
-    vector< Board::PositionXY > xyListCpu{  Board::PositionXY( 5, 7 ),
-    										Board::PositionXY( 6, 6 ),
-    										Board::PositionXY( 7, 5 ),
-    										Board::PositionXY( 4, 8 )
-    									};
+    vector<Board::PositionXY> xyListHuman{Board::PositionXY(9, 7), Board::PositionXY(9, 8), Board::PositionXY(9, 9),
+                                          Board::PositionXY(9, 10)};
 
-    vector< Board::PositionXY > xyListHuman{
-											  Board::PositionXY( 9, 7 ),
-											  Board::PositionXY( 9, 8 ),
-											  Board::PositionXY( 9, 9 ),
-											  Board::PositionXY( 9, 10 )
-											};
+    m_pGomokuBoard->PutMove(xyListCpu[0], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[0]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[0]);
+    m_pGomokuBoard->PutMove(xyListCpu[1], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[1]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[1]);
+    m_pGomokuBoard->PutMove(xyListCpu[2], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[2]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[2]);
+    m_pGomokuBoard->PutMove(xyListCpu[3], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[3]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[3]);
 
-	m_pGomokuBoard->PutMove( xyListCpu[0], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[0] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[0] );
-	m_pGomokuBoard->PutMove( xyListCpu[1], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[1] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[1] );
-	m_pGomokuBoard->PutMove( xyListCpu[2], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[2] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[2] );
-	m_pGomokuBoard->PutMove( xyListCpu[3], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[3] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[3] );
+    m_pGomokuBoard->PutMove(xyListHuman[0], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[0]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[0]);
+    m_pGomokuBoard->PutMove(xyListHuman[1], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[1]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[1]);
+    m_pGomokuBoard->PutMove(xyListHuman[2], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[2]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[2]);
+    m_pGomokuBoard->PutMove(xyListHuman[3], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[3]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[3]);
 
-	m_pGomokuBoard->PutMove( xyListHuman[0], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[0] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[0] );
-	m_pGomokuBoard->PutMove( xyListHuman[1], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[1] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[1] );
-	m_pGomokuBoard->PutMove( xyListHuman[2], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[2] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[2] );
-	m_pGomokuBoard->PutMove( xyListHuman[3], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[3] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[3] );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(boardScoreComputer.GetPlayer());
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
-
-	// Action: User created dead threat. It must be blocked
-	const Board::PositionXY bestMove1 = Board::PositionXY( 3, 9 );
-	const Board::PositionXY bestMove2 = Board::PositionXY( 8, 4 );
+    // Action: User created dead threat. It must be blocked
+    const Board::PositionXY bestMove1 = Board::PositionXY(3, 9);
+    const Board::PositionXY bestMove2 = Board::PositionXY(8, 4);
     SearchTreeAlgorithmIf::PriorityQueueScore nBestMove(1);
 
-	m_pMinMax->SetDeep( 1 );
+    m_pMinMax->SetDeep(1);
     const Board::PositionXY result1 = m_pMinMax->FindBestMove(nBestMove);
     nBestMove.ClearAll();
-    CHECK( bestMove1 == result1 || bestMove2 == result1 );
+    CHECK(bestMove1 == result1 || bestMove2 == result1);
 
-	m_pMinMax->SetDeep( 2 );
+    m_pMinMax->SetDeep(2);
     const Board::PositionXY result2 = m_pMinMax->FindBestMove(nBestMove);
     nBestMove.ClearAll();
-    CHECK( bestMove1 == result2 || bestMove2 == result2 );
+    CHECK(bestMove1 == result2 || bestMove2 == result2);
 
-	m_pMinMax->SetDeep( 3 );
+    m_pMinMax->SetDeep(3);
     const Board::PositionXY result3 = m_pMinMax->FindBestMove(nBestMove);
     nBestMove.ClearAll();
-    CHECK( bestMove1 == result3 || bestMove2 == result3 );
+    CHECK(bestMove1 == result3 || bestMove2 == result3);
 }
 
-TEST(MinMaxTest,GameTreeBrowsingBestMoveTest7)
+TEST(MinMaxTest, GameTreeBrowsingBestMoveTest7)
 {
-	// Get singletons.
+    // Get singletons.
     Score* pScore = Score::GetInstance();
 
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
-	//                       1 1 1 1 1
-	//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
-	//   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-	//0 |. . . . . . . . . . . . . . .|
-	//1 |. . . . . . . . . . . . . . .|
-	//2 |. . . . . . . . . . . . . . .|
-	//3 |. . . . . . . . . . . . . . .|
-	//4 |. . . . . . . . . . . . . . .|
-	//5 |. . . . . . . . . . . . . . .|
-	//6 |. . . . . . x . . . . . . . .|
-	//7 |. . . . . x . . . . . . . . .|
-	//8 |. . . . x . o . . . . . . . .|
-	//9 |. . . . . . . o . . . . . . .|
-	//10|. . . . . . . . o . . . . . .|
-	//11|. . . . . . . . . . . . . . .|
-	//12|. . . . . . . . . . o . . . .|
-	//13|. . . . . . . . . . . . . . .|
-	//14|. . . . . . . . . . . . . . .|
-	//  |_ _ _ _ _ _ _ _ _ _ _ _ _ _ _|
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
+    //                       1 1 1 1 1
+    //   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
+    //   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+    // 0 |. . . . . . . . . . . . . . .|
+    // 1 |. . . . . . . . . . . . . . .|
+    // 2 |. . . . . . . . . . . . . . .|
+    // 3 |. . . . . . . . . . . . . . .|
+    // 4 |. . . . . . . . . . . . . . .|
+    // 5 |. . . . . . . . . . . . . . .|
+    // 6 |. . . . . . x . . . . . . . .|
+    // 7 |. . . . . x . . . . . . . . .|
+    // 8 |. . . . x . o . . . . . . . .|
+    // 9 |. . . . . . . o . . . . . . .|
+    // 10|. . . . . . . . o . . . . . .|
+    // 11|. . . . . . . . . . . . . . .|
+    // 12|. . . . . . . . . . o . . . .|
+    // 13|. . . . . . . . . . . . . . .|
+    // 14|. . . . . . . . . . . . . . .|
+    //  |_ _ _ _ _ _ _ _ _ _ _ _ _ _ _|
 
-    vector< Board::PositionXY > xyListCpu{  Board::PositionXY( 8, 4 ),
-    										Board::PositionXY( 7, 5 ),
-    										Board::PositionXY( 6, 6 )
-    									};
+    vector<Board::PositionXY> xyListCpu{Board::PositionXY(8, 4), Board::PositionXY(7, 5), Board::PositionXY(6, 6)};
 
-    vector< Board::PositionXY > xyListHuman{
-											  Board::PositionXY( 8, 6 ),
-											  Board::PositionXY( 9, 7 ),
-											  Board::PositionXY( 10, 8 ),
-											  Board::PositionXY( 12, 10 )
-											};
+    vector<Board::PositionXY> xyListHuman{Board::PositionXY(8, 6), Board::PositionXY(9, 7), Board::PositionXY(10, 8),
+                                          Board::PositionXY(12, 10)};
 
-	m_pGomokuBoard->PutMove( xyListCpu[0], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[0] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[0] );
-	m_pGomokuBoard->PutMove( xyListCpu[1], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[1] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[1] );
-	m_pGomokuBoard->PutMove( xyListCpu[2], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[2] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[2] );
+    m_pGomokuBoard->PutMove(xyListCpu[0], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[0]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[0]);
+    m_pGomokuBoard->PutMove(xyListCpu[1], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[1]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[1]);
+    m_pGomokuBoard->PutMove(xyListCpu[2], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[2]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[2]);
 
-	m_pGomokuBoard->PutMove( xyListHuman[0], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[0] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[0] );
-	m_pGomokuBoard->PutMove( xyListHuman[1], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[1] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[1] );
-	m_pGomokuBoard->PutMove( xyListHuman[2], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[2] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[2] );
-	m_pGomokuBoard->PutMove( xyListHuman[3], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[3] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[3] );
+    m_pGomokuBoard->PutMove(xyListHuman[0], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[0]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[0]);
+    m_pGomokuBoard->PutMove(xyListHuman[1], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[1]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[1]);
+    m_pGomokuBoard->PutMove(xyListHuman[2], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[2]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[2]);
+    m_pGomokuBoard->PutMove(xyListHuman[3], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[3]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[3]);
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(boardScoreComputer.GetPlayer());
 
-	// Action: User created dead threat. It must be blocked
-	const Board::PositionXY bestMove = Board::PositionXY( 11, 9 );
+    // Action: User created dead threat. It must be blocked
+    const Board::PositionXY bestMove = Board::PositionXY(11, 9);
     SearchTreeAlgorithmIf::PriorityQueueScore nBestMove(1);
 
-	m_pMinMax->SetDeep( 2 );
+    m_pMinMax->SetDeep(2);
     const Board::PositionXY result2 = m_pMinMax->FindBestMove(nBestMove);
     nBestMove.ClearAll();
-    CHECK( bestMove == result2  );
+    CHECK(bestMove == result2);
 
-	m_pMinMax->SetDeep( 3 );
+    m_pMinMax->SetDeep(3);
     const Board::PositionXY result3 = m_pMinMax->FindBestMove(nBestMove);
     nBestMove.ClearAll();
-    CHECK( bestMove == result3 );
+    CHECK(bestMove == result3);
 }
 
-TEST(MinMaxTest,GameTreeBrowsingBestMoveTest8)
+TEST(MinMaxTest, GameTreeBrowsingBestMoveTest8)
 {
-	// Get singletons.
+    // Get singletons.
     Score* pScore = Score::GetInstance();
 
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(boardScoreComputer.GetPlayer());
 
-	//                       1 1 1 1 1
-	//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
-	//   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-	//0 |. . . . . . . . . . . . . . .|
-	//1 |. . . . . . . . . . . . . . .|
-	//2 |. . . . . . . . . . . . . . .|
-	//3 |. . . . . . . . . . . . . . .|
-	//4 |. . . . . . . . . . x . . . .|
-	//5 |. . . . . . . . . o . . . . .|
-	//6 |. . . . . . . . o . . . . . .|
-	//7 |. . . . . . x o . . . . . . .|
-	//8 |. . . . . x o o o . . . . . .|
-	//9 |. . . . . x x x o . . . . . .|
-	//10|. . . . . . . . . . . . . . .|
-	//11|. . . . . . . . . . . . . . .|
-	//12|. . . . . . . . . . . . . . .|
-	//13|. . . . . . . . . . . . . . .|
-	//14|. . . . . . . . . . . . . . .|
-	//  |_ _ _ _ _ _ _ _ _ _ _ _ _ _ _|
+    //                       1 1 1 1 1
+    //   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
+    //   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+    // 0 |. . . . . . . . . . . . . . .|
+    // 1 |. . . . . . . . . . . . . . .|
+    // 2 |. . . . . . . . . . . . . . .|
+    // 3 |. . . . . . . . . . . . . . .|
+    // 4 |. . . . . . . . . . x . . . .|
+    // 5 |. . . . . . . . . o . . . . .|
+    // 6 |. . . . . . . . o . . . . . .|
+    // 7 |. . . . . . x o . . . . . . .|
+    // 8 |. . . . . x o o o . . . . . .|
+    // 9 |. . . . . x x x o . . . . . .|
+    // 10|. . . . . . . . . . . . . . .|
+    // 11|. . . . . . . . . . . . . . .|
+    // 12|. . . . . . . . . . . . . . .|
+    // 13|. . . . . . . . . . . . . . .|
+    // 14|. . . . . . . . . . . . . . .|
+    //  |_ _ _ _ _ _ _ _ _ _ _ _ _ _ _|
 
-    vector< Board::PositionXY > xyListCpu{  Board::PositionXY( 9, 5 ),
-    										Board::PositionXY( 9, 6 ),
-    										Board::PositionXY( 9, 7 ),
-											Board::PositionXY( 8, 5 ),
-											Board::PositionXY( 7, 6 ),
-											Board::PositionXY( 4, 10 )
-    									};
+    vector<Board::PositionXY> xyListCpu{Board::PositionXY(9, 5), Board::PositionXY(9, 6), Board::PositionXY(9, 7),
+                                        Board::PositionXY(8, 5), Board::PositionXY(7, 6), Board::PositionXY(4, 10)};
 
-    vector< Board::PositionXY > xyListHuman{
-											  Board::PositionXY( 9, 8 ),
-											  Board::PositionXY( 8, 6 ),
-											  Board::PositionXY( 8, 7 ),
-											  Board::PositionXY( 7, 7 ),
-											  Board::PositionXY( 6, 8 ),
-											  Board::PositionXY( 5, 9 ),
-											  Board::PositionXY( 8, 8 )
-											};
+    vector<Board::PositionXY> xyListHuman{Board::PositionXY(9, 8), Board::PositionXY(8, 6), Board::PositionXY(8, 7),
+                                          Board::PositionXY(7, 7), Board::PositionXY(6, 8), Board::PositionXY(5, 9),
+                                          Board::PositionXY(8, 8)};
 
-	m_pGomokuBoard->PutMove( xyListCpu[0], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[0] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[0] );
-	m_pGomokuBoard->PutMove( xyListCpu[1], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[1] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[1] );
-	m_pGomokuBoard->PutMove( xyListCpu[2], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[2] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[2] );
-	m_pGomokuBoard->PutMove( xyListCpu[3], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[3] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[3] );
-	m_pGomokuBoard->PutMove( xyListCpu[4], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[4] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[4] );
-	m_pGomokuBoard->PutMove( xyListCpu[5], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[5] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[5] );
+    m_pGomokuBoard->PutMove(xyListCpu[0], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[0]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[0]);
+    m_pGomokuBoard->PutMove(xyListCpu[1], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[1]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[1]);
+    m_pGomokuBoard->PutMove(xyListCpu[2], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[2]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[2]);
+    m_pGomokuBoard->PutMove(xyListCpu[3], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[3]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[3]);
+    m_pGomokuBoard->PutMove(xyListCpu[4], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[4]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[4]);
+    m_pGomokuBoard->PutMove(xyListCpu[5], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[5]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[5]);
 
-	m_pGomokuBoard->PutMove( xyListHuman[0], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[0] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[0] );
-	m_pGomokuBoard->PutMove( xyListHuman[1], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[1] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[1] );
-	m_pGomokuBoard->PutMove( xyListHuman[2], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[2] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[2] );
-	m_pGomokuBoard->PutMove( xyListHuman[3], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[3] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[3] );
-	m_pGomokuBoard->PutMove( xyListHuman[4], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[4] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[4] );
-	m_pGomokuBoard->PutMove( xyListHuman[5], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[5] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[5] );
-	m_pGomokuBoard->PutMove( xyListHuman[6], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[6] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[6]);
+    m_pGomokuBoard->PutMove(xyListHuman[0], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[0]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[0]);
+    m_pGomokuBoard->PutMove(xyListHuman[1], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[1]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[1]);
+    m_pGomokuBoard->PutMove(xyListHuman[2], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[2]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[2]);
+    m_pGomokuBoard->PutMove(xyListHuman[3], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[3]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[3]);
+    m_pGomokuBoard->PutMove(xyListHuman[4], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[4]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[4]);
+    m_pGomokuBoard->PutMove(xyListHuman[5], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[5]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[5]);
+    m_pGomokuBoard->PutMove(xyListHuman[6], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[6]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[6]);
 
-	const uint32_t nBest = 12;
-	SearchTreeAlgorithmIf::PriorityQueueScore nBestMove( nBest );
-	vector<Board::PositionXY> candidates = {};
+    const uint32_t nBest = 12;
+    SearchTreeAlgorithmIf::PriorityQueueScore nBestMove(nBest);
+    vector<Board::PositionXY> candidates = {};
 
-	// Action: CPU extends it's threat creating a new at once.
-	const Board::PositionXY bestMoveStage1 = Board::PositionXY( 9, 4 );
-	const Board::PositionXY bestMoveStage2 = Board::PositionXY( 9, 3 );
-	const Board::PositionXY humanChallenge = Board::PositionXY( 7, 8 );
+    // Action: CPU extends it's threat creating a new at once.
+    const Board::PositionXY bestMoveStage1 = Board::PositionXY(9, 4);
+    const Board::PositionXY bestMoveStage2 = Board::PositionXY(9, 3);
+    const Board::PositionXY humanChallenge = Board::PositionXY(7, 8);
 
-	m_pMinMax->SetDeep( 2 );
-    m_pMinMax->FindBestMove( nBestMove );
+    m_pMinMax->SetDeep(2);
+    m_pMinMax->FindBestMove(nBestMove);
 
     uint32_t nBestMovesSize = nBestMove.GetSize();
-    for( uint32_t i = 0; i < nBestMovesSize; ++i )
+    for(uint32_t i = 0; i < nBestMovesSize; ++i)
     {
         const Board::PositionXY el = nBestMove.PopData().m_move;
-        candidates.push_back( el );
+        candidates.push_back(el);
     }
 
-    m_pMinMax->SetDeep( 4 );
+    m_pMinMax->SetDeep(4);
     nBestMove.ClearAll();
-    Board::PositionXY retVal = m_pMinMax->FindBestMove( nBestMove, candidates );
-    CHECK( retVal == bestMoveStage1  );
+    Board::PositionXY retVal = m_pMinMax->FindBestMove(nBestMove, candidates);
+    CHECK(retVal == bestMoveStage1);
 
-	m_pGomokuBoard->PutMove( bestMoveStage1, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, bestMoveStage1 );
-	pScore->UpdateScore( boardScoreComputer, bestMoveStage1);
+    m_pGomokuBoard->PutMove(bestMoveStage1, boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, bestMoveStage1);
+    pScore->UpdateScore(boardScoreComputer, bestMoveStage1);
 
-	m_pGomokuBoard->PutMove( humanChallenge, boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreHuman, humanChallenge );
-	pScore->UpdateScore( boardScoreComputer, humanChallenge);
+    m_pGomokuBoard->PutMove(humanChallenge, boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreHuman, humanChallenge);
+    pScore->UpdateScore(boardScoreComputer, humanChallenge);
 
-	m_pMinMax->SetDeep( 2 );
-	nBestMove.ClearAll();
+    m_pMinMax->SetDeep(2);
+    nBestMove.ClearAll();
     candidates.clear();
-    m_pMinMax->FindBestMove( nBestMove );
+    m_pMinMax->FindBestMove(nBestMove);
 
     nBestMovesSize = nBestMove.GetSize();
-    for( uint32_t i = 0; i < nBestMovesSize; ++i )
+    for(uint32_t i = 0; i < nBestMovesSize; ++i)
     {
         const Board::PositionXY el = nBestMove.PopData().m_move;
-        candidates.push_back( el );
+        candidates.push_back(el);
     }
 
-    m_pMinMax->SetDeep( 4 );
+    m_pMinMax->SetDeep(4);
     nBestMove.ClearAll();
-    retVal = m_pMinMax->FindBestMove( nBestMove, candidates );
-    CHECK( retVal == bestMoveStage2  );
-
+    retVal = m_pMinMax->FindBestMove(nBestMove, candidates);
+    CHECK(retVal == bestMoveStage2);
 }
 
-TEST(MinMaxTest,GenerateCandidateExtendGapsTest1)
+TEST(MinMaxTest, GenerateCandidateExtendGapsTest1)
 {
-	// Get singletons.
+    // Get singletons.
     Score* pScore = Score::GetInstance();
 
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	//	   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-	//	0 |. . . . . . . . . . . . . . .|
-	//	1 |. x x . + . . . . . . . . . .|
-	//	2 |. . x . . . . . . . . . . . .|
-	//	3 |. . . . . . . . . . . . . . .|
-	//	4 |. . + . + . . . . . . . . . .|
-	//	5 |. . . . . . . . . . . . . . .|
-	//	6 |. . . . . . . . . . . . . . .|
-	//	7 |. . . . . . . . . . . . . . .|
-	//	8 |. . . . . . . . . . . . . . .|
+    //	   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+    //	0 |. . . . . . . . . . . . . . .|
+    //	1 |. x x . + . . . . . . . . . .|
+    //	2 |. . x . . . . . . . . . . . .|
+    //	3 |. . . . . . . . . . . . . . .|
+    //	4 |. . + . + . . . . . . . . . .|
+    //	5 |. . . . . . . . . . . . . . .|
+    //	6 |. . . . . . . . . . . . . . .|
+    //	7 |. . . . . . . . . . . . . . .|
+    //	8 |. . . . . . . . . . . . . . .|
 
-    vector< Board::PositionXY > xyListCpu{  Board::PositionXY( 1, 1 ),
-    										Board::PositionXY( 1, 2 ),
-    										Board::PositionXY( 2, 2 ),
-    									};
+    vector<Board::PositionXY> xyListCpu{
+        Board::PositionXY(1, 1),
+        Board::PositionXY(1, 2),
+        Board::PositionXY(2, 2),
+    };
 
-	m_pGomokuBoard->PutMove( xyListCpu[0], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[0] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[0] );
-	m_pGomokuBoard->PutMove( xyListCpu[1], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[1] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[1] );
-	m_pGomokuBoard->PutMove( xyListCpu[2], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[2] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[2] );
+    m_pGomokuBoard->PutMove(xyListCpu[0], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[0]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[0]);
+    m_pGomokuBoard->PutMove(xyListCpu[1], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[1]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[1]);
+    m_pGomokuBoard->PutMove(xyListCpu[2], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[2]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[2]);
 
-	std::vector<Board::PositionField> exGaps;
-	uint32_t expectedExGapsNumber = 3;
+    std::vector<Board::PositionField> exGaps;
+    uint32_t expectedExGapsNumber = 3;
 
-	boardScoreComputer.GetExGaps(exGaps, ThreatFinder::THREAT_2_CASE_A);
-	CHECK( exGaps.size() == expectedExGapsNumber );
+    boardScoreComputer.GetExGaps(exGaps, ThreatFinder::THREAT_2_CASE_A);
+    CHECK(exGaps.size() == expectedExGapsNumber);
 
-	Board::PositionXY expectedExGapsList2A[] = { Board::PositionXY( 1, 4 ), Board::PositionXY( 4, 2 ), Board::PositionXY( 4, 4 ) };
-	for( uint32_t i = 0; i < std::size( expectedExGapsList2A ); ++i )
-	{
-		const Board::PositionField positionField( m_pGomokuBoard->GetSize(), expectedExGapsList2A[ i ] );
-		const bool isOnGapsList = Checker( positionField, exGaps );
-		CHECK( isOnGapsList == true );
-	}
+    Board::PositionXY expectedExGapsList2A[] = {Board::PositionXY(1, 4), Board::PositionXY(4, 2),
+                                                Board::PositionXY(4, 4)};
+    for(uint32_t i = 0; i < std::size(expectedExGapsList2A); ++i)
+    {
+        const Board::PositionField positionField(m_pGomokuBoard->GetSize(), expectedExGapsList2A[i]);
+        const bool isOnGapsList = Checker(positionField, exGaps);
+        CHECK(isOnGapsList == true);
+    }
 }
 
-TEST(MinMaxTest,GenerateCandidateExtendGapsTest2)
+TEST(MinMaxTest, GenerateCandidateExtendGapsTest2)
 {
-	// Get singletons.
+    // Get singletons.
     Score* pScore = Score::GetInstance();
 
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	//	   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-	//	0 |. . . . . . . . . . . x . . .|
-	//	1 |. x x x . + . . . . o x . . .|
-	//	2 |. . . x . . . . o . o x + . .|
-	//	3 |. . . . . . o x x x . + . . .|
-	//	4 |. . . + . + . . o o x + . . .|
-	//	5 |. . . . . . . . . x . o . . .|
-	//	6 |. . . . . . . . x . . . . . .|
-	//	7 |. . . . . . . o . . . . . . .|
-	//	8 |. . . . . . . . . . . . . . .|
+    //	   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+    //	0 |. . . . . . . . . . . x . . .|
+    //	1 |. x x x . + . . . . o x . . .|
+    //	2 |. . . x . . . . o . o x + . .|
+    //	3 |. . . . . . o x x x . + . . .|
+    //	4 |. . . + . + . . o o x + . . .|
+    //	5 |. . . . . . . . . x . o . . .|
+    //	6 |. . . . . . . . x . . . . . .|
+    //	7 |. . . . . . . o . . . . . . .|
+    //	8 |. . . . . . . . . . . . . . .|
 
-    vector< Board::PositionXY > xyListCpu{  Board::PositionXY( 0, 11 ),
-    										Board::PositionXY( 1, 1 ),
-    										Board::PositionXY( 1, 2 ),
-    										Board::PositionXY( 1, 3 ),
-    										Board::PositionXY( 1, 11 ),
-    										Board::PositionXY( 2, 3 ),
-    										Board::PositionXY( 2, 11 ),
-    										Board::PositionXY( 3, 7 ),
-    										Board::PositionXY( 3, 8 ),
-    										Board::PositionXY( 3, 9 ),
-    										Board::PositionXY( 4, 10 ),
-    										Board::PositionXY( 5, 9 ),
-    										Board::PositionXY( 6, 8 )
-    									};
+    vector<Board::PositionXY> xyListCpu{Board::PositionXY(0, 11), Board::PositionXY(1, 1),  Board::PositionXY(1, 2),
+                                        Board::PositionXY(1, 3),  Board::PositionXY(1, 11), Board::PositionXY(2, 3),
+                                        Board::PositionXY(2, 11), Board::PositionXY(3, 7),  Board::PositionXY(3, 8),
+                                        Board::PositionXY(3, 9),  Board::PositionXY(4, 10), Board::PositionXY(5, 9),
+                                        Board::PositionXY(6, 8)};
 
-    vector< Board::PositionXY > xyListHuman{
-		  	  	  	  	  	  	  	  	  	  Board::PositionXY( 1, 10 ),
-											  Board::PositionXY( 2, 8 ),
-											  Board::PositionXY( 2, 10 ),
-											  Board::PositionXY( 3, 6 ),
-											  Board::PositionXY( 4, 8 ),
-											  Board::PositionXY( 4, 9 ),
-											  Board::PositionXY( 5, 11 ),
-											  Board::PositionXY( 7, 7 )
-											};
+    vector<Board::PositionXY> xyListHuman{Board::PositionXY(1, 10), Board::PositionXY(2, 8), Board::PositionXY(2, 10),
+                                          Board::PositionXY(3, 6),  Board::PositionXY(4, 8), Board::PositionXY(4, 9),
+                                          Board::PositionXY(5, 11), Board::PositionXY(7, 7)};
 
-	m_pGomokuBoard->PutMove( xyListCpu[0], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[0] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[0] );
-	m_pGomokuBoard->PutMove( xyListCpu[1], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[1] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[1] );
-	m_pGomokuBoard->PutMove( xyListCpu[2], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[2] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[2] );
-	m_pGomokuBoard->PutMove( xyListCpu[3], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[3] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[3] );
-	m_pGomokuBoard->PutMove( xyListCpu[4], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[4] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[4] );
-	m_pGomokuBoard->PutMove( xyListCpu[5], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[5] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[5] );
-	m_pGomokuBoard->PutMove( xyListCpu[6], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[6] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[6] );
-	m_pGomokuBoard->PutMove( xyListCpu[7], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[7] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[7] );
-	m_pGomokuBoard->PutMove( xyListCpu[8], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[8] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[8] );
-	m_pGomokuBoard->PutMove( xyListCpu[9], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[9] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[9] );
-	m_pGomokuBoard->PutMove( xyListCpu[10], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[10] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[10] );
-	m_pGomokuBoard->PutMove( xyListCpu[11], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[11] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[11] );
-	m_pGomokuBoard->PutMove( xyListCpu[12], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[12] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[12] );
+    m_pGomokuBoard->PutMove(xyListCpu[0], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[0]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[0]);
+    m_pGomokuBoard->PutMove(xyListCpu[1], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[1]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[1]);
+    m_pGomokuBoard->PutMove(xyListCpu[2], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[2]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[2]);
+    m_pGomokuBoard->PutMove(xyListCpu[3], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[3]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[3]);
+    m_pGomokuBoard->PutMove(xyListCpu[4], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[4]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[4]);
+    m_pGomokuBoard->PutMove(xyListCpu[5], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[5]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[5]);
+    m_pGomokuBoard->PutMove(xyListCpu[6], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[6]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[6]);
+    m_pGomokuBoard->PutMove(xyListCpu[7], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[7]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[7]);
+    m_pGomokuBoard->PutMove(xyListCpu[8], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[8]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[8]);
+    m_pGomokuBoard->PutMove(xyListCpu[9], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[9]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[9]);
+    m_pGomokuBoard->PutMove(xyListCpu[10], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[10]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[10]);
+    m_pGomokuBoard->PutMove(xyListCpu[11], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[11]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[11]);
+    m_pGomokuBoard->PutMove(xyListCpu[12], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[12]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[12]);
 
-	m_pGomokuBoard->PutMove( xyListHuman[0], Board::PLAYER_B );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[0] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[0] );
-	m_pGomokuBoard->PutMove( xyListHuman[1], Board::PLAYER_B );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[1] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[1] );
-	m_pGomokuBoard->PutMove( xyListHuman[2], Board::PLAYER_B );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[2] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[2] );
-	m_pGomokuBoard->PutMove( xyListHuman[3], Board::PLAYER_B );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[3] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[3] );
-	m_pGomokuBoard->PutMove( xyListHuman[4], Board::PLAYER_B );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[4] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[4] );
-	m_pGomokuBoard->PutMove( xyListHuman[5], Board::PLAYER_B );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[5] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[5] );
-	m_pGomokuBoard->PutMove( xyListHuman[6], Board::PLAYER_B );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[6] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[6] );
-	m_pGomokuBoard->PutMove( xyListHuman[7], Board::PLAYER_B );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[7] );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[7] );
+    m_pGomokuBoard->PutMove(xyListHuman[0], Board::PLAYER_B);
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[0]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[0]);
+    m_pGomokuBoard->PutMove(xyListHuman[1], Board::PLAYER_B);
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[1]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[1]);
+    m_pGomokuBoard->PutMove(xyListHuman[2], Board::PLAYER_B);
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[2]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[2]);
+    m_pGomokuBoard->PutMove(xyListHuman[3], Board::PLAYER_B);
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[3]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[3]);
+    m_pGomokuBoard->PutMove(xyListHuman[4], Board::PLAYER_B);
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[4]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[4]);
+    m_pGomokuBoard->PutMove(xyListHuman[5], Board::PLAYER_B);
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[5]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[5]);
+    m_pGomokuBoard->PutMove(xyListHuman[6], Board::PLAYER_B);
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[6]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[6]);
+    m_pGomokuBoard->PutMove(xyListHuman[7], Board::PLAYER_B);
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[7]);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[7]);
 
-	std::vector<Board::PositionField> exGaps;
-	uint32_t expectedExGapsNumber = 6;
+    std::vector<Board::PositionField> exGaps;
+    uint32_t expectedExGapsNumber = 6;
 
-	// Those that are on EXTENDED_NEIGHBORHOOD list
-	for(uint32_t i = 0; i < ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD_SIZE; ++i)
-	{
-		boardScoreComputer.GetExGaps(exGaps, ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD[i]);
-	}
-	CHECK( exGaps.size() == expectedExGapsNumber );
+    // Those that are on EXTENDED_NEIGHBORHOOD list
+    for(uint32_t i = 0; i < ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD_SIZE; ++i)
+    {
+        boardScoreComputer.GetExGaps(exGaps, ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD[i]);
+    }
+    CHECK(exGaps.size() == expectedExGapsNumber);
 
-	Board::PositionXY expectedExGapsList[] = { Board::PositionXY( 1, 5 ), Board::PositionXY( 2, 12 ), Board::PositionXY( 3, 11 ),Board::PositionXY( 4, 5 ),
-											    Board::PositionXY( 4, 3 ), Board::PositionXY( 4, 11 )  };
-	for( uint32_t i = 0; i < std::size( expectedExGapsList ); ++i )
-	{
-		const Board::PositionField positionField( m_pGomokuBoard->GetSize(), expectedExGapsList[ i ] );
-		const bool isOnGapsList = Checker( positionField, exGaps );
-		CHECK( isOnGapsList == true );
-	}
+    Board::PositionXY expectedExGapsList[] = {Board::PositionXY(1, 5),  Board::PositionXY(2, 12),
+                                              Board::PositionXY(3, 11), Board::PositionXY(4, 5),
+                                              Board::PositionXY(4, 3),  Board::PositionXY(4, 11)};
+    for(uint32_t i = 0; i < std::size(expectedExGapsList); ++i)
+    {
+        const Board::PositionField positionField(m_pGomokuBoard->GetSize(), expectedExGapsList[i]);
+        const bool isOnGapsList = Checker(positionField, exGaps);
+        CHECK(isOnGapsList == true);
+    }
 }
 
-TEST(MinMaxTest,GenerateCandidateExtendGapsTest3)
+TEST(MinMaxTest, GenerateCandidateExtendGapsTest3)
 {
-	// Get singletons.
+    // Get singletons.
     Score* pScore = Score::GetInstance();
 
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	//	   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-	//	0 |. . . . . . . . . . . . . . .|
-	//	1 |. + . x x x . + . . . . . . .|
-	//	2 |. . . . . . . . . . . . . . .|
-	//	3 |. . . . . . . . + . x x . + .|
-	//	4 |. . . . . . . . . . . . . . .|
-	//	5 |. . . . . . . . . . . . . . .|
-	//	6 |. . . . . . . . . . . . . . .|
-	//	7 |. . . . . . . . . . . . . . .|
-	//	8 |. . . . . . . . . . . . . . .|
-    vector< Board::PositionXY > xyListCpu{  Board::PositionXY( 1, 3 ),
-    										Board::PositionXY( 1, 4 ),
-    										Board::PositionXY( 1, 5 ),
-    										Board::PositionXY( 3, 10 ),
-    										Board::PositionXY( 3, 11 ),
-    									 };
+    //	   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+    //	0 |. . . . . . . . . . . . . . .|
+    //	1 |. + . x x x . + . . . . . . .|
+    //	2 |. . . . . . . . . . . . . . .|
+    //	3 |. . . . . . . . + . x x . + .|
+    //	4 |. . . . . . . . . . . . . . .|
+    //	5 |. . . . . . . . . . . . . . .|
+    //	6 |. . . . . . . . . . . . . . .|
+    //	7 |. . . . . . . . . . . . . . .|
+    //	8 |. . . . . . . . . . . . . . .|
+    vector<Board::PositionXY> xyListCpu{
+        Board::PositionXY(1, 3),  Board::PositionXY(1, 4),  Board::PositionXY(1, 5),
+        Board::PositionXY(3, 10), Board::PositionXY(3, 11),
+    };
 
-	m_pGomokuBoard->PutMove( xyListCpu[0], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[0] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[0] );
-	m_pGomokuBoard->PutMove( xyListCpu[1], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[1] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[1] );
-	m_pGomokuBoard->PutMove( xyListCpu[2], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[2] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[2] );
-	m_pGomokuBoard->PutMove( xyListCpu[3], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[3] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[3] );
-	m_pGomokuBoard->PutMove( xyListCpu[4], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[4] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[4] );
+    m_pGomokuBoard->PutMove(xyListCpu[0], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[0]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[0]);
+    m_pGomokuBoard->PutMove(xyListCpu[1], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[1]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[1]);
+    m_pGomokuBoard->PutMove(xyListCpu[2], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[2]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[2]);
+    m_pGomokuBoard->PutMove(xyListCpu[3], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[3]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[3]);
+    m_pGomokuBoard->PutMove(xyListCpu[4], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[4]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[4]);
 
-	std::vector<Board::PositionField> exGaps;
-	uint32_t expectedExGapsNumber = 4;
+    std::vector<Board::PositionField> exGaps;
+    uint32_t expectedExGapsNumber = 4;
 
-	// Those that are on EXTENDED_NEIGHBORHOOD list
-	for(uint32_t i = 0; i < ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD_SIZE; ++i)
-	{
-		boardScoreComputer.GetExGaps(exGaps, ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD[i]);
-	}
-	CHECK( exGaps.size() == expectedExGapsNumber );
+    // Those that are on EXTENDED_NEIGHBORHOOD list
+    for(uint32_t i = 0; i < ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD_SIZE; ++i)
+    {
+        boardScoreComputer.GetExGaps(exGaps, ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD[i]);
+    }
+    CHECK(exGaps.size() == expectedExGapsNumber);
 
-	Board::PositionXY expectedExGapsList[] = { Board::PositionXY( 1, 1 ), Board::PositionXY( 1, 7 ), Board::PositionXY( 3, 8 ), Board::PositionXY( 3, 13 )  };
-	for( uint32_t i = 0; i < std::size( expectedExGapsList ); ++i )
-	{
-		const Board::PositionField positionField( m_pGomokuBoard->GetSize(), expectedExGapsList[ i ] );
-		const bool isOnGapsList = Checker( positionField, exGaps );
-		CHECK( isOnGapsList == true );
-	}
+    Board::PositionXY expectedExGapsList[] = {Board::PositionXY(1, 1), Board::PositionXY(1, 7), Board::PositionXY(3, 8),
+                                              Board::PositionXY(3, 13)};
+    for(uint32_t i = 0; i < std::size(expectedExGapsList); ++i)
+    {
+        const Board::PositionField positionField(m_pGomokuBoard->GetSize(), expectedExGapsList[i]);
+        const bool isOnGapsList = Checker(positionField, exGaps);
+        CHECK(isOnGapsList == true);
+    }
 }
 
-TEST(MinMaxTest,GenerateCandidateExtendGapsTest4)
+TEST(MinMaxTest, GenerateCandidateExtendGapsTest4)
 {
-	// Get singletons.
+    // Get singletons.
     Score* pScore = Score::GetInstance();
 
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_B );
-	BoardScore boardScoreHuman( Board::PLAYER_A );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_B);
+    BoardScore boardScoreHuman(Board::PLAYER_A);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	//	   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-	//	0 |. . + + + + + . . . . . . . .|
-	//	1 |. + + o o o + + . . . . . . .|
-	//	2 |. . + + + + + . . + + + + . .|
-	//	3 |. . . . . . . . + + o o + + .|
-	//	4 |. . . . . . . . . + + + + . .|
-	//	5 |. . . . . . . . . . . . . . .|
-	//	6 |. . . . . . . . . . . . . . .|
-	//	7 |. . . . . . . . . . . . . . .|
-	//	8 |. . . . . . . . . . . . . . .|
-    vector< Board::PositionXY > xyListCpu{  Board::PositionXY( 1, 3 ),
-    										Board::PositionXY( 1, 4 ),
-    										Board::PositionXY( 1, 5 ),
-    										Board::PositionXY( 3, 10 ),
-    										Board::PositionXY( 3, 11 ),
-    									 };
+    //	   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+    //	0 |. . + + + + + . . . . . . . .|
+    //	1 |. + + o o o + + . . . . . . .|
+    //	2 |. . + + + + + . . + + + + . .|
+    //	3 |. . . . . . . . + + o o + + .|
+    //	4 |. . . . . . . . . + + + + . .|
+    //	5 |. . . . . . . . . . . . . . .|
+    //	6 |. . . . . . . . . . . . . . .|
+    //	7 |. . . . . . . . . . . . . . .|
+    //	8 |. . . . . . . . . . . . . . .|
+    vector<Board::PositionXY> xyListCpu{
+        Board::PositionXY(1, 3),  Board::PositionXY(1, 4),  Board::PositionXY(1, 5),
+        Board::PositionXY(3, 10), Board::PositionXY(3, 11),
+    };
 
-	m_pGomokuBoard->PutMove( xyListCpu[0], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[0] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[0] );
-	m_pGomokuBoard->PutMove( xyListCpu[1], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[1] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[1] );
-	m_pGomokuBoard->PutMove( xyListCpu[2], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[2] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[2] );
-	m_pGomokuBoard->PutMove( xyListCpu[3], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[3] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[3] );
-	m_pGomokuBoard->PutMove( xyListCpu[4], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[4] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[4] );
+    m_pGomokuBoard->PutMove(xyListCpu[0], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[0]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[0]);
+    m_pGomokuBoard->PutMove(xyListCpu[1], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[1]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[1]);
+    m_pGomokuBoard->PutMove(xyListCpu[2], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[2]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[2]);
+    m_pGomokuBoard->PutMove(xyListCpu[3], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[3]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[3]);
+    m_pGomokuBoard->PutMove(xyListCpu[4], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[4]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[4]);
 
-	vector< Board::PositionXY > expectedCandidates = { Board::PositionXY( 0, 2 ),
-													   Board::PositionXY( 0, 3 ),
-													   Board::PositionXY( 0, 4 ),
-													   Board::PositionXY( 0, 5 ),
-													   Board::PositionXY( 0, 6 ),
-													   Board::PositionXY( 1, 1 ),
-													   Board::PositionXY( 1, 2 ),
-													   Board::PositionXY( 1, 6 ),
-													   Board::PositionXY( 1, 7 ),
-													   Board::PositionXY( 2, 2 ),
-													   Board::PositionXY( 2, 3 ),
-													   Board::PositionXY( 2, 4 ),
-													   Board::PositionXY( 2, 5 ),
-													   Board::PositionXY( 2, 6 ),
-													   Board::PositionXY( 2, 9 ),
-													   Board::PositionXY( 2, 10 ),
-													   Board::PositionXY( 2, 11 ),
-													   Board::PositionXY( 2, 12 ),
-													   Board::PositionXY( 3, 8 ),
-													   Board::PositionXY( 3, 9 ),
-													   Board::PositionXY( 3, 12 ),
-													   Board::PositionXY( 3, 13 ),
-													   Board::PositionXY( 4, 9 ),
-													   Board::PositionXY( 4, 10 ),
-													   Board::PositionXY( 4, 11 ),
-													   Board::PositionXY( 4, 12 )
+    vector<Board::PositionXY> expectedCandidates = {
+        Board::PositionXY(0, 2),  Board::PositionXY(0, 3),  Board::PositionXY(0, 4), Board::PositionXY(0, 5),
+        Board::PositionXY(0, 6),  Board::PositionXY(1, 1),  Board::PositionXY(1, 2), Board::PositionXY(1, 6),
+        Board::PositionXY(1, 7),  Board::PositionXY(2, 2),  Board::PositionXY(2, 3), Board::PositionXY(2, 4),
+        Board::PositionXY(2, 5),  Board::PositionXY(2, 6),  Board::PositionXY(2, 9), Board::PositionXY(2, 10),
+        Board::PositionXY(2, 11), Board::PositionXY(2, 12), Board::PositionXY(3, 8), Board::PositionXY(3, 9),
+        Board::PositionXY(3, 12), Board::PositionXY(3, 13), Board::PositionXY(4, 9), Board::PositionXY(4, 10),
+        Board::PositionXY(4, 11), Board::PositionXY(4, 12)
 
-													  };
+    };
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(boardScoreComputer.GetPlayer());
 
-	vector< Board::PositionField > candidate = m_pMinMax->GenerateCand();
-	CHECK( expectedCandidates.size() == candidate.size() );
+    vector<Board::PositionField> candidate = m_pMinMax->GenerateCand();
+    CHECK(expectedCandidates.size() == candidate.size());
 
-	for( uint32_t i = 0; i <  expectedCandidates.size(); ++i )
-	{
-		Board::PositionField temp( m_pGomokuBoard->GetSize(), expectedCandidates[i]);
-		const bool isOnList = Checker( temp, candidate );
-		CHECK( isOnList == true );
-	}
+    for(uint32_t i = 0; i < expectedCandidates.size(); ++i)
+    {
+        Board::PositionField temp(m_pGomokuBoard->GetSize(), expectedCandidates[i]);
+        const bool isOnList = Checker(temp, candidate);
+        CHECK(isOnList == true);
+    }
 }
 
-TEST(MinMaxTest,GenerateCandidateExtendGapsTest5)
+TEST(MinMaxTest, GenerateCandidateExtendGapsTest5)
 {
-	// Get singletons.
+    // Get singletons.
     Score* pScore = Score::GetInstance();
 
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	//    _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-	// 0 |. . . . . . . . . . . . . . .|
-	// 1 |. . . . . . . . . . . . . . .|
-	// 2 |. . . . . . . . . . . . . . .|
-	// 3 |. . . . . x x . . . . . . . .|
-	// 4 |. . . . . . . . . . . . . . .|
-	// 5 |. . . . . . . . . . . . . . .|
-	// 6 |. . . . . . . . . . . . . . .|
-	// 7 |. . . . . . . . . . . . . . .|
-	// 8 |. . . . . . . . . . . . . . .|
-	// 9 |. . . . . . . . . . . . . . .|
+    //    _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+    // 0 |. . . . . . . . . . . . . . .|
+    // 1 |. . . . . . . . . . . . . . .|
+    // 2 |. . . . . . . . . . . . . . .|
+    // 3 |. . . . . x x . . . . . . . .|
+    // 4 |. . . . . . . . . . . . . . .|
+    // 5 |. . . . . . . . . . . . . . .|
+    // 6 |. . . . . . . . . . . . . . .|
+    // 7 |. . . . . . . . . . . . . . .|
+    // 8 |. . . . . . . . . . . . . . .|
+    // 9 |. . . . . . . . . . . . . . .|
 
-    const vector< Board::PositionXY > xyListCpu{
-    											  Board::PositionXY( 3, 5 ),
-    										      Board::PositionXY( 3, 6 )
-    									 	   };
+    const vector<Board::PositionXY> xyListCpu{Board::PositionXY(3, 5), Board::PositionXY(3, 6)};
 
-    const vector< Board::PositionXY > xyListHuman{ Board::PositionXY( 3, 8 ) };
+    const vector<Board::PositionXY> xyListHuman{Board::PositionXY(3, 8)};
 
-	m_pGomokuBoard->PutMove(xyListCpu[0], Board::PLAYER_A);
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[0] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[0] );
+    m_pGomokuBoard->PutMove(xyListCpu[0], Board::PLAYER_A);
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[0]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[0]);
 
-	m_pGomokuBoard->PutMove(xyListCpu[1], Board::PLAYER_A);
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[1] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[1] );
+    m_pGomokuBoard->PutMove(xyListCpu[1], Board::PLAYER_A);
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[1]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[1]);
 
-	std::vector<Board::PositionField> exGaps;
-	uint32_t expectedExGapsNumber = 2;
+    std::vector<Board::PositionField> exGaps;
+    uint32_t expectedExGapsNumber = 2;
 
-	// Those that are on EXTENDED_NEIGHBORHOOD list
-	for(uint32_t i = 0; i < ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD_SIZE; ++i)
-	{
-		boardScoreComputer.GetExGaps(exGaps, ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD[i]);
-	}
-	CHECK( exGaps.size() == expectedExGapsNumber );
+    // Those that are on EXTENDED_NEIGHBORHOOD list
+    for(uint32_t i = 0; i < ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD_SIZE; ++i)
+    {
+        boardScoreComputer.GetExGaps(exGaps, ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD[i]);
+    }
+    CHECK(exGaps.size() == expectedExGapsNumber);
 
-	Board::PositionXY expectedExGapsList[] = { Board::PositionXY( 3, 3 ), Board::PositionXY( 3, 8 ) };
+    Board::PositionXY expectedExGapsList[] = {Board::PositionXY(3, 3), Board::PositionXY(3, 8)};
 
-	for( uint32_t i = 0; i < std::size( expectedExGapsList ); ++i )
-	{
-		const Board::PositionField positionField( m_pGomokuBoard->GetSize(), expectedExGapsList[ i ] );
-		const bool isOnGapsList = Checker( positionField, exGaps );
-		CHECK( isOnGapsList == true );
-	}
-	exGaps.clear();
+    for(uint32_t i = 0; i < std::size(expectedExGapsList); ++i)
+    {
+        const Board::PositionField positionField(m_pGomokuBoard->GetSize(), expectedExGapsList[i]);
+        const bool isOnGapsList = Checker(positionField, exGaps);
+        CHECK(isOnGapsList == true);
+    }
+    exGaps.clear();
 
-	// Now human puts its own move on ex gaps position.
-	m_pGomokuBoard->PutMove( xyListHuman[0], Board::PLAYER_B );
-	pScore->UpdateScore( boardScoreComputer, xyListHuman[0] );
-	pScore->UpdateScore( boardScoreHuman, xyListHuman[0] );
+    // Now human puts its own move on ex gaps position.
+    m_pGomokuBoard->PutMove(xyListHuman[0], Board::PLAYER_B);
+    pScore->UpdateScore(boardScoreComputer, xyListHuman[0]);
+    pScore->UpdateScore(boardScoreHuman, xyListHuman[0]);
 
-	// Its expected that one extended gaps will be removed.
-	expectedExGapsNumber = 1;
+    // Its expected that one extended gaps will be removed.
+    expectedExGapsNumber = 1;
 
-	// Those that are on EXTENDED_NEIGHBORHOOD list
-	for(uint32_t i = 0; i < ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD_SIZE; ++i)
-	{
-		boardScoreComputer.GetExGaps(exGaps, ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD[i]);
-	}
-	CHECK( exGaps.size() == expectedExGapsNumber );
+    // Those that are on EXTENDED_NEIGHBORHOOD list
+    for(uint32_t i = 0; i < ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD_SIZE; ++i)
+    {
+        boardScoreComputer.GetExGaps(exGaps, ThreatsBloodRelation::EXTENDED_NEIGHBORHOOD[i]);
+    }
+    CHECK(exGaps.size() == expectedExGapsNumber);
 }
 
-TEST(MinMaxTest,StalemateTest1)
+TEST(MinMaxTest, StalemateTest1)
 {
-	// Get singletons.
+    // Get singletons.
     Score* pScore = Score::GetInstance();
 
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoardStalemate );
-	boardScoreHuman.SetBoard( *m_pGomokuBoardStalemate );
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoardStalemate);
+    boardScoreHuman.SetBoard(*m_pGomokuBoardStalemate);
 
-//	   0 1 2 3 4
-//	   _ _ _ _ _
-//	0 |x o x x x|
-//	1 |x x o x x|
-//	2 |x x x o x|
-//	3 |x x x x o|
-//	4 |o . . . o|
-//	  |_ _ _ _ _|
+    //	   0 1 2 3 4
+    //	   _ _ _ _ _
+    //	0 |x o x x x|
+    //	1 |x x o x x|
+    //	2 |x x x o x|
+    //	3 |x x x x o|
+    //	4 |o . . . o|
+    //	  |_ _ _ _ _|
 
-	// Update score for current state.
-    vector< Board::PositionXY > xyListCpu{
-										 	Board::PositionXY( 0, 0 ),
-											Board::PositionXY( 0, 1 ),
-											Board::PositionXY( 0, 2 ),
-											Board::PositionXY( 0, 3 ),
-											Board::PositionXY( 0, 4 ),
+    // Update score for current state.
+    vector<Board::PositionXY> xyListCpu{
+        Board::PositionXY(0, 0), Board::PositionXY(0, 1), Board::PositionXY(0, 2),
+        Board::PositionXY(0, 3), Board::PositionXY(0, 4),
 
-										 	Board::PositionXY( 1, 0 ),
-											Board::PositionXY( 1, 1 ),
-											Board::PositionXY( 1, 2 ),
-											Board::PositionXY( 1, 3 ),
-											Board::PositionXY( 1, 4 ),
+        Board::PositionXY(1, 0), Board::PositionXY(1, 1), Board::PositionXY(1, 2),
+        Board::PositionXY(1, 3), Board::PositionXY(1, 4),
 
-										 	Board::PositionXY( 2, 0 ),
-											Board::PositionXY( 2, 1 ),
-											Board::PositionXY( 2, 2 ),
-											Board::PositionXY( 2, 3 ),
-											Board::PositionXY( 2, 4 ),
+        Board::PositionXY(2, 0), Board::PositionXY(2, 1), Board::PositionXY(2, 2),
+        Board::PositionXY(2, 3), Board::PositionXY(2, 4),
 
-										 	Board::PositionXY( 3, 0 ),
-											Board::PositionXY( 3, 1 ),
-											Board::PositionXY( 3, 2 ),
-											Board::PositionXY( 3, 3 ),
-											Board::PositionXY( 3, 4 ),
+        Board::PositionXY(3, 0), Board::PositionXY(3, 1), Board::PositionXY(3, 2),
+        Board::PositionXY(3, 3), Board::PositionXY(3, 4),
 
-										 	Board::PositionXY( 4, 0 ),
-											Board::PositionXY( 4, 4 ),
+        Board::PositionXY(4, 0), Board::PositionXY(4, 4),
 
-    								   	  };
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[0], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[0] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[0] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[1], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[1] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[1] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[2], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[2] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[2] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[3], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[3] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[3] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[4], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[4] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[4] );
+    };
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[0], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[0]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[0]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[1], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[1]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[1]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[2], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[2]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[2]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[3], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[3]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[3]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[4], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[4]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[4]);
 
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[5], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[5] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[5] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[6], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[6] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[6] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[7], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[7] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[7] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[8], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[8] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[8] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[9], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[9] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[9] );
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[5], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[5]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[5]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[6], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[6]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[6]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[7], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[7]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[7]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[8], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[8]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[8]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[9], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[9]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[9]);
 
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[10], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[10] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[10] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[11], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[11] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[11] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[12], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[12] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[12] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[13], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[13] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[13] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[14], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[14] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[14] );
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[10], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[10]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[10]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[11], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[11]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[11]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[12], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[12]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[12]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[13], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[13]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[13]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[14], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[14]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[14]);
 
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[15], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[15] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[15] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[16], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[16] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[16] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[17], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[17] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[17] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[18], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[18] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[18] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[19], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[19] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[19] );
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[15], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[15]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[15]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[16], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[16]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[16]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[17], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[17]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[17]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[18], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[18]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[18]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[19], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[19]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[19]);
 
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[20], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[20] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[20] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[21], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[21] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[21] );
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[20], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[20]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[20]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[21], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[21]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[21]);
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(boardScoreComputer.GetPlayer());
 
     SearchTreeAlgorithmIf::PriorityQueueScore nBestMove(1);
 
-    m_pMinMax->SetDeep( 3 );
+    m_pMinMax->SetDeep(3);
     const Board::PositionXY result1 = m_pMinMax->FindBestMove(nBestMove);
-
 }
 
-TEST(MinMaxTest,StalemateTest2)
+TEST(MinMaxTest, StalemateTest2)
 {
-	// Get singletons.
+    // Get singletons.
     Score* pScore = Score::GetInstance();
 
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoardStalemate );
-	boardScoreHuman.SetBoard( *m_pGomokuBoardStalemate );
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoardStalemate);
+    boardScoreHuman.SetBoard(*m_pGomokuBoardStalemate);
 
-//	   0 1 2 3 4
-//	   _ _ _ _ _
-//	0 |x o x x x|
-//	1 |x x o x x|
-//	2 |x x x o x|
-//	3 |x x x x o|
-//	4 |o o . . o|
-//	  |_ _ _ _ _|
+    //	   0 1 2 3 4
+    //	   _ _ _ _ _
+    //	0 |x o x x x|
+    //	1 |x x o x x|
+    //	2 |x x x o x|
+    //	3 |x x x x o|
+    //	4 |o o . . o|
+    //	  |_ _ _ _ _|
 
-	// Update score for current state.
-    vector< Board::PositionXY > xyListCpu{
-										 	Board::PositionXY( 0, 0 ),
-											Board::PositionXY( 0, 1 ),
-											Board::PositionXY( 0, 2 ),
-											Board::PositionXY( 0, 3 ),
-											Board::PositionXY( 0, 4 ),
+    // Update score for current state.
+    vector<Board::PositionXY> xyListCpu{
+        Board::PositionXY(0, 0), Board::PositionXY(0, 1), Board::PositionXY(0, 2),
+        Board::PositionXY(0, 3), Board::PositionXY(0, 4),
 
-										 	Board::PositionXY( 1, 0 ),
-											Board::PositionXY( 1, 1 ),
-											Board::PositionXY( 1, 2 ),
-											Board::PositionXY( 1, 3 ),
-											Board::PositionXY( 1, 4 ),
+        Board::PositionXY(1, 0), Board::PositionXY(1, 1), Board::PositionXY(1, 2),
+        Board::PositionXY(1, 3), Board::PositionXY(1, 4),
 
-										 	Board::PositionXY( 2, 0 ),
-											Board::PositionXY( 2, 1 ),
-											Board::PositionXY( 2, 2 ),
-											Board::PositionXY( 2, 3 ),
-											Board::PositionXY( 2, 4 ),
+        Board::PositionXY(2, 0), Board::PositionXY(2, 1), Board::PositionXY(2, 2),
+        Board::PositionXY(2, 3), Board::PositionXY(2, 4),
 
-										 	Board::PositionXY( 3, 0 ),
-											Board::PositionXY( 3, 1 ),
-											Board::PositionXY( 3, 2 ),
-											Board::PositionXY( 3, 3 ),
-											Board::PositionXY( 3, 4 ),
+        Board::PositionXY(3, 0), Board::PositionXY(3, 1), Board::PositionXY(3, 2),
+        Board::PositionXY(3, 3), Board::PositionXY(3, 4),
 
-										 	Board::PositionXY( 4, 0 ),
-										 	Board::PositionXY( 4, 1 ),
-										 	Board::PositionXY( 4, 2 ),
-										 	Board::PositionXY( 4, 3 ),
-											Board::PositionXY( 4, 4 ),
+        Board::PositionXY(4, 0), Board::PositionXY(4, 1), Board::PositionXY(4, 2),
+        Board::PositionXY(4, 3), Board::PositionXY(4, 4),
 
-    								   	  };
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[0], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[0] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[0] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[1], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[1] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[1] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[2], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[2] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[2] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[3], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[3] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[3] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[4], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[4] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[4] );
+    };
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[0], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[0]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[0]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[1], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[1]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[1]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[2], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[2]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[2]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[3], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[3]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[3]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[4], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[4]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[4]);
 
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[5], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[5] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[5] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[6], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[6] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[6] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[7], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[7] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[7] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[8], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[8] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[8] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[9], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[9] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[9] );
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[5], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[5]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[5]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[6], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[6]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[6]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[7], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[7]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[7]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[8], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[8]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[8]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[9], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[9]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[9]);
 
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[10], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[10] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[10] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[11], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[11] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[11] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[12], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[12] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[12] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[13], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[13] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[13] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[14], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[14] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[14] );
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[10], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[10]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[10]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[11], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[11]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[11]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[12], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[12]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[12]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[13], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[13]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[13]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[14], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[14]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[14]);
 
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[15], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[15] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[15] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[16], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[16] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[16] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[17], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[17] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[17] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[18], boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[18] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[18] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[19], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[19] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[19] );
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[15], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[15]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[15]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[16], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[16]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[16]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[17], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[17]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[17]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[18], boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[18]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[18]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[19], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[19]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[19]);
 
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[20], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[20] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[20] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[21], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[21] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[21] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[22], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[22] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[22] );
-    m_pGomokuBoardStalemate->PutMove( xyListCpu[23], boardScoreHuman.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[23] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[23] );
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[20], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[20]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[20]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[21], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[21]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[21]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[22], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[22]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[22]);
+    m_pGomokuBoardStalemate->PutMove(xyListCpu[23], boardScoreHuman.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[23]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[23]);
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(boardScoreComputer.GetPlayer());
 
     SearchTreeAlgorithmIf::PriorityQueueScore nBestMove(1);
 
-    m_pMinMax->SetDeep( 3 );
+    m_pMinMax->SetDeep(3);
     const Board::PositionXY result1 = m_pMinMax->FindBestMove(nBestMove);
 }
 
-
-TEST(MinMaxTest,AnomalyReproduction1)
+TEST(MinMaxTest, AnomalyReproduction1)
 {
-	// This scenario fix one of the anomaly
-	// - (algo returned out of board move.)
+    // This scenario fix one of the anomaly
+    // - (algo returned out of board move.)
 
-	// Get singletons.
+    // Get singletons.
     Score* pScore = Score::GetInstance();
 
-//                       1 1 1 1 1
-//   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
-//   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-//0 |. . . . . . . . . . . . . . .|
-//1 |. . . . . . . . . . . . . . .|
-//2 |. . . o x x x o x . . . . . .|
-//3 |. . . x o o o x o . . . . . .|
-//4 |. . o . x o o . o o . . . . .|
-//5 |. o x x x o x x x o . . . . .|
-//6 |. . . o x o o o x . . o . . .|
-//7 |. . . . o x o x x x o x . . .|
-//8 |. . . . . . x x o . o x . . .|
-//9 |. . . . . o x o x . x x . . .|
-//10|. . . . . o . . . . . o . . .|
-//11|. . . . . . . . . . . x . . .|
-//12|. . . . . . . . . . . . . . .|
-//13|. . . . . . . . . . . . . . .|
-//14|. . . . . . . . . . . . . . .|
-//  |_ _ _ _ _ _ _ _ _ _ _ _ _ _ _|
+    //                       1 1 1 1 1
+    //   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
+    //   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+    // 0 |. . . . . . . . . . . . . . .|
+    // 1 |. . . . . . . . . . . . . . .|
+    // 2 |. . . o x x x o x . . . . . .|
+    // 3 |. . . x o o o x o . . . . . .|
+    // 4 |. . o . x o o . o o . . . . .|
+    // 5 |. o x x x o x x x o . . . . .|
+    // 6 |. . . o x o o o x . . o . . .|
+    // 7 |. . . . o x o x x x o x . . .|
+    // 8 |. . . . . . x x o . o x . . .|
+    // 9 |. . . . . o x o x . x x . . .|
+    // 10|. . . . . o . . . . . o . . .|
+    // 11|. . . . . . . . . . . x . . .|
+    // 12|. . . . . . . . . . . . . . .|
+    // 13|. . . . . . . . . . . . . . .|
+    // 14|. . . . . . . . . . . . . . .|
+    //  |_ _ _ _ _ _ _ _ _ _ _ _ _ _ _|
 
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
+    vector<Board::PositionXY> xyListCpu{Board::PositionXY(7, 7),   Board::PositionXY(5, 7),  Board::PositionXY(6, 8),
+                                        Board::PositionXY(7, 9),   Board::PositionXY(9, 11), Board::PositionXY(8, 6),
+                                        Board::PositionXY(5, 6),   Board::PositionXY(6, 4),  Board::PositionXY(7, 5),
+                                        Board::PositionXY(5, 3),   Board::PositionXY(7, 8),  Board::PositionXY(5, 8),
+                                        Board::PositionXY(5, 4),   Board::PositionXY(9, 8),  Board::PositionXY(4, 4),
+                                        Board::PositionXY(2, 4),   Board::PositionXY(2, 6),  Board::PositionXY(7, 11),
+                                        Board::PositionXY(2, 5),   Board::PositionXY(8, 11), Board::PositionXY(2, 8),
+                                        Board::PositionXY(11, 11), Board::PositionXY(5, 2),  Board::PositionXY(9, 6),
+                                        Board::PositionXY(3, 3),   Board::PositionXY(8, 7),  Board::PositionXY(9, 10),
+                                        Board::PositionXY(3, 7)
 
-	vector< Board::PositionXY > xyListCpu{
-		Board::PositionXY(7, 7),
-		Board::PositionXY(5, 7),
-		Board::PositionXY(6, 8),
-		Board::PositionXY(7, 9),
-		Board::PositionXY(9, 11),
-		Board::PositionXY(8, 6),
-		Board::PositionXY(5, 6),
-		Board::PositionXY(6, 4),
-		Board::PositionXY(7, 5),
-		Board::PositionXY(5, 3),
-		Board::PositionXY(7, 8),
-		Board::PositionXY(5, 8),
-		Board::PositionXY(5, 4),
-		Board::PositionXY(9, 8),
-		Board::PositionXY(4, 4),
-		Board::PositionXY(2, 4),
-		Board::PositionXY(2, 6),
-		Board::PositionXY(7, 11),
-		Board::PositionXY(2, 5),
-		Board::PositionXY(8, 11),
-		Board::PositionXY(2, 8),
-		Board::PositionXY(11, 11),
-		Board::PositionXY(5, 2),
-		Board::PositionXY(9, 6),
-		Board::PositionXY(3, 3),
-		Board::PositionXY(8, 7),
-		Board::PositionXY(9, 10),
-		Board::PositionXY(3, 7)
+    };
 
-	};
+    vector<Board::PositionXY> xyHuman{
+        Board::PositionXY(6, 6),  Board::PositionXY(6, 7),   Board::PositionXY(6, 5), Board::PositionXY(4, 6),
+        Board::PositionXY(8, 10), Board::PositionXY(5, 9),   Board::PositionXY(6, 3), Board::PositionXY(9, 5),
+        Board::PositionXY(9, 7),  Board::PositionXY(4, 2),   Board::PositionXY(7, 6), Board::PositionXY(4, 8),
+        Board::PositionXY(5, 5),  Board::PositionXY(8, 8),   Board::PositionXY(7, 4), Board::PositionXY(3, 4),
+        Board::PositionXY(3, 5),  Board::PositionXY(7, 10),  Board::PositionXY(2, 3), Board::PositionXY(6, 11),
+        Board::PositionXY(2, 7),  Board::PositionXY(10, 11), Board::PositionXY(5, 1), Board::PositionXY(3, 6),
+        Board::PositionXY(4, 5),  Board::PositionXY(10, 5),  Board::PositionXY(3, 8)};
 
-	vector< Board::PositionXY > xyHuman{
-		Board::PositionXY(6, 6),
-		Board::PositionXY(6, 7),
-		Board::PositionXY(6, 5),
-		Board::PositionXY(4, 6),
-		Board::PositionXY(8, 10),
-		Board::PositionXY(5, 9),
-		Board::PositionXY(6, 3),
-		Board::PositionXY(9, 5),
-		Board::PositionXY(9, 7),
-		Board::PositionXY(4, 2),
-		Board::PositionXY(7, 6),
-		Board::PositionXY(4, 8),
-		Board::PositionXY(5, 5),
-		Board::PositionXY(8, 8),
-		Board::PositionXY(7, 4),
-		Board::PositionXY(3, 4),
-		Board::PositionXY(3, 5),
-		Board::PositionXY(7, 10),
-		Board::PositionXY(2, 3),
-		Board::PositionXY(6, 11),
-		Board::PositionXY(2, 7),
-		Board::PositionXY(10, 11),
-		Board::PositionXY(5, 1),
-		Board::PositionXY(3, 6),
-		Board::PositionXY(4, 5),
-		Board::PositionXY(10, 5),
-		Board::PositionXY(3, 8)
-	};
+    for(uint32_t i = 0; i < xyHuman.size(); ++i)
+    {
+        m_pGomokuBoard->PutMove(xyListCpu[i], Board::PLAYER_A);
+        pScore->UpdateScore(boardScoreComputer, xyListCpu[i]);
+        pScore->UpdateScore(boardScoreHuman, xyListCpu[i]);
 
-	for ( uint32_t i = 0; i<xyHuman.size(); ++i )
-	{
-		m_pGomokuBoard->PutMove(xyListCpu[i], Board::PLAYER_A);
-		pScore->UpdateScore( boardScoreComputer, xyListCpu[i] );
-		pScore->UpdateScore( boardScoreHuman, xyListCpu[i] );
+        m_pGomokuBoard->PutMove(xyHuman[i], Board::PLAYER_B);
+        pScore->UpdateScore(boardScoreComputer, xyHuman[i]);
+        pScore->UpdateScore(boardScoreHuman, xyHuman[i]);
+    }
 
-		m_pGomokuBoard->PutMove(xyHuman[i], Board::PLAYER_B);
-		pScore->UpdateScore( boardScoreComputer, xyHuman[i] );
-		pScore->UpdateScore( boardScoreHuman, xyHuman[i] );
-	}
+    m_pGomokuBoard->PutMove(xyListCpu[27], Board::PLAYER_A);
+    pScore->UpdateScore(boardScoreComputer, xyListCpu[27]);
+    pScore->UpdateScore(boardScoreHuman, xyListCpu[27]);
 
-	m_pGomokuBoard->PutMove(xyListCpu[27], Board::PLAYER_A);
-	pScore->UpdateScore( boardScoreComputer, xyListCpu[27] );
-	pScore->UpdateScore( boardScoreHuman, xyListCpu[27] );
+    const Board::PositionXY issue = Board::PositionXY(4, 9);
 
-	const  Board::PositionXY issue  = Board::PositionXY(4, 9);
+    m_pGomokuBoard->PutMove(issue, Board::PLAYER_B);
+    pScore->UpdateScore(boardScoreComputer, issue);
+    pScore->UpdateScore(boardScoreHuman, issue);
 
-	m_pGomokuBoard->PutMove(issue, Board::PLAYER_B);
-	pScore->UpdateScore( boardScoreComputer, issue );
-	pScore->UpdateScore( boardScoreHuman, issue );
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(boardScoreComputer.GetPlayer());
 
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
+    const uint32_t nBest = 12;
+    SearchTreeAlgorithmIf::PriorityQueueScore nBestMoves(nBest);
+    vector<Board::PositionXY> candidates = {};
 
-	const uint32_t nBest = 12;
-	SearchTreeAlgorithmIf::PriorityQueueScore nBestMoves( nBest );
-	vector<Board::PositionXY> candidates = {};
+    m_pMinMax->SetDeep(2);
 
-    m_pMinMax->SetDeep( 2 );
+    m_pMinMax->FindBestMove(nBestMoves);
+    const uint32_t nBestMovesSize = nBestMoves.GetSize();
+    for(uint32_t i = 0; i < nBest; ++i)
+    {
+        const Board::PositionXY el = nBestMoves.PopData().m_move;
+        candidates.push_back(el);
+    }
 
-    m_pMinMax->FindBestMove( nBestMoves );
-	const uint32_t nBestMovesSize = nBestMoves.GetSize();
-	for( uint32_t i = 0; i < nBest; ++i )
-	{
-		const Board::PositionXY el = nBestMoves.PopData().m_move;
-		candidates.push_back( el );
-	}
+    nBestMoves.ClearAll();
 
-	nBestMoves.ClearAll();
-
-    m_pMinMax->SetDeep( 4 );
-    const Board::PositionXY result = m_pMinMax->FindBestMove( nBestMoves, candidates );
-    CHECK( XY_OUT_OF_BOARD != result );
+    m_pMinMax->SetDeep(4);
+    const Board::PositionXY result = m_pMinMax->FindBestMove(nBestMoves, candidates);
+    CHECK(XY_OUT_OF_BOARD != result);
 }
 
-TEST(MinMaxTest,AnomalyReproduction5)
+TEST(MinMaxTest, AnomalyReproduction5)
 {
-	// This scenario fix anomaly: GameRecord9_L4
+    // This scenario fix anomaly: GameRecord9_L4
 
-	// Resolution: Checked and is resolved BTW other anomaly fix.
+    // Resolution: Checked and is resolved BTW other anomaly fix.
 
-	//	.                      1 1 1 1 1
-	//	   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
-	//	   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-	//	0 |. . . . . . . . . . . . . . .|
-	//	1 |. . . . . . . . . . . . . . .|
-	//	2 |. . . . . . . . . . . . . . .|
-	//	3 |. . . . . . . . . . . . . . .|
-	//	4 |. . . . . . . . x . . . . . .|
-	//	5 |. . . . . . . x o . . . . . .|
-	//	6 |. . . . x . o o o x . . . . .|
-	//	7 |. . . . . . x x o o o x . . .|
-	//	8 |. . . . . . . o x o x . . . .|
-	//	9 |. . . . . . x o x x x o . . .|
-	//	10|. . . . . . . . o . o . . . .|
-	//	11|. . . . . . . . . . . . . . .|
-	//	12|. . . . . . . . . . . . . . .|
-	//	13|. . . . . . . . . . . . . . .|
-	//	14|. . . . . . . . . . . . . . .|
-	//	  |_ _ _ _ _ _ _ _ _ _ _ _ _ _ _|
+    //	.                      1 1 1 1 1
+    //	   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4
+    //	   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+    //	0 |. . . . . . . . . . . . . . .|
+    //	1 |. . . . . . . . . . . . . . .|
+    //	2 |. . . . . . . . . . . . . . .|
+    //	3 |. . . . . . . . . . . . . . .|
+    //	4 |. . . . . . . . x . . . . . .|
+    //	5 |. . . . . . . x o . . . . . .|
+    //	6 |. . . . x . o o o x . . . . .|
+    //	7 |. . . . . . x x o o o x . . .|
+    //	8 |. . . . . . . o x o x . . . .|
+    //	9 |. . . . . . x o x x x o . . .|
+    //	10|. . . . . . . . o . o . . . .|
+    //	11|. . . . . . . . . . . . . . .|
+    //	12|. . . . . . . . . . . . . . .|
+    //	13|. . . . . . . . . . . . . . .|
+    //	14|. . . . . . . . . . . . . . .|
+    //	  |_ _ _ _ _ _ _ _ _ _ _ _ _ _ _|
 
-	// Get singletons.
+    // Get singletons.
     Score* pScore = Score::GetInstance();
 
-	// Prepare BoardScore.
-	BoardScore boardScoreComputer( Board::PLAYER_A );
-	BoardScore boardScoreHuman( Board::PLAYER_B );
-	boardScoreComputer.SetBoard( *m_pGomokuBoard );
-	boardScoreHuman.SetBoard( *m_pGomokuBoard );
+    // Prepare BoardScore.
+    BoardScore boardScoreComputer(Board::PLAYER_A);
+    BoardScore boardScoreHuman(Board::PLAYER_B);
+    boardScoreComputer.SetBoard(*m_pGomokuBoard);
+    boardScoreHuman.SetBoard(*m_pGomokuBoard);
 
-	vector< Board::PositionXY > xyListCpu{
-		Board::PositionXY(7,7),
-		Board::PositionXY(8,8),
-		Board::PositionXY(6,9),
-		Board::PositionXY(5,7),
-		Board::PositionXY(6,4),
-		Board::PositionXY(7,6),
-		Board::PositionXY(4,8),
-		Board::PositionXY(9,10),
-		Board::PositionXY(9,8),
-		Board::PositionXY(9,9),
-		Board::PositionXY(9,6),
-		Board::PositionXY(8,10),
-		Board::PositionXY(7,11)
-		//Board::PositionXY(3,7)
-	};
+    vector<Board::PositionXY> xyListCpu{
+        Board::PositionXY(7, 7), Board::PositionXY(8, 8), Board::PositionXY(6, 9), Board::PositionXY(5, 7),
+        Board::PositionXY(6, 4), Board::PositionXY(7, 6), Board::PositionXY(4, 8), Board::PositionXY(9, 10),
+        Board::PositionXY(9, 8), Board::PositionXY(9, 9), Board::PositionXY(9, 6), Board::PositionXY(8, 10),
+        Board::PositionXY(7, 11)
+        // Board::PositionXY(3,7)
+    };
 
-	vector< Board::PositionXY > xyHuman{
-		Board::PositionXY(6,8),
-		Board::PositionXY(6,6),
-		Board::PositionXY(7,9),
-		Board::PositionXY(6,7),
-		Board::PositionXY(5,8),
-		Board::PositionXY(7,8),
-		Board::PositionXY(8,9),
-		Board::PositionXY(7,10),
-		Board::PositionXY(8,7),
-		Board::PositionXY(9,11),
-		Board::PositionXY(9,7),
-		Board::PositionXY(10,10),
-		Board::PositionXY(10,8)
-	};
+    vector<Board::PositionXY> xyHuman{Board::PositionXY(6, 8),  Board::PositionXY(6, 6),  Board::PositionXY(7, 9),
+                                      Board::PositionXY(6, 7),  Board::PositionXY(5, 8),  Board::PositionXY(7, 8),
+                                      Board::PositionXY(8, 9),  Board::PositionXY(7, 10), Board::PositionXY(8, 7),
+                                      Board::PositionXY(9, 11), Board::PositionXY(9, 7),  Board::PositionXY(10, 10),
+                                      Board::PositionXY(10, 8)};
 
-	// 1. Put moves into board to create anomaly situation.
-	uint32_t i;
-	for ( i = 0; i < xyHuman.size(); ++i )
-	{
-		m_pGomokuBoard->PutMove( xyListCpu[i], boardScoreComputer.GetPlayer() );
-		pScore->UpdateScore( boardScoreComputer, xyListCpu[i] );
-		pScore->UpdateScore( boardScoreHuman, xyListCpu[i] );
+    // 1. Put moves into board to create anomaly situation.
+    uint32_t i;
+    for(i = 0; i < xyHuman.size(); ++i)
+    {
+        m_pGomokuBoard->PutMove(xyListCpu[i], boardScoreComputer.GetPlayer());
+        pScore->UpdateScore(boardScoreComputer, xyListCpu[i]);
+        pScore->UpdateScore(boardScoreHuman, xyListCpu[i]);
 
-		m_pGomokuBoard->PutMove( xyHuman[i], boardScoreHuman.GetPlayer() );
-		pScore->UpdateScore( boardScoreComputer, xyHuman[i] );
-		pScore->UpdateScore( boardScoreHuman, xyHuman[i] );
-	}
+        m_pGomokuBoard->PutMove(xyHuman[i], boardScoreHuman.GetPlayer());
+        pScore->UpdateScore(boardScoreComputer, xyHuman[i]);
+        pScore->UpdateScore(boardScoreHuman, xyHuman[i]);
+    }
 
-	// 2. Find best nBest (12) best moves on deep 2.
-	m_pMinMax->SetBoardScore( boardScoreComputer, boardScoreHuman );
-	m_pMinMax->SetInitialPlayer( boardScoreComputer.GetPlayer() );
+    // 2. Find best nBest (12) best moves on deep 2.
+    m_pMinMax->SetBoardScore(boardScoreComputer, boardScoreHuman);
+    m_pMinMax->SetInitialPlayer(boardScoreComputer.GetPlayer());
 
-	const uint32_t nBest = 12;
-	SearchTreeAlgorithmIf::PriorityQueueScore nBestMoves( nBest );
-	vector<Board::PositionXY> candidates = {};
+    const uint32_t nBest = 12;
+    SearchTreeAlgorithmIf::PriorityQueueScore nBestMoves(nBest);
+    vector<Board::PositionXY> candidates = {};
 
-    m_pMinMax->SetDeep( 2 );
+    m_pMinMax->SetDeep(2);
 
-    m_pMinMax->FindBestMove( nBestMoves );
-	const uint32_t nBestMovesSize = nBestMoves.GetSize();
-	for( uint32_t i = 0; i < nBest; ++i )
-	{
-		const Board::PositionXY el = nBestMoves.PopData().m_move;
-		candidates.push_back( el );
-	}
+    m_pMinMax->FindBestMove(nBestMoves);
+    const uint32_t nBestMovesSize = nBestMoves.GetSize();
+    for(uint32_t i = 0; i < nBest; ++i)
+    {
+        const Board::PositionXY el = nBestMoves.PopData().m_move;
+        candidates.push_back(el);
+    }
 
-	nBestMoves.ClearAll();
+    nBestMoves.ClearAll();
 
-    SearchTreeAlgorithmIf::PriorityQueueScore nBestMove( 1 );
+    SearchTreeAlgorithmIf::PriorityQueueScore nBestMove(1);
 
-	m_pMinMax->SetDeep( 4 );
-    const Board::PositionXY result4 = m_pMinMax->FindBestMove( nBestMove, candidates );
+    m_pMinMax->SetDeep(4);
+    const Board::PositionXY result4 = m_pMinMax->FindBestMove(nBestMove, candidates);
     nBestMove.ClearAll();
 
-	// Best strategy is:
+    // Best strategy is:
 
-	// a. Blocking human threats.
-	const Board::PositionXY bestMove1 = Board::PositionXY( 8,6 );
-	const Board::PositionXY bestMove2 = Board::PositionXY( 8,12 );
-	const Board::PositionXY bestMove3 = Board::PositionXY( 11,9 );
+    // a. Blocking human threats.
+    const Board::PositionXY bestMove1 = Board::PositionXY(8, 6);
+    const Board::PositionXY bestMove2 = Board::PositionXY(8, 12);
+    const Board::PositionXY bestMove3 = Board::PositionXY(11, 9);
 
-	const bool defend = bestMove1 == result4 || bestMove2 == result4 || bestMove3 == result4;
+    const bool defend = bestMove1 == result4 || bestMove2 == result4 || bestMove3 == result4;
 
-	// b. Increasing itself attack:
-	m_pGomokuBoard->PutMove( result4, boardScoreComputer.GetPlayer() );
-	pScore->UpdateScore( boardScoreComputer, result4 );
-	pScore->UpdateScore( boardScoreHuman, result4 );
-	const bool attack = ( 0 < boardScoreComputer.GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_A ) ) ||
-			 	 	    ( 0 < boardScoreComputer.GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_C ) ) ||
-						( 0 < boardScoreComputer.GetNumberOfRecognizedThreat( ThreatFinder::THREAT_4_CASE_B ) ) ||
-						( 0 < boardScoreComputer.GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_A ) ) ||
-						( 0 < boardScoreComputer.GetNumberOfRecognizedThreat( ThreatFinder::THREAT_3_CASE_C ) );
+    // b. Increasing itself attack:
+    m_pGomokuBoard->PutMove(result4, boardScoreComputer.GetPlayer());
+    pScore->UpdateScore(boardScoreComputer, result4);
+    pScore->UpdateScore(boardScoreHuman, result4);
+    const bool attack = (0 < boardScoreComputer.GetNumberOfRecognizedThreat(ThreatFinder::THREAT_4_CASE_A)) ||
+                        (0 < boardScoreComputer.GetNumberOfRecognizedThreat(ThreatFinder::THREAT_4_CASE_C)) ||
+                        (0 < boardScoreComputer.GetNumberOfRecognizedThreat(ThreatFinder::THREAT_4_CASE_B)) ||
+                        (0 < boardScoreComputer.GetNumberOfRecognizedThreat(ThreatFinder::THREAT_3_CASE_A)) ||
+                        (0 < boardScoreComputer.GetNumberOfRecognizedThreat(ThreatFinder::THREAT_3_CASE_C));
 
-
-    CHECK( defend || attack );
-
+    CHECK(defend || attack);
 }
 
-//TEST(MinMaxTest,PerformanceTest1)
+// TEST(MinMaxTest,PerformanceTest1)
 //{
 //	//TIME TOO EXPENSIVE
 //
@@ -2490,18 +2292,17 @@ TEST(MinMaxTest,AnomalyReproduction5)
 ////    FindBestMove: depth == 3 took 158.018000 seconds to execute
 //}
 
-
-bool Checker( const Board::PositionField positionField, const std::vector<Board::PositionField>& container )
+bool Checker(const Board::PositionField positionField, const std::vector<Board::PositionField>& container)
 {
-	bool isOK = false;
+    bool isOK = false;
 
-	for( uint32_t i = 0; i < container.size(); ++i )
-	{
-		if(container[i]==positionField)
-		{
-			isOK = true;
-		}
-	}
+    for(uint32_t i = 0; i < container.size(); ++i)
+    {
+        if(container[i] == positionField)
+        {
+            isOK = true;
+        }
+    }
 
-	return isOK;
+    return isOK;
 }

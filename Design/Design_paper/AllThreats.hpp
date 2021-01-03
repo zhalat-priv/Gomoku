@@ -1,6 +1,6 @@
 4194303 THREAT_WINNER XXXXX
 
-    100000 THREAT_4_CASE_A.XXXX.30000 THREAT_4_CASE_C OXXX.XO /
+    100000 THREAT_4_CASE_A.XXXX .30000 THREAT_4_CASE_C OXXX.XO /
     OXX.XXO / OX.XXXO /
     O.XXXXO  // powinno byc .XXX.X / .XX.XX /.X.XXX / XXX.X. / XX.XX. / X.XXX.
     20000 THREAT_4_CASE_B OX.XXX /
@@ -14,7 +14,7 @@
         .X
 
         200 THREAT_2_CASE_A.XX... /
-        .X.X../.X..X./..XX../..X.X./ ... XX.150 THREAT_2_CASE_C.XX../.X.X./..XX.50 THREAT_2_CASE_B OXX... / OX.X../
+        .X.X../.X..X./..XX../..X.X./ ... XX .150 THREAT_2_CASE_C.XX../.X.X./..XX .50 THREAT_2_CASE_B OXX... / OX.X../
     OX..X./ ... XXO /..X.XO /
         .X..XO
 

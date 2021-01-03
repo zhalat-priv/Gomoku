@@ -1,6 +1,6 @@
 /// Stubbed version of GomokuGameUI class.
 
-#if !defined ( GOMOKU_GAMEUI )
+#if !defined(GOMOKU_GAMEUI)
 #define GOMOKU_GAMEUI
 
 // SYSTEM INCLUDES
@@ -11,18 +11,15 @@
 
 // C++ PROJECT INCLUDES
 
-
 // FORWARD REFERENCES
 // <none>
 
 class GomokuGame
 {
-public:
-
+   public:
     static constexpr uint32_t MAX_BOARD_SIZE = 3;
 
-private:
-
+   private:
 };
 
 #endif /* GOMOKU_GAMEUI */

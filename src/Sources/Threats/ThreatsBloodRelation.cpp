@@ -1,7 +1,7 @@
-#include <assert.h>   					// For assert.
-#include <algorithm>  					// For find algorithm.
-#include "ThreatFinder.hpp"         	// For enum KindOfThreats.
-#include "ThreatsBloodRelation.hpp"  	// For ThreatsBloodRelation declaration.
+#include <assert.h>                  // For assert.
+#include <algorithm>                 // For find algorithm.
+#include "ThreatFinder.hpp"          // For enum KindOfThreats.
+#include "ThreatsBloodRelation.hpp"  // For ThreatsBloodRelation declaration.
 
 bool ThreatsBloodRelation::IsOnFourList(const ThreatFinder::KindOfThreats kindOfThreat)
 {

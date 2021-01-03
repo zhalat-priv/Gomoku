@@ -1,8 +1,8 @@
 #pragma once
 
-#include <assert.h>  // For assert.
-#include <string.h>  // For memset.
-#include <vector>    // For vector.
+#include <assert.h>        // For assert.
+#include <string.h>        // For memset.
+#include <vector>          // For vector.
 #include "GomokuGame.hpp"  // For GomokuGameUI::MAX_BOARD_SIZE.
 #include "IteratorIf.hpp"  // For iterator interface.
 #include "Board.hpp"       // Board::PositionField.
@@ -130,7 +130,6 @@ class VectorLight
 #warning "Such dependency should be removed."
     friend class TEST_VectorLightTest_InitTest_Test;
 };
-
 
 /***************************************************************************
  *   Copyright (C) 2018 by Zbigniew Halat                                  *

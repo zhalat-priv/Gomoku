@@ -647,7 +647,7 @@ class Board
             // None.
         };
 
-   //protected:
+    // protected:
     // Board size.
     uint32_t m_Size;
 

@@ -1,8 +1,8 @@
-#include <vector>     // For vector container.
-#include <set>        // For set container.
-#include <ctime>      // For time to set seed for random.
-#include <limits>     // For numeric_limits.
-#include <algorithm>  // std::sort, uses in debbug mode.
+#include <vector>                    // For vector container.
+#include <set>                       // For set container.
+#include <ctime>                     // For time to set seed for random.
+#include <limits>                    // For numeric_limits.
+#include <algorithm>                 // std::sort, uses in debbug mode.
 #include "MinMax.hpp"                // For MinMax declaration.
 #include "IteratorIf.hpp"            // For iterator interface.
 #include "Score.hpp"                 // For Score instance.
@@ -18,8 +18,8 @@ static void VctrXy2VctrPosition(const vector<Board::PositionXY>& rVctrXy, vector
 
 MinMax* MinMax::GetInstance()
 {
-	static MinMax minMax{SearchTreeAlgorithmIf::DEFAULT_DEPTH, "MinMax"};
-	return &minMax;
+    static MinMax minMax{SearchTreeAlgorithmIf::DEFAULT_DEPTH, "MinMax"};
+    return &minMax;
 }
 
 Board::PositionXY MinMax::FindBestMove(PriorityQueueScore& rBestMove, const vector<Board::PositionXY>& rInitCandidates)

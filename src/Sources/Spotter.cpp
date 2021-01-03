@@ -38,9 +38,7 @@ Spotter::Spotter(BoardScore& rBoardScore) : m_rBoardScore(rBoardScore), m_Region
 }
 
 Spotter::~Spotter()
-{
-
-}
+{}
 
 void Spotter::AddToExecute(const RegionToInvestigate regionToInvestigate)
 {
@@ -68,15 +66,15 @@ void Spotter::Execute(const Board::PositionXY xy, const bool isOpponentMove, con
         if(isOpponentMove)
         {
             // Opponent's move can mitigate my threats.
-        	pThreatChanging = &ThreatsBloodRelation::DISMISSAL[threatBloodAssociationIndex][0];
+            pThreatChanging = &ThreatsBloodRelation::DISMISSAL[threatBloodAssociationIndex][0];
         }
         else
         {
             // My move can boost my threats.
-        	pThreatChanging = &ThreatsBloodRelation::PROMOTION[threatBloodAssociationIndex][0];
+            pThreatChanging = &ThreatsBloodRelation::PROMOTION[threatBloodAssociationIndex][0];
         }
 
-        for(; *pThreatChanging!=ThreatFinder::THREAT_NONE; pThreatChanging++)
+        for(; *pThreatChanging != ThreatFinder::THREAT_NONE; pThreatChanging++)
         {
             const uint32_t threatIndex = static_cast<uint32_t>(*pThreatChanging);
             const bool isFound         = Score::m_ThreatScore[threatIndex].m_pThreat->FindThreatPattern(

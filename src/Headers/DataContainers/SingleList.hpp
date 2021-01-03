@@ -67,7 +67,7 @@ SingleList<parList>::~SingleList()
     }
 
     delete m_pIterator;
-    m_pIterator= NULL;
+    m_pIterator = NULL;
 }
 
 template<class parList>
@@ -252,13 +252,10 @@ IteratorIf<parList>* SingleList<parList>::GetIterator() const
     }
     else
     {
-
-    	assert(false);
+        assert(false);
     }
 
-
     return retVal;
-
 }
 
 #endif  // SINGLE_LIST

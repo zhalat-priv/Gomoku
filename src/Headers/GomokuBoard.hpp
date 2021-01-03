@@ -48,7 +48,6 @@ class TEST_GomokuBoardTest_RemoveNLastMoveTest;
 class TEST_GomokuBoardTest_OppositePlayerTest;
 class TEST_GomokuBoardTest_GetFirstMoveTest;
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////
 /// CLASS NAME: GomokuBoard.
 ///

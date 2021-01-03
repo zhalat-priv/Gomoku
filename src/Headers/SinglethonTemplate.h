@@ -3,10 +3,10 @@
 
 // Singleton pattern via CRTP (curiously recurring template pattern)
 // thread safe in C++11 and later
-template <typename T>
+template<typename T>
 class Singleton
 {
-public:
+   public:
     static T& getInstance() noexcept(std::is_nothrow_constructible<T>::value)
     {
         static T instance;
@@ -20,8 +20,8 @@ public:
         return instance;
     }
 
-protected:
+   protected:
     Singleton(const Singleton&) = delete;
     Singleton& operator=(const Singleton&) = delete;
-    Singleton() noexcept = default;
+    Singleton() noexcept                   = default;
 };
