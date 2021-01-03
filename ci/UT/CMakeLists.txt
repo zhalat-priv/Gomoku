@@ -26,7 +26,7 @@ add_executable( ci
     "StateEvaluationTest/StateEvaluationTest.cpp"
     "MinMaxTest/MinMaxTest.cpp"
     "AlphaBetaTest/AlphaBetaTest.cpp"
-	
+    
     # Unit under test
     "../../src/Sources/GomokuBoard.cpp"
     "../../src/Sources/BoardScore.cpp"
@@ -71,13 +71,13 @@ target_include_directories(ci PUBLIC
 add_library( cppUnitLib STATIC IMPORTED )
 set_target_properties( cppUnitLib PROPERTIES IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/../framework_cppunit-3.7_linux/src/CppUTest/libMyCppUnitStaticLibrary.a" )
 target_link_libraries( ci PRIVATE
-					   cppUnitLib
+                       cppUnitLib
 )
  
 target_link_options(ci PRIVATE
-					-Wl,-Map,output.map
-					-Wl,--print-memory-usage
-					-Wl,--gc-sections
-					-lc
+                    -Wl,-Map,output.map
+                    -Wl,--print-memory-usage
+                    -Wl,--gc-sections
+                    -lc
 )
  

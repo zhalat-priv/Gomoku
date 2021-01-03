@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(Gomoku 
-		VERSION 1.0
-		DESCRIPTION "Gomoku algorithm implementation from scratch"
-		LANGUAGES CXX)
+        VERSION 1.0
+        DESCRIPTION "Gomoku algorithm implementation from scratch"
+        LANGUAGES CXX)
 
 if(NOT CMAKE_BUILD_TYPE)
     message(FATAL_ERROR "Missing CMAKE_BUILD_TYPE, set to Debug or Release")
