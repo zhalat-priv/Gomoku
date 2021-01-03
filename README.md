@@ -127,7 +127,7 @@ I recomend to use eclipse IDE, but you can compile and run directly form console
 	docker run --rm -v <path_to_project>/Gomoku:/gomoku -it gomoku_doxy	
 	~~~
 	That command runs container in interactive mode.
-	Navigate to project and run doxygen command to generate documentation
+	Navigate to project and run *doxygen* command to generate documentation
 	~~~cmake
 	cd gomoku
 	doxygen
