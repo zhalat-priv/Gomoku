@@ -36,6 +36,11 @@ class ClangFormat:
                 ignore = f.readlines()
                 ignore = [x.strip() for x in ignore]
                 ignore = ["*{0}".format(x) for x in ignore if x != ""]
+                
+                print("ignored file--------------------------------------------")
+                print(ignore)
+                print("ignored file--------------------------------------------")
+                
                 self.exclude_files.extend(ignore)
 
         self.cmd = [self.config["clang_cmd"], "-i", "-verbose", "-style=file"]
