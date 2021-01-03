@@ -19,8 +19,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 add_subdirectory(src)
 add_subdirectory(ci/UT)
 
-message(STATUS ${CMAKE_SOURCE_DIR}/scripts/clang-format.py)
-
+#Clang format
 find_package(Python3)
 if(Python3_Interpreter_FOUND)
     add_custom_target(format_sources ALL
