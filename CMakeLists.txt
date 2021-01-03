@@ -18,3 +18,12 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 add_subdirectory(src)
 add_subdirectory(ci/UT)
+
+find_package(Python3)
+if(Python3_Interpreter_FOUND)s
+    add_custom_target(format_sources ALL
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/scripts/clang-format.py --path=${CMAKE_SOURCE_DIR} --clang_ignore ${CMAKE_SOURCE_DIR}/.clangignore
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Format source code using clang-format tool"
+    )
+endif()
