@@ -17,7 +17,15 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -fstack-usage")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 add_subdirectory(src)
-add_subdirectory(ci/UT)
+
+#Google tests
+enable_testing()
+find_package(GTest REQUIRED)
+include_directories(${GTEST_INCLUDE_DIRS})
+if(GTEST_FOUND)
+	enable_testing()
+	add_subdirectory(ci/UT)
+endif()
 
 #Clang format
 find_package(Python3)
