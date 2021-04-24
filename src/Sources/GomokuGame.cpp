@@ -153,7 +153,8 @@ void GomokuGame::Play()
     {
         switch(playStateMachine)
         {
-        case START: {
+        case START:
+        {
             assert(m_pSearchAlgorithm);
             assert(m_Level != LEVEL_NONE);
             assert(NULL != pInputStream);
@@ -175,7 +176,8 @@ void GomokuGame::Play()
         }
         break;
 
-        case CPU_WHITE_FIRST_MOVE: {
+        case CPU_WHITE_FIRST_MOVE:
+        {
             // Put the first move on center of the board.
             const Board::PositionXY firstMove(m_pBoard->GetSize() / 2, m_pBoard->GetSize() / 2);
             cpuMove = firstMove;
@@ -190,7 +192,8 @@ void GomokuGame::Play()
         }
         break;
 
-        case CPU_WHITE_OPEN_BOOK_MOVE: {
+        case CPU_WHITE_OPEN_BOOK_MOVE:
+        {
             assert(Board::PLAYER_A == m_ComputerColor);
 
             cpuMove = OpenBook::GetBestThirdWhiteMove(*m_pBoard);
@@ -226,7 +229,8 @@ void GomokuGame::Play()
         }
         break;
 
-        case CPU_BLACK_OPEN_BOOK_MOVE: {
+        case CPU_BLACK_OPEN_BOOK_MOVE:
+        {
             assert(Board::PLAYER_B == m_ComputerColor);
 
             cpuMove = OpenBook::GetBestSecondBlackMove(*m_pBoard);
@@ -243,7 +247,8 @@ void GomokuGame::Play()
         }
         break;
 
-        case CPU_AI_MOVE: {
+        case CPU_AI_MOVE:
+        {
             cpuMove = GetBestMove();
 
             m_pBoard->PutMove(cpuMove, m_ComputerColor);
@@ -258,14 +263,16 @@ void GomokuGame::Play()
         }
         break;
 
-        case HUMAN_MOVE: {
+        case HUMAN_MOVE:
+        {
             humanMove              = GetUserMove();
             playStateMachineShadow = PLAY_STATE_MACHINE_NONE;
             playStateMachine       = HUMAN_VALIDATION_MOVE;
         }
         break;
 
-        case HUMAN_VALIDATION_MOVE: {
+        case HUMAN_VALIDATION_MOVE:
+        {
             if(ValidateMove(humanMove))
             {
                 m_pBoard->PutMove(humanMove, m_HumanColor);
@@ -290,7 +297,8 @@ void GomokuGame::Play()
         }
         break;
 
-        case CHECK_WINNER: {
+        case CHECK_WINNER:
+        {
             bool isCpuWhiteOpening = (isComputerMove && (2 == m_pBoard->GetMoveNumber()));
             bool isCpuBlackOpening = (isComputerMove && (1 == m_pBoard->GetMoveNumber()));
             bool isCpuFirstMove    = (isComputerMove && (0 == m_pBoard->GetMoveNumber()));
@@ -360,7 +368,8 @@ void GomokuGame::Play()
         }
         break;
 
-        case DISPLAY: {
+        case DISPLAY:
+        {
             *pOutputStream << *m_pBoard;
 
             Board::PositionXY lastMove = XY_OUT_OF_BOARD;
@@ -388,7 +397,8 @@ void GomokuGame::Play()
         }
         break;
 
-        case GAME_OVER: {
+        case GAME_OVER:
+        {
             isEnd = EndGame();
             if(isEnd)
             {
@@ -558,21 +568,24 @@ void GomokuGame::SetSearchAlgorithm(const Level level)
 {
     switch(level)
     {
-    case BEGINNER: {
+    case BEGINNER:
+    {
         const uint32_t beginnerDepth = 2U;
         m_pSearchAlgorithm           = MinMax::GetInstance();
         m_pSearchAlgorithm->SetDeep(beginnerDepth);
     }
     break;
 
-    case INTERMEDIATE: {
+    case INTERMEDIATE:
+    {
         const uint32_t intermediateDepth = 4U;
         m_pSearchAlgorithm               = MinMax::GetInstance();
         m_pSearchAlgorithm->SetDeep(intermediateDepth);
     }
     break;
 
-    case ADVANCED: {
+    case ADVANCED:
+    {
         const uint32_t advancedDepth = 4U;
         m_pSearchAlgorithm           = AlphaBeta::GetInstance();
         m_pSearchAlgorithm->SetDeep(advancedDepth);

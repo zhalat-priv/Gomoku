@@ -59,7 +59,8 @@ class OpenBook
         CrawlingChain* m_pCrawlingChain;
 
         Openings(const Board::Direction direction, CrawlingChain* const pCrawlingChain) :
-            m_MainDirection(direction), m_pCrawlingChain(pCrawlingChain)
+            m_MainDirection(direction),
+            m_pCrawlingChain(pCrawlingChain)
         {}
     };
 

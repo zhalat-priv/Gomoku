@@ -96,7 +96,10 @@ class AlphaBeta : public SearchTreeAlgorithmIf
    private:
     /// Constructor.
     AlphaBeta(const uint32_t deep, const char* const pName) :
-        SearchTreeAlgorithmIf(deep, pName), m_pBoardScoreCpuCopy(NULL), m_pBoardScoreHumanCopy(NULL), m_pBoardCopy(NULL)
+        SearchTreeAlgorithmIf(deep, pName),
+        m_pBoardScoreCpuCopy(NULL),
+        m_pBoardScoreHumanCopy(NULL),
+        m_pBoardCopy(NULL)
     {
         memset(m_SnapshotContainerCpu, 0, sizeof(m_SnapshotContainerCpu));
         memset(m_SnapshotContainerHuman, 0, sizeof(m_SnapshotContainerHuman));

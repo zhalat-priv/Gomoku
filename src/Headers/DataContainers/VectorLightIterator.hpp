@@ -14,7 +14,10 @@ class VectorLightIterator : public IteratorIf<uint32_t>
 
     VectorLightIterator(const uint32_t (&rDataArray)[VectorLight::VECTOR_SIZE], const uint32_t& rCursor,
                         const uint32_t emptyVal) :
-        m_rDataArray(rDataArray), m_rCursor(rCursor), m_Cntr(0), m_ReleasedSpace(emptyVal)
+        m_rDataArray(rDataArray),
+        m_rCursor(rCursor),
+        m_Cntr(0),
+        m_ReleasedSpace(emptyVal)
     {
         // Nothing to do.
     }

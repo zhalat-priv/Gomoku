@@ -20,7 +20,10 @@ class SingleListIterator : public IteratorIf<parList>
 
     // Constructor.
     SingleListIterator(Node<parList>** ppHead, Node<parList>** ppTail) :
-        m_ppHead(ppHead), m_ppTail(ppTail), m_ppCursor(ppHead), m_Cntr(0)
+        m_ppHead(ppHead),
+        m_ppTail(ppTail),
+        m_ppCursor(ppHead),
+        m_Cntr(0)
     {
         // Nothing to do.
     }
