@@ -7,20 +7,21 @@ FROM debian:buster-slim
 RUN apt-get update \
   && apt-get install --no-install-recommends -y \
     build-essential \
-    clang-format \
-    cmake \
-    cppcheck \
-    git \
-    nano \
-    openssh-server \
-    gdb-multiarch \
     libgmock-dev \
     libgtest-dev \
     python3 \
     python3-pytest \
     python3-pytest-cov \
-    net-tools \
+    cmake \
+    git \
+    clang-format \
+    cppcheck \
     valgrind \
+    openssh-server \
+    gdb-multiarch \
+    rsync \
+    net-tools \
+    nano \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
