@@ -19,6 +19,15 @@ RUN apt-get update \
     python3 \
     python3-pytest \
     python3-pytest-cov \
+    net-tools \
     valgrind \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
+
+# Enable ssh connection
+RUN echo 'root:admin' | chpasswd
+RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
+RUN mkdir -p /run/sshd
+EXPOSE 22
+ENTRYPOINT service ssh restart && bash
