@@ -2,3 +2,4 @@ build*/*
 *build*/*
 .clang-format
 .idea/*
+Doxygen/
